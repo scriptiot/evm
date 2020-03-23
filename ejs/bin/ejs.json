@@ -1,0 +1,9 @@
+{
+	"heap_size": 1024000000,
+	"stack_size": 10240000,
+	"module_size": 10,
+	"module_paths": [
+		".",
+		"./ejs_modules"
+	]
+}
