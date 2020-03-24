@@ -19,9 +19,10 @@ void lvgl_qml_obj_add_style(lv_obj_t * obj){
 }
 
 lv_color_t lvgl_qml_style_get_color(evm_t * e, evm_val_t * v){
+    EVM_UNUSED(e);
     if( !v ) return LV_COLOR_BLACK;
     if( evm_is_string(v)) {
-        char * s = evm_2_string(v);
+        const char * s = evm_2_string(v);
         if( !strcmp(s, "white") ) return LV_COLOR_WHITE;
         if( !strcmp(s, "silver") ) return LV_COLOR_SILVER;
         if( !strcmp(s, "gray") ) return LV_COLOR_GRAY;
@@ -51,8 +52,9 @@ lv_color_t lvgl_qml_style_get_color(evm_t * e, evm_val_t * v){
 }
 
 lv_layout_t lvgl_qml_get_layout(evm_t * e, evm_val_t * v){
+    EVM_UNUSED(e);
     if( evm_is_string(v)) {
-        char * s = evm_2_string(v);
+        const char * s = evm_2_string(v);
         if( !strcmp(s, "off") ) return LV_LAYOUT_OFF;
         if( !strcmp(s, "center") ) return LV_LAYOUT_CENTER;
         if( !strcmp(s, "hLeft") ) return LV_LAYOUT_COL_L;
@@ -68,8 +70,9 @@ lv_layout_t lvgl_qml_get_layout(evm_t * e, evm_val_t * v){
 }
 
 lv_fit_t lvgl_qml_get_fit(evm_t * e, evm_val_t * v){
+    EVM_UNUSED(e);
     if( evm_is_string(v)) {
-        char * s = evm_2_string(v);
+        const char * s = evm_2_string(v);
         if( !strcmp(s, "none") ) return LV_FIT_NONE;
         if( !strcmp(s, "tight") ) return LV_FIT_TIGHT;
         if( !strcmp(s, "flood") ) return LV_FIT_FLOOD;
@@ -79,8 +82,9 @@ lv_fit_t lvgl_qml_get_fit(evm_t * e, evm_val_t * v){
 }
 
 lv_label_align_t lvgl_qml_ta_get_text_align(evm_t * e, evm_val_t * v){
+    EVM_UNUSED(e);
     if( evm_is_string(v)) {
-        char * s = evm_2_string(v);
+        const char * s = evm_2_string(v);
         if( !strcmp(s, "left") ) return LV_LABEL_ALIGN_LEFT;
         if( !strcmp(s, "right") ) return LV_LABEL_ALIGN_RIGHT;
         if( !strcmp(s, "center") ) return LV_LABEL_ALIGN_CENTER;
@@ -90,8 +94,9 @@ lv_label_align_t lvgl_qml_ta_get_text_align(evm_t * e, evm_val_t * v){
 }
 
 char * lvgl_qml_get_symbol(evm_t * e, evm_val_t * v){
+    EVM_UNUSED(e);
     if( evm_is_string(v)) {
-        char * s = evm_2_string(v);
+        const char * s = evm_2_string(v);
         if( !strcmp(s, "audio") ) return LV_SYMBOL_AUDIO;
         if( !strcmp(s, "video") ) return LV_SYMBOL_VIDEO;
         if( !strcmp(s, "list") ) return LV_SYMBOL_LIST;
@@ -154,8 +159,9 @@ char * lvgl_qml_get_symbol(evm_t * e, evm_val_t * v){
 }
 
 lv_chart_type_t lvgl_qml_get_ChartType(evm_t * e, evm_val_t * v){
+    EVM_UNUSED(e);
     if( evm_is_string(v)) {
-        char * s = evm_2_string(v);
+        const char * s = evm_2_string(v);
         if( !strcmp(s, "None") ) return LV_CHART_TYPE_NONE;
         if( !strcmp(s, "Line") ) return LV_CHART_TYPE_LINE;
         if( !strcmp(s, "Bar") ) return LV_CHART_TYPE_COLUMN;

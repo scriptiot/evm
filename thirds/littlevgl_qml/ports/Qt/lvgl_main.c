@@ -4,6 +4,7 @@
 #include "lv_examples/lv_apps/demo/demo.h"
 #include "lv_examples/lv_tests/lv_test_theme/lv_test_theme_1.h"
 #include "lv_examples/lv_tests/lv_test_theme/lv_test_theme_2.h"
+#include <unistd.h>
 
 extern int lvgl_init(evm_t * e);
 extern void ecma_timer_poll(evm_t * e);
@@ -23,7 +24,7 @@ void my_disp_flush(lv_disp_t * disp, const lv_area_t * area, lv_color_t * color_
             color_p++;
         }
     }
-    lv_disp_flush_ready(disp);         /* Indicate you are ready with the flushing*/
+    lv_disp_flush_ready((lv_disp_drv_t*)disp);         /* Indicate you are ready with the flushing*/
     update = 1;
 }
 
@@ -49,13 +50,14 @@ int touchpad_is_pressed(){
     return is_touched;
 }
 
-void touchpad_get_xy(int * x, int * y){
+void touchpad_get_xy(lv_coord_t * x, lv_coord_t * y){
     *x = evm_touch_x;
     *y = evm_touch_y;
 }
 
 bool my_touchpad_read(lv_indev_drv_t * indev_driver, lv_indev_data_t * data)
 {
+    (void)indev_driver;
     static lv_coord_t last_x = 0;
     static lv_coord_t last_y = 0;
 
@@ -213,7 +215,7 @@ void lvgl_main()
     fb = calloc(LV_HOR_RES_MAX * LV_VER_RES_MAX, 2);
     lv_disp_buf_init(&disp_buf, buf, NULL, LV_HOR_RES_MAX * 10);
     lv_disp_drv_init(&disp_drv);          /*Basic initialization*/
-    disp_drv.flush_cb = my_disp_flush;    /*Set your driver function*/
+    disp_drv.flush_cb = (void*)my_disp_flush;    /*Set your driver function*/
     disp_drv.buffer = &disp_buf;          /*Assign the buffer to the display*/
     lv_disp_drv_register(&disp_drv);      /*Finally register the driver*/
 

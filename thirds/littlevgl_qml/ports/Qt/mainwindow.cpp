@@ -44,6 +44,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::paintEvent(QPaintEvent* p)
 {
+    (void)p;
     uchar * fb = (uchar*)evm_get_fb();
     if(fb){
         QPainter painter(this);

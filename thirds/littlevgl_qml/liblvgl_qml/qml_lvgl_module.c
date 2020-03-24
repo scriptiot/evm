@@ -20,13 +20,13 @@ static evm_t * global_e;
 
 static void lv_qml_gc_init(evm_t * e, evm_val_t *old_self, evm_val_t * new_self){
     lv_obj_t * o = (lv_obj_t*)evm_qml_object_get_pointer(old_self);
-    lv_obj_set_user_data(o, *new_self);
+    lv_obj_set_user_data(o, (lv_obj_user_data_t)*new_self);
     qml_object_gc_init(e, old_self, new_self);
 }
 
 /********** Callback ***********/
 
-static lv_qml_run_callback(evm_t * e, evm_val_t * obj, char * name, int argc, evm_val_t * argv){
+static void lv_qml_run_callback(evm_t * e, evm_val_t * obj, char * name, int argc, evm_val_t * argv){
     evm_val_t * m_clicked_fn = evm_prop_get(e, obj, name, 0);
     if( m_clicked_fn != NULL)
         evm_run_callback(e, m_clicked_fn, obj, argv, argc);
@@ -50,7 +50,7 @@ static void lv_qml_TextInput_event_handler(lv_obj_t * obj, lv_event_t event)
 {
     if(event == LV_EVENT_VALUE_CHANGED) {
         evm_val_t v = (evm_val_t)lv_obj_get_user_data(obj);
-        evm_qml_write_value(global_e, &v, "text", evm_mk_foreign_string(lv_ta_get_text(obj)));
+        evm_qml_write_value(global_e, &v, "text", evm_mk_foreign_string((intptr_t)lv_ta_get_text(obj)));
         lv_qml_run_callback(global_e, &v, "onTextEdited", 0, NULL);
     }
 }
@@ -97,7 +97,7 @@ static evm_val_t  qml_Item_opacity(evm_t * e, evm_val_t *p, int argc, evm_val_t 
     EVM_UNUSED(e);
     if( argc >= 1 && evm_is_number(v)){
         lv_obj_t * obj = (lv_obj_t*)evm_qml_object_get_pointer(p);
-        lv_style_t * style = lv_obj_get_style(obj);
+        lv_style_t * style = (lv_style_t*)lv_obj_get_style(obj);
         style->body.opa = 255 * evm_2_double(v);
         lv_obj_refresh_style(obj);
     }
@@ -105,6 +105,7 @@ static evm_val_t  qml_Item_opacity(evm_t * e, evm_val_t *p, int argc, evm_val_t 
 }
 
 static evm_val_t  qml_Item_visible(evm_t * e, evm_val_t *p, int argc, evm_val_t * v){
+    EVM_UNUSED(e);
     if( argc >= 1 && evm_is_boolean(v)){
         lv_obj_t * obj = (lv_obj_t*)evm_qml_object_get_pointer(p);
         lv_obj_set_hidden(obj, evm_2_intptr(v));
@@ -132,7 +133,7 @@ static evm_val_t  qml_Rectangle_color(evm_t * e, evm_val_t *p, int argc, evm_val
     EVM_UNUSED(e);
     if( argc >= 1){
         lv_obj_t * obj = (lv_obj_t*)evm_qml_object_get_pointer(p);
-        lv_style_t * style = lv_obj_get_style(obj);
+        lv_style_t * style = (lv_style_t*)lv_obj_get_style(obj);
         style->body.main_color = lvgl_qml_style_get_color(e, v);
         lv_obj_refresh_style(obj);
     }
@@ -143,7 +144,7 @@ static evm_val_t  qml_Rectangle_gradient(evm_t * e, evm_val_t *p, int argc, evm_
     EVM_UNUSED(e);
     if( argc >= 1){
         lv_obj_t * obj = (lv_obj_t*)evm_qml_object_get_pointer(p);
-        lv_style_t * style = lv_obj_get_style(obj);
+        lv_style_t * style = (lv_style_t*)lv_obj_get_style(obj);
         style->body.grad_color = lvgl_qml_style_get_color(e, v);
         lv_obj_refresh_style(obj);
     }
@@ -154,7 +155,7 @@ static evm_val_t  qml_Rectangle_radius(evm_t * e, evm_val_t *p, int argc, evm_va
     EVM_UNUSED(e);
     if( argc >= 1 && evm_is_number(v)){
         lv_obj_t * obj = (lv_obj_t*)evm_qml_object_get_pointer(p);
-        lv_style_t * style = lv_obj_get_style(obj);
+        lv_style_t * style = (lv_style_t*)lv_obj_get_style(obj);
         style->body.radius = evm_2_integer(v);
         lv_obj_refresh_style(obj);
     }
@@ -173,7 +174,7 @@ static evm_val_t  qml_Button(evm_t * e, evm_val_t *p, int argc, evm_val_t * v){
     evm_qml_object_set_pointer(p, obj);
     lv_obj_set_event_cb(obj, lv_qml_Button_event_handler);
     evm_object_set_init(p, (evm_init_fn)lv_qml_gc_init);
-    lv_obj_set_user_data(obj, *p);
+    lv_obj_set_user_data(obj, (lv_obj_user_data_t)*p);
     lvgl_qml_obj_add_style(obj);
     return EVM_VAL_UNDEFINED;
 }
@@ -196,7 +197,7 @@ static evm_val_t  qml_Text_color(evm_t * e, evm_val_t *p, int argc, evm_val_t * 
     EVM_UNUSED(e);
     if( argc >= 1){
         lv_obj_t * obj = (lv_obj_t*)evm_qml_object_get_pointer(p);
-        lv_style_t * style = lv_obj_get_style(obj);
+        lv_style_t * style = (lv_style_t*)lv_obj_get_style(obj);
         style->text.color = lvgl_qml_style_get_color(e, v);
         lv_obj_refresh_style(obj);
     }
@@ -250,7 +251,7 @@ static evm_val_t  qml_CheckBox(evm_t * e, evm_val_t *p, int argc, evm_val_t * v)
     lvgl_qml_obj_add_style(obj);
     lv_obj_set_event_cb(obj, lv_qml_Button_event_handler);
     evm_object_set_init(p, (evm_init_fn)lv_qml_gc_init);
-    lv_obj_set_user_data(obj, *p);
+    lv_obj_set_user_data(obj, (lv_obj_user_data_t)*p);
     return EVM_VAL_UNDEFINED;
 }
 
@@ -296,7 +297,7 @@ static evm_val_t  qml_TextField(evm_t * e, evm_val_t *p, int argc, evm_val_t * v
     obj = (lv_obj_t*)lv_ta_create(parent, NULL);
     if( !obj ) return EVM_VAL_UNDEFINED;
     evm_qml_object_set_pointer(p, obj);
-    lv_obj_set_user_data(obj, *p);
+    lv_obj_set_user_data(obj, (lv_obj_user_data_t)*p);
     evm_object_set_init(p, (evm_init_fn)lv_qml_gc_init);
     lv_ta_set_cursor_type(obj, LV_CURSOR_LINE | LV_CURSOR_HIDDEN);
     lv_obj_set_event_cb(obj, lv_qml_TextInput_event_handler);
@@ -338,6 +339,7 @@ static evm_val_t  qml_CircularGauge(evm_t * e, evm_val_t *p, int argc, evm_val_t
 }
 
 static evm_val_t qml_CircularGauge_value(evm_t * e, evm_val_t *p, int argc, evm_val_t * v){
+    EVM_UNUSED(e);
     if( argc >= 1 && evm_is_number(v)){
         lv_obj_t * obj = (lv_obj_t*)evm_qml_object_get_pointer( p );
         lv_gauge_set_value(obj, 0, evm_2_integer(v));
@@ -346,6 +348,7 @@ static evm_val_t qml_CircularGauge_value(evm_t * e, evm_val_t *p, int argc, evm_
 }
 
 static evm_val_t qml_CircularGauge_minimumValue(evm_t * e, evm_val_t *p, int argc, evm_val_t * v){
+    EVM_UNUSED(e);
     if( argc >= 1 && evm_is_number(v)){
         lv_obj_t * obj = (lv_obj_t*)evm_qml_object_get_pointer( p );
         int max = lv_gauge_get_max_value(obj);
@@ -355,6 +358,7 @@ static evm_val_t qml_CircularGauge_minimumValue(evm_t * e, evm_val_t *p, int arg
 }
 
 static evm_val_t qml_CircularGauge_maximumValue(evm_t * e, evm_val_t *p, int argc, evm_val_t * v){
+    EVM_UNUSED(e);
     if( argc >= 1 && evm_is_number(v)){
         lv_obj_t * obj = (lv_obj_t*)evm_qml_object_get_pointer( p );
         int min = lv_gauge_get_min_value(obj);
@@ -374,6 +378,7 @@ static evm_val_t  qml_CircularGaugeStyle(evm_t * e, evm_val_t *p, int argc, evm_
 }
 
 static evm_val_t qml_CircularGaugeStyle_angleRange(evm_t * e, evm_val_t *p, int argc, evm_val_t * v){
+    EVM_UNUSED(e);
     if( argc >= 1 && evm_is_number(v)){
         lv_obj_t * obj = (lv_obj_t*)evm_qml_object_get_pointer( p );
         uint8_t line_cnt = lv_gauge_get_line_count(obj);
@@ -384,6 +389,7 @@ static evm_val_t qml_CircularGaugeStyle_angleRange(evm_t * e, evm_val_t *p, int 
 }
 
 static evm_val_t qml_CircularGaugeStyle_labelCount(evm_t * e, evm_val_t *p, int argc, evm_val_t * v){
+    EVM_UNUSED(e);
     if( argc >= 1 && evm_is_number(v)){
         lv_obj_t * obj = (lv_obj_t*)evm_qml_object_get_pointer( p );
         uint16_t angle = lv_gauge_get_scale_angle(obj);
@@ -394,6 +400,7 @@ static evm_val_t qml_CircularGaugeStyle_labelCount(evm_t * e, evm_val_t *p, int 
 }
 
 static evm_val_t qml_CircularGaugeStyle_tickmarkCount(evm_t * e, evm_val_t *p, int argc, evm_val_t * v){
+    EVM_UNUSED(e);
     if( argc >= 1 && evm_is_number(v)){
         lv_obj_t * obj = (lv_obj_t*)evm_qml_object_get_pointer( p );
         uint16_t angle = lv_gauge_get_scale_angle(obj);
@@ -442,7 +449,7 @@ static evm_val_t qml_border_width(evm_t * e, evm_val_t *p, int argc, evm_val_t *
     EVM_UNUSED(e);
     if( argc >= 1 && evm_is_number(v) ){
         lv_obj_t * obj = (lv_obj_t*)evm_qml_object_get_pointer( evm_get_parent(e, *p) );
-        lv_style_t * style = lv_obj_get_style(obj);
+        lv_style_t * style = (lv_style_t*)lv_obj_get_style(obj);
         style->body.border.width = evm_2_integer(v);
         lv_obj_refresh_style(obj);
     }
@@ -453,7 +460,7 @@ static evm_val_t qml_border_color(evm_t * e, evm_val_t *p, int argc, evm_val_t *
     EVM_UNUSED(e);
     if( argc >= 1 ){
         lv_obj_t * obj = (lv_obj_t*)evm_qml_object_get_pointer( evm_get_parent(e, *p) );
-        lv_style_t * style = lv_obj_get_style(obj);
+        lv_style_t * style = (lv_style_t*)lv_obj_get_style(obj);
         style->body.border.color = lvgl_qml_style_get_color(e, v);
         lv_obj_refresh_style(obj);
     }
@@ -573,7 +580,7 @@ int qml_lvgl_module(evm_t * e){
         {"CircularGauge", "Item", (evm_native_fn)qml_CircularGauge, qml_properties_CircularGauge},
         {"CircularGaugeStyle", NULL, (evm_native_fn)qml_CircularGaugeStyle, qml_properties_CircularGaugeStyle},
         {"Window", "Item", (evm_native_fn)qml_Window, qml_properties_Window},
-        {NULL, NULL, NULL}
+        {NULL, NULL, NULL, NULL}
     };
 
     evm_qml_register(e, qml_objects);
