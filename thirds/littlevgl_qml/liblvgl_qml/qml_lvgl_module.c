@@ -20,7 +20,7 @@ static evm_t * global_e;
 
 static void lv_qml_gc_init(evm_t * e, evm_val_t *old_self, evm_val_t * new_self){
     lv_obj_t * o = (lv_obj_t*)evm_qml_object_get_pointer(old_self);
-    lv_obj_set_user_data(o, (lv_obj_user_data_t)*new_self);
+    lv_obj_set_user_data(o, (lv_obj_user_data_t)evm_2_intptr(new_self));
     qml_object_gc_init(e, old_self, new_self);
 }
 
@@ -35,7 +35,7 @@ static void lv_qml_run_callback(evm_t * e, evm_val_t * obj, char * name, int arg
 static void lv_qml_Button_event_handler(lv_obj_t * obj, lv_event_t event)
 {
     if(event == LV_EVENT_CLICKED) {
-        evm_val_t v = (evm_val_t)lv_obj_get_user_data(obj);
+        evm_val_t v = evm_mk_object(lv_obj_get_user_data(obj));
         lv_qml_run_callback(global_e, &v, "onClicked", 0, NULL);
     }else if(event == LV_EVENT_PRESSED) {
         evm_val_t v = (evm_val_t)lv_obj_get_user_data(obj);
@@ -49,7 +49,7 @@ static void lv_qml_Button_event_handler(lv_obj_t * obj, lv_event_t event)
 static void lv_qml_TextInput_event_handler(lv_obj_t * obj, lv_event_t event)
 {
     if(event == LV_EVENT_VALUE_CHANGED) {
-        evm_val_t v = (evm_val_t)lv_obj_get_user_data(obj);
+        evm_val_t v = evm_mk_object(lv_obj_get_user_data(obj));
         evm_qml_write_value(global_e, &v, "text", evm_mk_foreign_string((intptr_t)lv_ta_get_text(obj)));
         lv_qml_run_callback(global_e, &v, "onTextEdited", 0, NULL);
     }
@@ -174,7 +174,7 @@ static evm_val_t  qml_Button(evm_t * e, evm_val_t *p, int argc, evm_val_t * v){
     evm_qml_object_set_pointer(p, obj);
     lv_obj_set_event_cb(obj, lv_qml_Button_event_handler);
     evm_object_set_init(p, (evm_init_fn)lv_qml_gc_init);
-    lv_obj_set_user_data(obj, (lv_obj_user_data_t)*p);
+    lv_obj_set_user_data(obj, (lv_obj_user_data_t)evm_2_intptr(p));
     lvgl_qml_obj_add_style(obj);
     return EVM_VAL_UNDEFINED;
 }
@@ -251,7 +251,7 @@ static evm_val_t  qml_CheckBox(evm_t * e, evm_val_t *p, int argc, evm_val_t * v)
     lvgl_qml_obj_add_style(obj);
     lv_obj_set_event_cb(obj, lv_qml_Button_event_handler);
     evm_object_set_init(p, (evm_init_fn)lv_qml_gc_init);
-    lv_obj_set_user_data(obj, (lv_obj_user_data_t)*p);
+    lv_obj_set_user_data(obj, (lv_obj_user_data_t)evm_2_intptr(p));
     return EVM_VAL_UNDEFINED;
 }
 
@@ -297,7 +297,7 @@ static evm_val_t  qml_TextField(evm_t * e, evm_val_t *p, int argc, evm_val_t * v
     obj = (lv_obj_t*)lv_ta_create(parent, NULL);
     if( !obj ) return EVM_VAL_UNDEFINED;
     evm_qml_object_set_pointer(p, obj);
-    lv_obj_set_user_data(obj, (lv_obj_user_data_t)*p);
+    lv_obj_set_user_data(obj, (lv_obj_user_data_t)evm_2_intptr(p));
     evm_object_set_init(p, (evm_init_fn)lv_qml_gc_init);
     lv_ta_set_cursor_type(obj, LV_CURSOR_LINE | LV_CURSOR_HIDDEN);
     lv_obj_set_event_cb(obj, lv_qml_TextInput_event_handler);

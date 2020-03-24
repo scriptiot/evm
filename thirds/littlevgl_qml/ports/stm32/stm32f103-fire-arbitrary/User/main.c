@@ -39,8 +39,6 @@ FATFS fs;
 char * vm_load_file(evm_t * e, char *filename){
     FIL file;
 	int size;
-    size_t result;
-    uint32_t lSize;
     char *buffer = NULL;
 
     FRESULT res = f_open(&file, filename, FA_READ | FA_OPEN_EXISTING);
@@ -94,6 +92,7 @@ void vm_free(void * mem)
 #define VM_MODULE_SIZE	5
 
 extern int qml_lvgl_module(evm_t * e);
+extern int ecma_module(evm_t * e, uint32_t num_of_timers);
 
 int main(void)
 {
