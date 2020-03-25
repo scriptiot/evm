@@ -663,6 +663,46 @@ static evm_val_t lvgl_qml_ChartSeries_set_color(evm_t * e, evm_val_t *p, int arg
     return EVM_VAL_UNDEFINED;
 }
 
+/********** TabView ***********/
+static evm_val_t  qml_TabView(evm_t * e, evm_val_t *p, int argc, evm_val_t * v){
+    EVM_UNUSED(e);
+    lv_obj_t * obj = NULL;
+    lv_obj_t * parent = lv_scr_act();
+    if(argc == 1) parent = evm_qml_object_get_pointer(v);
+    obj = (lv_obj_t*)lv_tabview_create(parent, NULL);
+    lv_obj_set_size(obj, lv_obj_get_height(parent), lv_obj_get_height(parent));
+    if( !obj ) return EVM_VAL_UNDEFINED;
+    lvgl_qml_obj_add_style(obj);
+    evm_qml_object_set_pointer(p, obj);
+    return EVM_VAL_UNDEFINED;
+}
+
+
+
+/********** Tab ***********/
+static evm_val_t  qml_Tab(evm_t * e, evm_val_t *p, int argc, evm_val_t * v){
+    EVM_UNUSED(e);
+    lv_obj_t * obj = NULL;
+    lv_obj_t * parent = lv_scr_act();
+    if(argc == 1) parent = evm_qml_object_get_pointer(v);
+
+    if (!strcmp(evm_qml_object_get_name(e, v), "TabView")){
+        obj = lv_tabview_add_tab(parent, "123");
+    }
+    if( !obj ) return EVM_VAL_UNDEFINED;
+    evm_qml_object_set_pointer(p, obj);
+    return EVM_VAL_UNDEFINED;
+}
+
+static evm_val_t lvgl_qml_Tab_set_title(evm_t * e, evm_val_t *p, int argc, evm_val_t * v){
+    if( argc >= 1 && (evm_is_string(v))){
+        lv_obj_t * obj = (lv_obj_t*)evm_qml_object_get_pointer( evm_get_parent(e, *p) );
+        lv_tabview_set_tab_name(obj, evm_2_string(v));
+    }
+    return EVM_VAL_UNDEFINED;
+}
+
+
 /********** border ***********/
 
 static evm_val_t qml_border_width(evm_t * e, evm_val_t *p, int argc, evm_val_t * v){
@@ -800,6 +840,14 @@ static evm_qml_value_reg_t qml_properties_ChartSeries[] = {
     {0, NULL, NULL}
 };
 
+static evm_qml_value_reg_t qml_properties_TabView[] = {
+    {0, NULL, NULL}
+};
+
+static evm_qml_value_reg_t qml_properties_Tab[] = {
+    {EVM_QML_STRING, "title", (evm_native_fn)lvgl_qml_Tab_set_title},
+    {0, NULL, NULL}
+};
 
 static evm_val_t qml_lv_init(evm_t * e, evm_val_t *p, int argc, evm_val_t * v){
     EVM_UNUSED(e);EVM_UNUSED(argc);EVM_UNUSED(v);
@@ -834,6 +882,8 @@ int qml_lvgl_module(evm_t * e){
         {"Slider", "Item", (evm_native_fn)qml_Slider, qml_properties_Slider},
         {"Chart", "Item", (evm_native_fn)qml_Chart, qml_properties_Chart},
         {"ChartSeries", NULL, (evm_native_fn)qml_ChartSeries, qml_properties_ChartSeries},
+        {"TabView", "Item", (evm_native_fn)qml_TabView, qml_properties_TabView},
+        {"Tab", NULL, (evm_native_fn)qml_Tab, qml_properties_Tab},
         {NULL, NULL, NULL, NULL}
     };
 
