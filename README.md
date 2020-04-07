@@ -48,9 +48,9 @@
 | **lib**|    静态库目录 |
 | **lib/arm_windows_armcc/libqml.lib**|  windows平台libqml静态库(armcc, Keil)|
 | **lib/x86_64_linux_gnu/linux/libejs.a**|  Linux平台libejs静态库 （gcc7 64位）|
-| **lib/x86_64_linux_gnu/linux/libeqml.a**|  Linux平台libqml静态库 （gcc7 64位）|
+| **lib/x86_64_linux_gnu/linux/libqml.a**|  Linux平台libqml静态库 （gcc7 64位）|
 | **lib/x86_64_windows_mingw/libejs.a**|  windows平台libejs静态库(MinGW-gcc 64位)|
-| **lib/x86_64_windows_mingw/libeqml.a**|  windows平台libeqml静态库(MinGW-gcc 64位)|
+| **lib/x86_64_windows_mingw/libqml.a**|  windows平台libqml静态库(MinGW-gcc 64位)|
 | **thirds/littevgl_qml**| littevgl_qml模块| 
 | **thirds/littevgl_qml/lvgl_module**| 基于littlelvgl的qml封装| 
 | **thirds/littevgl_qml/ports**| 第三方平台适配| 
