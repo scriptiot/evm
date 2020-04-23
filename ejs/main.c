@@ -2,10 +2,66 @@
 #include <stdlib.h>
 #include <string.h>
 #include "evm.h"
-#include "cJSON.h"
 
-#define CHECK_ITEM(item, key) if (!item) { printf("['%s'] is not existed; Please check ejs.json!\n", key); }
+/*****************REPL*******************/
+// 定义REPL接口函数evm_repl_tty_read，从tty终端获取字符
+#ifdef EVM_LANG_ENABLE_REPL
+#ifdef __linux__
+#include <termios.h>
+#include <unistd.h>
+#endif
 
+#ifdef __WIN64__
+#include <conio.h>
+#endif
+
+#ifdef __linux__
+/**
+ * @brief linux平台终端repl读取单个字符接口
+ * @return 单个字符
+ */
+char mygetch(void)  // 不回显获取字符
+{
+    struct termios oldt, newt;
+    int ch;
+    tcgetattr(STDIN_FILENO, &oldt);
+    newt = oldt;
+    newt.c_lflag &= ~(ICANON | ECHO);
+    tcsetattr(STDIN_FILENO, TCSANOW, &newt);
+    ch = getchar();
+    newt.c_cc[VEOL] = 1;
+    newt.c_cc[VEOF] = 2;
+    tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
+    return ch;
+}
+#endif
+
+#ifdef __WIN64__
+/**
+ * @brief windows平台终端repl读取单个字符接口
+ * @return 单个字符
+ */
+char mygetch(void)  // 不回显获取字符
+{
+    return getch();
+}
+
+#endif
+
+// 如果启动REPL, 必须实现evm_repl_tty_read接口，
+/**
+ * @brief 终端repl读取单个字符接口, 如果是单片机实时调试，基于串口读取字符实现
+ * @param e, 虚拟机对象
+ * @return 单个字符
+ */
+char evm_repl_tty_read(evm_t * e)
+{
+    return mygetch();
+}
+#endif
+
+
+/******************文件操作API******************/
 enum FS_MODE{
     FS_READ = 1,
     FS_WRITE = 2,
@@ -16,6 +72,12 @@ enum FS_MODE{
     FS_BIN = 64,
 };
 
+/**
+ * @brief 打开文件
+ * @param name, 文件路径
+ * @param mode, 文件打开模式FS_MODE
+ * @return 文件句柄
+ */
 void * fs_open(char * name, int mode)
 {
     char m[5];
@@ -41,11 +103,21 @@ void * fs_open(char * name, int mode)
     return fopen(name, m);
 }
 
+/**
+ * @brief 关闭文件
+ * @param handle, 文件句柄
+ * @return
+ */
 void fs_close(void * handle)
 {
     fclose((FILE*)handle);
 }
 
+/**
+ * @brief 读取文件内容长度
+ * @param handle, 文件句柄
+ * @return 文件内容长度
+ */
 int fs_size(void * handle)
 {
     FILE *file = (void*)handle;
@@ -55,42 +127,35 @@ int fs_size(void * handle)
     return lSize;
 }
 
+/**
+ * @brief 读取文件内容
+ * @param handle, 文件句柄
+ * @param buf, 文件内容缓存buf
+ * @param len, 读取字节长度
+ * @return 读取字节长度
+ */
 int fs_read(void * handle, char * buf, int len)
 {
     return fread (buf, 1, len, (FILE*)handle);
 }
 
+/**
+ * @brief 读取文件内容
+ * @param e, 虚拟机对象
+ * @param path, 脚本文件路径
+ * @return buffer, 返回脚本文件内容
+ */
 int fs_write(void * handle, char * buf, int len)
 {
     return fwrite(buf, 1, len, (FILE*)handle);
 }
 
-
-int modules_paths_count = 0;
-char** modules_paths;
-
-char * loadconfig(char *filename){
-    FILE *file;
-    size_t result;
-    uint32_t lSize;
-    char *buffer = NULL;
-
-    file = fs_open(filename, FS_READ | FS_TEXT);
-    if (file == NULL) return NULL;
-    lSize = fs_size(file);
-    buffer = (char*)malloc(lSize+1);;
-    memset(buffer, 0, lSize + 1);
-    result = fs_read(file, buffer, lSize);
-    if (!result){
-        fclose(file);
-        return NULL;
-    }
-    buffer[lSize] = 0;
-    fclose(file);
-    return buffer;
-}
-
-
+/**
+ * @brief 读取文件内容
+ * @param e, 虚拟机对象
+ * @param path, 脚本文件路径
+ * @return buffer, 返回脚本文件内容
+ */
 char * open(evm_t * e, char *filename){
     FILE *file;
     size_t result;
@@ -113,6 +178,27 @@ char * open(evm_t * e, char *filename){
     return buffer;
 }
 
+/*****************定义模块寻址路径列表和路径个数*******************/
+/**
+ * modules_paths_count 模块路径个数
+ * modules_paths 模块路径列表
+ */
+int modules_paths_count = 2;
+char* modules_paths[] = {
+    ".",
+    "./evm_modules"
+};
+
+
+/*****************定义虚拟机注册API*******************/
+
+/**
+ * @brief 加载main运行脚本和加模块脚本
+ * @param e, 虚拟机对象
+ * @param path, 脚本路径
+ * @param type, EVM_LOAD_MAIN代表main运行脚本，非EVM_LOAD_MAIN代表加载模块
+ * @return
+ */
 const char * vm_load(evm_t * e, char * path, int type)
 {
     int file_name_len = strlen(path) + 1;
@@ -150,7 +236,11 @@ const char * vm_load(evm_t * e, char * path, int type)
     return buffer;
 }
 
-
+/**
+ * @brief 外部内存申请接口
+ * @param size, 申请内存大小
+ * @return 内存成功分配的对象指针
+ */
 void * vm_malloc(int size)
 {
     void * m = malloc(size);
@@ -158,92 +248,82 @@ void * vm_malloc(int size)
     return m;
 }
 
+/**
+ * @brief 外部内存释放接口
+ * @param mem, 需要释放的对象指针
+ * @return
+ */
 void vm_free(void * mem)
 {
     if(mem) free(mem);
 }
 
+/****************声明ecma模块********************/
+
 #ifdef EVM_LANG_ENABLE_JAVASCRIPT
 extern int ecma_module(evm_t * e, int num_of_timers);
 #endif
+
+/****************声明python内置模块***************/
 
 #ifdef EVM_LANG_ENABLE_PYTHON
 extern int python_builtins(evm_t * e);
 #endif
 
+#define QMAKE_TARGET "ejs"
+#define QMAKE_VERSION "1.0"
 
+/****************终端提示信息***************/
 void help(void)
 {
     printf(QMAKE_TARGET " version " QMAKE_VERSION "\n"
            "usage: " QMAKE_TARGET " [file.js]\n"
     );
-    exit(1);
 }
 
 
 int main(int argc, char *argv[])
 {
+    // 注册平台相关的虚拟机API
     evm_register_free((intptr_t)vm_free);
     evm_register_malloc((intptr_t)vm_malloc);
     evm_register_print((intptr_t)printf);
     evm_register_file_load((intptr_t)vm_load);
 
-    if (argc == 1){
-        help();
-    }
-
+    // 初始化虚拟机
     int32_t head_size = 10 *1000 * 1024;
     int32_t stack_size = 10000 * 1024;
     int32_t module_size = 10;
-    char *config;
-    config = loadconfig(QMAKE_TARGET".json");
-    if( config ){
-        cJSON * root = NULL;
-        cJSON * item = NULL;//cjson对象
-        root = cJSON_Parse(config);
-        if (!root)
-        {
-            printf(QMAKE_TARGET".json parser error: [%s]\n",cJSON_GetErrorPtr());
-        }
-        else
-        {
-            item = cJSON_GetObjectItem(root, "heap_size");
-            CHECK_ITEM(item, "heap_size")
-            head_size = item->valueint;
-            item = cJSON_GetObjectItem(root, "stack_size");
-            CHECK_ITEM(item, "stack_size")
-            stack_size = item->valueint;
-            item = cJSON_GetObjectItem(root, "module_size");
-            CHECK_ITEM(item, "module_size")
-            module_size = item->valueint;
-            item = cJSON_GetObjectItem(root, "module_paths");
-            CHECK_ITEM(item, "module_paths")
-            if (cJSON_IsArray(item)){
-                modules_paths_count = cJSON_GetArraySize(item);
-                modules_paths = malloc(sizeof(char*)*modules_paths_count);
-                for(int i=0; i< modules_paths_count; i++){
-                    cJSON * pathItem = cJSON_GetArrayItem(item, i);
-                    modules_paths[i] = cJSON_GetStringValue(pathItem);
-                }
-            }
-        }
-        memset(config, 0, sizeof(config));
-    }
     evm_t * env = (evm_t*)malloc(sizeof(evm_t));
     memset(env, 0, sizeof(evm_t));
     int err = evm_init(env, head_size, stack_size, module_size, EVM_VAR_NAME_MAX_LEN, EVM_FILE_NAME_LEN);
 
+    // 加载ecma模块
 #ifdef EVM_LANG_ENABLE_JAVASCRIPT
     ecma_module(env, 10);
     if(env->err) {evm_errcode_print(env);evm_deinit(env); return err;}
 #endif
 
+    // 加载python内置模块
 #ifdef EVM_LANG_ENABLE_PYTHON
     python_builtins(env);
     if(env->err) {evm_errcode_print(env);evm_deinit(env); return err;}
 #endif
 
+    // 启动REPL调试
+    if (argc == 1){
+        help();
+#ifdef EVM_LANG_ENABLE_REPL
+#ifdef EVM_LANG_ENABLE_JAVASCRIPT
+        evm_repl_run(env, 1000, EVM_LANG_JS);
+#endif
+#ifdef EVM_LANG_ENABLE_PYTHON
+        evm_repl_run(env, 1000, EVM_LANG_PY);
+#endif
+#endif
+    }
 
+    // 加载js/py/lua等脚本文件
     err = evm_boot(env, argv[1]);
 
     if (err == ec_no_file){
@@ -253,6 +333,7 @@ int main(int argc, char *argv[])
 
     if(err) {return err;}
 
+    // 启动虚拟机
     err = evm_start(env);
 
     return err;

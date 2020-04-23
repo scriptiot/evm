@@ -556,12 +556,12 @@ ARM Macro Assembler    Page 9
 Command Line: --debug --xref --diag_suppress=9931 --cpu=Cortex-M3 --apcs=interw
 ork --depend=..\..\..\build\build-stm32f103-fire-arbitrary\startup_stm32f10x_hd
 .d -o..\..\..\build\build-stm32f103-fire-arbitrary\startup_stm32f10x_hd.o -ID:\
-scriptiot\evm_publish\thirds\littlevgl_qml\ports\stm32\stm32f103-fire-arbitrary
-\Project\RVMDK£¨uv5£©\RTE -IC:\Keil_v5\ARM\PACK\Keil\STM32F1xx_DFP\2.1.0\Device
-\Include -IC:\Keil_v5\ARM\CMSIS\Include --predefine="__MICROLIB SETA 1" --prede
-fine="__UVISION_VERSION SETA 521" --predefine="STM32F10X_HD SETA 1" --list=..\.
-.\listing\startup_stm32f10x_hd.lst ..\..\Libraries\CMSIS\startup\startup_stm32f
-10x_hd.s
+scriptiot\evm_publish_final\thirds\littlevgl_qml\ports\stm32\stm32f103-fire-arb
+itrary\Project\RVMDK£¨uv5£©\RTE -IC:\Keil_v5\ARM\PACK\Keil\STM32F1xx_DFP\2.1.0\
+Device\Include -IC:\Keil_v5\ARM\CMSIS\Include --predefine="__MICROLIB SETA 1" -
+-predefine="__UVISION_VERSION SETA 521" --predefine="STM32F10X_HD SETA 1" --lis
+t=..\..\listing\startup_stm32f10x_hd.lst ..\..\Libraries\CMSIS\startup\startup_
+stm32f10x_hd.s
 
 
 

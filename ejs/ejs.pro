@@ -19,8 +19,8 @@ DEFINES += EVM_LANG_ENABLE_JSON
 DEFINES += EVM_LANG_ENABLE_XML
 
 unix {
-    exists($$PWD/../lib/x86_linux/libejs.a) {
-        LIBS += $$PWD/../lib/x86_linux/libejs.a
+    exists($$PWD/../lib/x86_64-linux-gnu/libejs.a) {
+        LIBS += $$PWD/../lib/x86_64-linux-gnu/libejs.a
     }
     exists($$OUT_PWD/../libejs/libejs.a) {
         LIBS += $$OUT_PWD/../libejs/libejs.a
@@ -28,8 +28,8 @@ unix {
 }
 
 win32{
-    exists($$PWD/../lib/x86_win64/libejs.a) {
-        LIBS += $$PWD/../lib/x86_win64/libejs.a
+    exists($$PWD/../lib/x86_64-windows-mingw/libejs.a) {
+        LIBS += $$PWD/../lib/x86_64-windows-mingw/libejs.a
     }
     exists($$OUT_PWD/../libejs/libejs.a) {
         LIBS += $$OUT_PWD/../libejs/libejs.a
@@ -37,11 +37,7 @@ win32{
 }
 
 INCLUDEPATH += $$PWD/../libevm
-INCLUDEPATH += $$PWD/../lib/include
-INCLUDEPATH += $$PWD/../thirds/cjson
-
-include($$PWD/../thirds/cjson/cjson.pri)
-
+INCLUDEPATH += $$PWD/../include
 
 exists($$PWD/../main.c) {
     SOURCES += \

@@ -14,7 +14,7 @@ void my_disp_flush(lv_disp_t * disp, const lv_area_t * area, lv_color_t * color_
             color_p++;
         }
     }
-    lv_disp_flush_ready(disp);         /* Indicate you are ready with the flushing*/
+    lv_disp_flush_ready((lv_disp_drv_t*)disp);         /* Indicate you are ready with the flushing*/
 }
 
 
@@ -62,9 +62,6 @@ FIL lvgl_file;
 static lv_fs_res_t pcfs_open(lv_fs_drv_t * drv, void * file_p, const char * fn, lv_fs_mode_t mode)
 {
     (void) drv; /*Unused*/
-
-    const char * flags = "";
-
 	char buf[128];
 	sprintf(buf,  "0:/%s", fn);
 	FRESULT res = f_open(&lvgl_file, buf, FA_READ | FA_OPEN_EXISTING);
@@ -88,8 +85,6 @@ static lv_fs_res_t pcfs_open(lv_fs_drv_t * drv, void * file_p, const char * fn, 
 static lv_fs_res_t pcfs_close(lv_fs_drv_t * drv, void * file_p)
 {
     (void) drv; /*Unused*/
-
-    pc_file_t * fp = file_p;        /*Just avoid the confusing casings*/
     f_close(&lvgl_file);
     return LV_FS_RES_OK;
 }
@@ -107,8 +102,6 @@ static lv_fs_res_t pcfs_close(lv_fs_drv_t * drv, void * file_p)
 static lv_fs_res_t pcfs_read(lv_fs_drv_t * drv, void * file_p, void * buf, uint32_t btr, uint32_t * br)
 {
     (void) drv; /*Unused*/
-
-    pc_file_t * fp = file_p;        /*Just avoid the confusing casings*/
     f_read(&lvgl_file, buf, btr, br);
     return LV_FS_RES_OK;
 }
@@ -123,9 +116,7 @@ static lv_fs_res_t pcfs_read(lv_fs_drv_t * drv, void * file_p, void * buf, uint3
  */
 static lv_fs_res_t pcfs_seek(lv_fs_drv_t * drv, void * file_p, uint32_t pos)
 {
-    (void) drv; /*Unused*/
-
-    pc_file_t * fp = file_p;        /*Just avoid the confusing casings*/	
+    (void) drv; /*Unused*/	
 	f_lseek(&lvgl_file, pos);
     return LV_FS_RES_OK;
 }
@@ -141,7 +132,6 @@ static lv_fs_res_t pcfs_seek(lv_fs_drv_t * drv, void * file_p, uint32_t pos)
 static lv_fs_res_t pcfs_tell(lv_fs_drv_t * drv, void * file_p, uint32_t * pos_p)
 {
     (void) drv; /*Unused*/
-    pc_file_t * fp = file_p;        /*Just avoid the confusing casings*/
     *pos_p = (uint32_t)f_tell(&lvgl_file);
     return LV_FS_RES_OK;
 }
@@ -169,7 +159,7 @@ void lvgl_main(void)
     lv_indev_drv_t indev_drv;
     lv_disp_buf_init(&disp_buf, buf, NULL, LV_HOR_RES_MAX * 10);
     lv_disp_drv_init(&disp_drv);          /*Basic initialization*/
-    disp_drv.flush_cb = my_disp_flush;    /*Set your driver function*/
+    disp_drv.flush_cb = (void*)my_disp_flush;    /*Set your driver function*/
     disp_drv.buffer = &disp_buf;          /*Assign the buffer to the display*/
     lv_disp_drv_register(&disp_drv);      /*Finally register the driver*/
 
