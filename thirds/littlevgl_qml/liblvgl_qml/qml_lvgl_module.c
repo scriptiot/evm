@@ -493,7 +493,7 @@ static evm_qml_value_reg_t qml_properties_Rectangle[] = {
     {EVM_QML_INT|EVM_QML_STRING, "color", (evm_native_fn)qml_Rectangle_color},
     {EVM_QML_INT|EVM_QML_STRING, "gradient", (evm_native_fn)qml_Rectangle_gradient},
     {EVM_QML_INT, "radius", (evm_native_fn)qml_Rectangle_radius},
-    {EVM_QML_GROUP, "border", qml_properties_border},
+    {EVM_QML_GROUP, "border", (evm_native_fn)qml_properties_border},
     {0, NULL, NULL}
 };
 
