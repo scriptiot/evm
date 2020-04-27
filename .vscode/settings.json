@@ -1,0 +1,6 @@
+{
+    "files.associations": {
+        "device.h": "c",
+        "evm_board.h": "c"
+    }
+}
