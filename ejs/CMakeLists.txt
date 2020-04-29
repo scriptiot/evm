@@ -13,6 +13,7 @@ set(EVM_ECMA_DIR ${EVM_NATIVE_DIR}/ecma/)
 set(EVM_REPL_DIR ${EVM_NATIVE_DIR}/repl/)
 set(EVM_QML_DIR ${EVM_NATIVE_DIR}/qml/)
 set(EVM_PYTHON_DIR ${EVM_NATIVE_DIR}/python/)
+set(EVM_DRIVER_DIR ${EVM_NATIVE_DIR}/driver/)
 
 set(ejs_common_sources 
     ${LIBEVM_DIR}/compiler.c
@@ -22,6 +23,20 @@ set(ejs_common_sources
     ${LIBEVM_DIR}/native.c
     ${LIBEVM_DIR}/executable.c
     ${LIBEVM_DIR}/jsonparser.c
+)
+
+set(evm_driver_sources 
+    ${ZEPHYR_BASE}/../../drivers/zephyr/adc_driver.c 
+    ${ZEPHYR_BASE}/../../drivers/zephyr/can_driver.c 
+    ${ZEPHYR_BASE}/../../drivers/zephyr/dac_driver.c
+    ${ZEPHYR_BASE}/../../drivers/zephyr/gpio_driver.c
+    ${ZEPHYR_BASE}/../../drivers/zephyr/i2c_driver.c
+    ${ZEPHYR_BASE}/../../drivers/zephyr/rtc_driver.c
+    ${ZEPHYR_BASE}/../../drivers/zephyr/spi_driver.c
+    ${ZEPHYR_BASE}/../../drivers/zephyr/timer_driver.c
+    ${ZEPHYR_BASE}/../../drivers/zephyr/uart_driver.c
+    ${ZEPHYR_BASE}/../../drivers/zephyr/wdg_driver.c
+    ${ZEPHYR_BASE}/../../drivers/zephyr/pwm_driver.c
 )
 
 set(evm_repl_sources 
@@ -55,6 +70,7 @@ set(libejs_sources
     ${ejs_common_sources}
     ${LIBEVM_DIR}/jsparser.c
     ${evm_repl_sources}
+    ${evm_driver_sources}
 )
 
 set(libqml_sources 
@@ -70,11 +86,14 @@ set(libepy_sources
     ${ejs_common_sources}
     ${LIBEVM_DIR}/pyparser.c
     ${evm_repl_sources}
+    ${evm_driver_sources}
 )
+
 
 
 add_definitions("-DEVM_LANG_ENABLE_JAVASCRIPT")
 add_definitions("-DEVM_LANG_ENABLE_REPL")
+add_definitions("-DEVM_LANG_ENABLE_UOL")
 
 zephyr_library_named(ejs)
 foreach(i ${libejs_sources})

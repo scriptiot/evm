@@ -1,6 +1,11 @@
 {
     "files.associations": {
         "device.h": "c",
-        "evm_board.h": "c"
+        "evm_board.h": "c",
+        "zephyr.h": "c",
+        "gpio.h": "c",
+        "adc.h": "c",
+        "dac.h": "c",
+        "typeinfo": "c"
     }
 }

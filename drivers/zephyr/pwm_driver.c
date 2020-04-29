@@ -1,29 +1,37 @@
 #include "nevm.h"
 
-#define ARG_LENGTH_ERR { evm_set_err(e, ec_type, "invalid argument length");return evm_mk_undefined(); }
-#define ARG_TYPE_ERR   { evm_set_err(e, ec_type, "invalid argument type");return evm_mk_undefined(); }
+#ifdef EVM_DRIVER_PWM
+#include <pwm.h>
+#include <zephyr.h>
+#endif
 
+//pwm_config(devname, pin, period, pulse)
 evm_val_t nevm_driver_pwm_config(evm_t * e, evm_val_t * p, int argc, evm_val_t * v){
-    (void)p;
-    return EVM_VAL_UNDEFINED;
+    EVM_UNUSED(e);EVM_UNUSED(p);EVM_UNUSED(argc);EVM_UNUSED(v);
+#ifdef EVM_DRIVER_PWM
+    const char * name = evm_2_string(v);
+    struct device *dev = device_get_binding(name);
+    if( !dev ) return NEVM_FALSE;
+    if( pwm_pin_set_nsec(dev, evm_2_integer(v + 1), evm_2_integer(v + 2), evm_2_integer(v + 3)) == 0 )
+        return NEVM_TRUE;
+#endif
+    return NEVM_FALSE;
 }
 
 evm_val_t nevm_driver_pwm_init(evm_t * e, evm_val_t * p, int argc, evm_val_t * v){
-    (void)p;
-    return EVM_VAL_UNDEFINED;
+    EVM_UNUSED(e);EVM_UNUSED(p);EVM_UNUSED(argc);EVM_UNUSED(v);
+#ifdef EVM_DRIVER_PWM
+    if( argc > 0){
+        const char * name = evm_2_string(v);
+        struct device *dev = device_get_binding(name);
+        if( !dev ) return NEVM_FALSE;
+        return NEVM_TRUE;
+    }
+#endif
+    return NEVM_FALSE;
 }
 
 evm_val_t nevm_driver_pwm_deinit(evm_t * e, evm_val_t * p, int argc, evm_val_t * v){
-    (void)p;
-    return EVM_VAL_UNDEFINED;
-}
-
-evm_val_t nevm_driver_pwm_start(evm_t * e, evm_val_t * p, int argc, evm_val_t * v){
-    (void)p;
-    return EVM_VAL_UNDEFINED;
-}
-
-evm_val_t nevm_driver_pwm_stop(evm_t * e, evm_val_t * p, int argc, evm_val_t * v){
     (void)p;
     return EVM_VAL_UNDEFINED;
 }
