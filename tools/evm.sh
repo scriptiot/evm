@@ -1,3 +1,17 @@
+
+if [ $# != 1 ] ; then 
+    echo "USAGE: $0 [path of evm-tools]" 
+    echo " e.g.: $0 /c/evm-tools"
+    exit 1; 
+else
+    if [ -d $1 ];then
+        EVM_TOOLS=$1
+    else
+        echo "evm-tools path:[$1] is not existed! Please enter correct path!"
+        exit 1;
+    fi
+fi
+
 echo "==========【install west】==============="
 pip3 install west -i http://mirrors.aliyun.com/pypi/simple/ --trusted-host mirrors.aliyun.com
 echo "==========【install west successfully】==============="
@@ -9,7 +23,7 @@ cd ${EVMTOOLSDIR}
 echo "==========【install west tools successfully】==============="
 
 EVM_BASE=$(cd $PWD/..; pwd)
-EVM_TOOLS=/c/evm-tools
+EVM_TOOLS=$1
 
 bash_path="${HOME}/.bash_profile"
 evm_path="${HOME}/.evmrc"

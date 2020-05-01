@@ -1,21 +1,30 @@
 ### 1. 下载evm-tools
 
-+ 解压到目录
++ 解压到任意目录
 
 + 下载Python3 ，如果python3已经安装，跳过。
 
+```
+cd tools
+./evm.sh /c/evm-tools
+```
+### 2. 一键安装EVM开发环境
 
-### 2. 配置git启动配置
++ evm.sh用法
 
+```sh
+USAGE: ./evm.sh [path of evm-tools]
+e.g.: ./evm.sh /c/evm-tools
 
-+ 启动Git终端
+```
++ 举例
 
 ```
 cd tools
-./evm.sh
+./evm.sh /c/evm-tools
 ```
 
-> 安装完成后，重启Git终端，cd到evm目录
++ 安装完成后，重启Git终端，cd到evm目录
 
 
 ### 3. 编译小熊派
@@ -31,3 +40,4 @@ west build -b bearpi_stm32l431 bsp/stm32/bearpi_stm32l431
 ```
 west flash
 ```
+
