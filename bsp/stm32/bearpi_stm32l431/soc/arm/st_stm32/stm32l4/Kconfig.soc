@@ -43,4 +43,7 @@ config SOC_STM32L4R9XX
 config SOC_STM32L471XX
 	bool "STM32L471XX"
 
+config SOC_STM32L431XX
+	bool "STM32L431XX"
+
 endchoice

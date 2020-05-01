@@ -1,4 +1,0 @@
-
-config BOARD_BEARPI_STM32L431RC
-	bool "Bearpi STM32L431RC Development Board"
-	depends on SOC_STM32L431XX

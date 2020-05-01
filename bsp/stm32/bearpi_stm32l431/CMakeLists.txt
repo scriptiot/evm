@@ -2,6 +2,10 @@
 
 cmake_minimum_required(VERSION 3.13.1)
 
+set(SOC_ROOT ${CMAKE_CURRENT_LIST_DIR})
+set(BOARD_ROOT ${CMAKE_CURRENT_LIST_DIR})
+
+
 set(BOARD bearpi_stm32l431)
 
 find_package(Zephyr HINTS $ENV{ZEPHYR_BASE})

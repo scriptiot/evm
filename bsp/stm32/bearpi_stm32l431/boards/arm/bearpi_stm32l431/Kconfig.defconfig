@@ -1,0 +1,11 @@
+# BEARIP STM32L431RC board configuration
+
+# Copyright (c) 2016 Nordic Semiconductor ASA
+# SPDX-License-Identifier: Apache-2.0
+
+if BOARD_BEARPI_STM32L431
+
+config BOARD
+	default "bearpi_stm32l431"
+
+endif
