@@ -2,7 +2,6 @@
 
 cmake_minimum_required(VERSION 3.13.1)
 
-set(SOC_ROOT ${CMAKE_CURRENT_LIST_DIR})
 set(BOARD_ROOT ${CMAKE_CURRENT_LIST_DIR})
 
 

@@ -1,5 +1,5 @@
-identifier: bearpi_stm32l431rc
-name: BEARPI-STM32L431RC
+identifier: nucleo_l432kc
+name: NUCLEO-L432KC
 type: mcu
 arch: arm
 toolchain:
@@ -9,9 +9,8 @@ toolchain:
 ram: 64
 flash: 256
 supported:
-  - gpio
-  - i2c
+  - nvs
+  - pwm
+  - can
+  - counter
   - spi
-  - uart
-  - adc
-  - dac

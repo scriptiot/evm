@@ -1,4 +1,9 @@
+# STM32L432KC Nucleo board configuration
+
+# Copyright (c) 2016 Open-RnD Sp. z o.o.
+# Copyright (c) 2016 BayLibre, SAS
+# SPDX-License-Identifier: Apache-2.0
 
 config BOARD_BEARPI_STM32L431
-	bool "Bearpi STM32L431 Development Board"
-	depends on SOC_STM32L431XX
+	bool "bearpi stm32l431 Development Board"
+	depends on SOC_STM32L432XX

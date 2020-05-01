@@ -1,9 +1,15 @@
+/*
+ * Copyright (c) 2017 Linaro Limited
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 /dts-v1/;
 #include <st/l4/stm32l432Xc.dtsi>
 
 / {
-	model = "Bearpi STM32L431 board";
-	compatible = "bearpi,bearpi_stm32l431", "st,stm32l431";
+	model = "STMicroelectronics STM32L432KC-NUCLEO board";
+	compatible = "st,stm32l432kc-nucleo", "st,stm32l432";
 
 	chosen {
 		zephyr,console = &usart1;
@@ -15,14 +21,20 @@
 	leds {
 		compatible = "gpio-leds";
 		green_led: led_0 {
-			gpios = <&gpiob 0 GPIO_ACTIVE_HIGH>;
-			label = "LED0";
+			gpios = <&gpioc 13 GPIO_ACTIVE_HIGH>;
+			label = "User LD3";
 		};
+	};
+
+	aliases {
+		led0 = &green_led;
+		can-primary = &can1;
 	};
 };
 
 &usart1 {
 	current-speed = <115200>;
+	status = "okay";
 };
 
 &usart2 {
@@ -34,7 +46,23 @@
 	status = "okay";
 };
 
+&timers2 {
+	status = "okay";
+
+	pwm {
+		status = "okay";
+	};
+};
+
+&can1 {
+	bus-speed = <125000>;
+	status = "okay";
+};
+
 &rtc {
 	status = "okay";
 };
 
+&lptim1 {
+	status = "okay";
+};
