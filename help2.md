@@ -51,6 +51,37 @@ export PATH=$EVM_TOOLS/Python38:$EVM_TOOLS/Python38/Scripts:$PATH
 
 ### 3. 编译运行程序
 
++ 同步zephyr子仓库
+
+```
+
+git submodule init components/zephyr
+git submodule update
+```
+
++ 安装west
+
+```
+cd components/zephyr
+pip3 install west -i http://mirrors.aliyun.com/pypi/simple/ --trusted-host mirrors.aliyun.com
+cd components/zephyr/scripts
+pip3 install -r requiremests.txt -i http://mirrors.aliyun.com/pypi/simple/ --trusted-host mirrors.aliyun.com
+```
+
++ 修改配置文件components/zephyr/.west.yml中第23行
+
+```
+
+url-base: https://gitee.com/evm-zephyr-rtos
+
+```
+
++  更新依赖库
+
+```
+west update
+```
+
 + 根据指定的board芯片类型进行编译
 
 ```
