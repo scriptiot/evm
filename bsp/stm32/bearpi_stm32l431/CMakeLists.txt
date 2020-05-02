@@ -19,6 +19,10 @@ set(EVM_QML_DIR ${EVM_NATIVE_DIR}/qml/)
 set(EVM_PYTHON_DIR ${EVM_NATIVE_DIR}/python/)
 set(EVM_DRIVER_DIR ${EVM_NATIVE_DIR}/driver/)
 
+set(ejs_sources
+    ${ZEPHYR_BASE}/../../ejs/evm_main.c 
+)
+
 set(ejs_common_sources 
     ${LIBEVM_DIR}/compiler.c
     ${LIBEVM_DIR}/evm.c
@@ -88,6 +92,7 @@ set(evm_ecma_sources
 )
 
 set(libejs_sources 
+    ${ejs_sources}
     ${ejs_common_sources}
     ${LIBEVM_DIR}/jsparser.c
     ${evm_repl_sources}
@@ -113,6 +118,7 @@ set(libepy_sources
 
 add_definitions("-DEVM_LANG_ENABLE_JAVASCRIPT")
 add_definitions("-DEVM_LANG_ENABLE_REPL")
+add_definitions("-DEVM_LANG_ENABLE_EXECUTABLE")
 add_definitions("-DEVM_LANG_ENABLE_UOL")
 
 zephyr_library_named(ejs)
@@ -127,9 +133,12 @@ zephyr_library_include_directories(
 
 add_definitions("-DQMAKE_TARGET=\"ejs\"")
 add_definitions("-DQMAKE_VERSION=\"1.0\"")
-target_include_directories(app PRIVATE "C:/xunlei/gcc-arm-none-eabi-9-2019-q4-major-win32/arm-none-eabi/include")
-target_include_directories(app PRIVATE ${ZEPHYR_BASE}/../../include)
-target_include_directories(app PRIVATE ${ZEPHYR_BASE}/../../components/evm)
-target_sources(app PRIVATE src/main.c)
+remove_definitions("-DWall")
 
+include_directories(app PRIVATE ${ZEPHYR_BASE}/../../include)
+include_directories(app PRIVATE ${ZEPHYR_BASE}/../../ejs)
+
+target_sources(app PRIVATE src/main.c)
 target_link_libraries(app PRIVATE ejs)
+
+add_definitions("-DEVM_DRIVER_GPIO")

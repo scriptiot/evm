@@ -10,6 +10,8 @@
         "evm_module.h": "c",
         "*.tcc": "c",
         "optional": "c",
-        "system_error": "c"
+        "system_error": "c",
+        "evm_main.h": "c",
+        "output.h": "c"
     }
 }

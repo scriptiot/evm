@@ -10,10 +10,6 @@
 **  Website	: https://github.com/scriptiot
 **  Licence: 个人免费，企业授权
 ****************************************************************************/
-/** @file      evm.h
- * @brief      Copyright (c) 2019, 武汉市字节码科技有限公司（Wuhan ByteCode Technology Co.,Ltd)
- * @copyright  scripiot
- */
 #ifndef EVM_H
 #define EVM_H
 
@@ -33,13 +29,11 @@
 #define EVM_LANG_JSON   4   /** JSON语法*/
 #define EVM_LANG_XML    5   /** XML语法*/
 #define EVM_LANG_QML    6   /** QML语法*/
+#define EVM_LANG_UOL    7   /** UOL语法*/
 
 #define EVM_VER                   100  /** 虚拟机版本号*/
 #define EVM_VAR_NAME_MAX_LEN      255  /** 虚拟机解析文件变量名称最大长度*/
 #define EVM_FILE_NAME_LEN         255  /** 文件名称长度*/
-#define EVM_HEAP_SIZE             (10 * 1024) /** 虚拟机堆大小*/
-#define EVM_STACK_SIZE            (10 * 1024) /** 虚拟机栈大小*/
-#define EVM_MODULE_SIZE           10          /** 虚拟机栈内置模块数量大小*/
 
 #define EVM_LOAD_MODULE      0      /** 虚拟机加载模块*/
 #define EVM_LOAD_MAIN        1      /** 虚拟机加载main*/
@@ -50,6 +44,8 @@
 
 typedef uint64_t evm_val_t;
 typedef uint32_t evm_err_t;
+
+#define EVM_GC_TYPE_MASK(v)  (v & 0xff)
 
 enum GC_TYPE
 {
@@ -68,12 +64,9 @@ enum GC_TYPE
     GC_BUFFER16,
     GC_BUFFER32,
     GC_BUFFER64,
-    GC_BUFFER16_U,
-    GC_BUFFER32_U,
-    GC_BUFFER64_U,
     GC_BUFFER_FLOAT,
     GC_BUFFER_DOUBLE,
-    GC_LOCAL,
+    GC_BUFFER_OBJECT,
     GC_STRING,
     GC_NUMBER,
     GC_BOOLEAN,
@@ -82,6 +75,12 @@ enum GC_TYPE
     GC_MEMBER,
     GC_MEMBER_KEYS,
     GC_MEMBER_VALS,
+
+    //NEVM GC TYPE
+    GC_NEVM_ROOT,
+    GC_NEVM_FUNCTION,
+    GC_NEVM_CLASS,
+    GC_NEVM_OBJECT,
 };
 
 enum EVM_TYPE
@@ -169,6 +168,14 @@ typedef union {
 #define EVM_VAL_TRUE            (INNER_TYPE_BOOLEAN | 1)
 #define EVM_VAL_FALSE           (INNER_TYPE_BOOLEAN)
 
+/**
+ * @brief evm_native_fn函数声明
+ * @param e，虚拟机参数
+ * @param self，绑定的内置函数
+ * @param vc, 函数参数个数
+ * @param v，函数参数指针
+ * @return 内置函数对象
+ */
 typedef evm_val_t (*evm_native_fn)(void * e, evm_val_t * self, int vc, evm_val_t * v);
 
 typedef struct evm_builtin_t{
@@ -192,7 +199,7 @@ typedef struct evm_t{
     uint8_t err;
     const char * err_arg;
     char * file_name;
-    int file_name_len;
+    uint32_t file_name_len;
 
     char * var_name;
     int var_name_len;
@@ -210,7 +217,7 @@ typedef struct evm_t{
     int32_t module_size;
     int32_t module_cnt;
     intptr_t * module_symbals;
-    intptr_t * module_tbl;
+    evm_val_t * module_tbl;
 
     evm_const_pool_t * string_pool;
     evm_const_pool_t * number_pool;
@@ -247,9 +254,9 @@ void evm_gc_protect(evm_t *e , evm_val_t * v);
  */
 int evm_set_err(evm_t * e, int err, const char *arg);
 /**
- * @brief 通过index查找字符串
+ * @brief 通过key索引查找字符串
  * @param e，虚拟机
- * @param index，索引
+ * @param key，索引
  * @return 字符串，若找不到，返回NULL
  */
 char *evm_string_get(evm_t * e, uint16_t key);
@@ -281,7 +288,7 @@ int evm_str_lookup(evm_t * e, const char *str);
  * @param alloc，1表示复制字符串对象，0表示不复制
  * @return 常量池索引位置
  */
-uint16_t evm_str_insert(evm_t *e, const char *str, int alloc);
+int evm_str_insert(evm_t *e, const char *str, int alloc);
 /**
  * @brief 插入数字到常量池
  * @param e,虚拟机
@@ -297,7 +304,15 @@ int evm_number_insert(evm_t *e, double num);
  */
 evm_val_t *evm_buffer_create(evm_t *e, int len);
 /**
- * @brief evm_buffer_addr
+ * @brief 创建带有类型的buffer对象
+ * @param e
+ * @param gc类型
+ * @param 长度
+ * @return
+ */
+evm_val_t * evm_buffer_create_ex(evm_t *e, int gc_type, int len);
+/**
+ * @brief 获取buffer对象的数据地址
  * @param o
  * @return
  */
@@ -473,17 +488,17 @@ evm_val_t * evm_prop_get_by_index(evm_t * e, evm_val_t * o, int index);
  * @param index, 索引
  * @param key，字符串名称
  * @param v，成员值
- * @return 错误码，如果当前成员内容已满，则返回错误
+ * @return 正确返回ec_ok，错误返回ec_index
  */
 evm_err_t evm_prop_set(evm_t * e, evm_val_t * o, uint32_t index, const char *key, evm_val_t v);
 /**
- * @brief evm_prop_set_key_value
- * @param e
- * @param o
- * @param index
- * @param key
- * @param v
- * @return
+ * @brief 通过索引index，设置对象成员的key和value
+ * @param e，虚拟机
+ * @param o，对象
+ * @param index，索引
+ * @param key，字符串key值
+ * @param v，成员值
+ * @return 正确返回ec_ok，错误返回ec_index
  */
 evm_err_t evm_prop_set_key_value(evm_t * e, evm_val_t * o, uint32_t index, uint16_t key, evm_val_t v);
 /**
@@ -492,7 +507,7 @@ evm_err_t evm_prop_set_key_value(evm_t * e, evm_val_t * o, uint32_t index, uint1
  * @param o，对象
  * @param key，字符串名称
  * @param v，成员值
- * @return 错误码
+ * @return 正确返回ec_ok，错误返回ec_key
  */
 evm_err_t evm_prop_set_value(evm_t * e, evm_val_t * o, const char* key, evm_val_t v);
 /**
@@ -537,7 +552,7 @@ uint32_t evm_prop_get_key_by_index(evm_t * e, evm_val_t * o, int index);
  */
 void evm_prop_set_key_by_index(evm_t * e, evm_val_t * o, int index, uint32_t key);
 /**
- * @brief 对象成员获取长度
+ * @brief 获取对象成员个数长度
  * @param o，对象
  * @return
  */
@@ -552,7 +567,6 @@ int evm_attr_len(evm_val_t * o);
  * @brief 创建内置函数对象
  * @param e，虚拟机参数
  * @param fn，绑定的内置函数
- * @param prop_len，成员长度
  * @param attr_len，属性长度
  * @return 内置函数对象
  */
@@ -561,7 +575,7 @@ evm_val_t *evm_native_function_create(evm_t *e, evm_native_fn fn, int attr_len);
  * @brief 创建数组、列表
  * @param e，虚拟机参数
  * @param type，类型
- * @param count，长度
+ * @param len，长度
  * @return 数组、列表对象
  */
 evm_val_t * evm_list_create(evm_t * e, int type, uint16_t len);
@@ -631,6 +645,16 @@ evm_err_t evm_attr_create(evm_t * e, evm_val_t * o, int len);
  */
 evm_err_t evm_attr_set(evm_t * e, evm_val_t * o, uint32_t index, const char *name, evm_val_t v);
 /**
+ * @brief 设置对象属性
+ * @param e
+ * @param o
+ * @param index
+ * @param key
+ * @param v
+ * @return
+ */
+evm_err_t evm_attr_set_key_value(evm_t * e, evm_val_t * o, uint32_t index, uint16_t key, evm_val_t v);
+/**
  * @brief 通过索引值设置属性
  * @param e，虚拟机参数
  * @param o，对象
@@ -655,7 +679,14 @@ evm_val_t* evm_attr_get(evm_t * e, evm_val_t * o, const char *name);
  * @return 属性值，未找到返回NULL
  */
 evm_val_t * evm_attr_get_by_index(evm_t * e, evm_val_t * o, uint32_t index);
-
+/**
+ * @brief 获取对象属性
+ * @param e
+ * @param obj
+ * @param key
+ * @return
+ */
+evm_val_t* evm_attr_get_by_key(evm_t * e, evm_val_t *obj, int key);
 /**
  * @brief 追加对象属性
  * @param e，虚拟机
@@ -784,7 +815,43 @@ void evm_deinit(evm_t * e);
  * @param e，虚拟机
  */
 void evm_errcode_print(evm_t *e);
-
+/**
+ * @brief 虚拟机加载字节码执行文件
+ * @param e
+ * @param buf，字节码二进制
+ * @return 成功返回ec_ok,错误返回ec_err
+ */
+evm_err_t evm_executable_load(evm_t *e, uint8_t * buf);
+/**
+ * @brief 虚拟机运行字节码文件
+ * @param e
+ * @return
+ */
+evm_err_t evm_executable_run(evm_t *e);
+/**
+ * @brief 写字节码二进制文件
+ * @param e
+ * @param path，脚步文件路径
+ * @param buf，写入文件缓存
+ * @param buf_len，写入文件内容长度
+ * @return 成功返回ec_ok,错误返回ec_err
+ */
+evm_err_t evm_executable_write(evm_t *e, char * path, uint8_t * buf, uint32_t * buf_len);
+/**
+ * @brief 交互式编程运行
+ * @param e
+ * @param number_of_variables
+ * @param language
+ * @return
+ */
+evm_err_t evm_repl_run(evm_t * e, uint16_t number_of_variables, int language);
+/**
+ * @brief 启动nano版本虚拟机，运行driverscript语言
+ * @param e
+ * @return
+ */
+evm_err_t nevm_start(evm_t *e);
+extern char evm_repl_tty_read(evm_t * e);
 extern void (*evm_print)(const char *fmt, ...);
 extern void * (*evm_malloc)(int size);
 extern void (*evm_free)(void * mem);
@@ -861,7 +928,7 @@ static inline int evm_2_boolean(evm_val_t *v) {
     return evm_2_intptr(v);
 }
 /**
- * @brief 判断值是否是数字
+ * @brief 判断值是否为数字
  * @param v
  * @return
  */
