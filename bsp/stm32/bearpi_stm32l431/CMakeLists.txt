@@ -4,7 +4,6 @@ cmake_minimum_required(VERSION 3.13.1)
 
 set(BOARD_ROOT ${CMAKE_CURRENT_LIST_DIR})
 
-
 set(BOARD bearpi_stm32l431)
 
 find_package(Zephyr HINTS $ENV{ZEPHYR_BASE})
@@ -44,6 +43,23 @@ set(evm_driver_sources
     ${ZEPHYR_BASE}/../../drivers/zephyr/pwm_driver.c
 )
 
+set(evm_modules 
+    ${ZEPHYR_BASE}/../../components/evm/evm_module.c 
+    ${ZEPHYR_BASE}/../../components/evm/evm_module_adc.c 
+    ${ZEPHYR_BASE}/../../components/evm/evm_module_can.c
+    ${ZEPHYR_BASE}/../../components/evm/evm_module_dac.c
+    ${ZEPHYR_BASE}/../../components/evm/evm_module_flash.c
+    ${ZEPHYR_BASE}/../../components/evm/evm_module_i2c.c
+    ${ZEPHYR_BASE}/../../components/evm/evm_module_lcd.c
+    ${ZEPHYR_BASE}/../../components/evm/evm_module_led.c
+    ${ZEPHYR_BASE}/../../components/evm/evm_module_pin.c
+    ${ZEPHYR_BASE}/../../components/evm/evm_module_rtc.c
+    ${ZEPHYR_BASE}/../../components/evm/evm_module_spi.c
+    ${ZEPHYR_BASE}/../../components/evm/evm_module_switch.c
+    ${ZEPHYR_BASE}/../../components/evm/evm_module_timer.c
+    ${ZEPHYR_BASE}/../../components/evm/evm_module_uart.c
+)
+
 set(evm_repl_sources 
     ${EVM_REPL_DIR}/evm_repl.c 
     ${EVM_REPL_DIR}/rbuff.c 
@@ -76,6 +92,7 @@ set(libejs_sources
     ${LIBEVM_DIR}/jsparser.c
     ${evm_repl_sources}
     ${evm_driver_sources}
+    ${evm_modules}
 )
 
 set(libqml_sources 
@@ -94,8 +111,6 @@ set(libepy_sources
     ${evm_driver_sources}
 )
 
-
-
 add_definitions("-DEVM_LANG_ENABLE_JAVASCRIPT")
 add_definitions("-DEVM_LANG_ENABLE_REPL")
 add_definitions("-DEVM_LANG_ENABLE_UOL")
@@ -110,11 +125,11 @@ zephyr_library_include_directories(
     ${LIBEVM_PRIVATE_DIR}
 )
 
-
 add_definitions("-DQMAKE_TARGET=\"ejs\"")
 add_definitions("-DQMAKE_VERSION=\"1.0\"")
 target_include_directories(app PRIVATE "C:/xunlei/gcc-arm-none-eabi-9-2019-q4-major-win32/arm-none-eabi/include")
 target_include_directories(app PRIVATE ${ZEPHYR_BASE}/../../include)
+target_include_directories(app PRIVATE ${ZEPHYR_BASE}/../../components/evm)
 target_sources(app PRIVATE src/main.c)
 
 target_link_libraries(app PRIVATE ejs)

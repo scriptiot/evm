@@ -6,6 +6,10 @@
         "gpio.h": "c",
         "adc.h": "c",
         "dac.h": "c",
-        "typeinfo": "c"
+        "typeinfo": "c",
+        "evm_module.h": "c",
+        "*.tcc": "c",
+        "optional": "c",
+        "system_error": "c"
     }
 }

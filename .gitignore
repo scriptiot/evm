@@ -29,6 +29,7 @@ release
 build*
 distwin/
 build/
+.vscode/
 
 *.pro.user
 vm.pro.user
