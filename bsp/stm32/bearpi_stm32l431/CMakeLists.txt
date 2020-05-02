@@ -93,6 +93,7 @@ set(evm_ecma_sources
 
 set(libejs_sources 
     ${ejs_sources}
+    ${evm_ecma_sources}
     ${ejs_common_sources}
     ${LIBEVM_DIR}/jsparser.c
     ${evm_repl_sources}

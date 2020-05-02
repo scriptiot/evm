@@ -3,7 +3,7 @@
 //DAC(name)
 static evm_val_t evm_module_dac(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
 {
-	evm_module_construct(e, p, v, "dacCreate");
+	evm_module_construct(e, p, argc, v, "dacCreate");
 	return EVM_VAL_UNDEFINED;
 }
 

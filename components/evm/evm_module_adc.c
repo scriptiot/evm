@@ -3,7 +3,7 @@
 //ADC(name)
 static evm_val_t evm_module_adc(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
 {
-    evm_module_construct(e, p, v, "adcCreate");
+    evm_module_construct(e, p, argc, v, "adcCreate");
 	return EVM_VAL_UNDEFINED;
 }
 //ADC.read()

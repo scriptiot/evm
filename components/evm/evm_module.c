@@ -1,9 +1,9 @@
 #include "evm_module.h"
 
-void evm_module_construct(evm_t* e, evm_val_t * p, evm_val_t * v, const char * api_name){
-	evm_val_t dev = nevm_function_invoke(nevm_runtime, api_name, 1, v);
-	nevm_object_function_invoke(nevm_runtime, &dev, "open", 0, NULL);
-	evm_object_set_ext_data(p, evm_2_intptr(&dev) );
+void evm_module_construct(evm_t* e, evm_val_t * p, int argc, evm_val_t * v, const char * api_name){
+    evm_val_t dev = nevm_function_invoke(e, api_name, argc, v);
+    nevm_object_function_invoke(e, &dev, "open", 0, NULL);
+    nevm_object_set_ext_data(p, evm_2_intptr(&dev) );
 }
 
 int evm_module(evm_t * e){

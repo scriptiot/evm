@@ -31,7 +31,7 @@ evm_val_t evm_class_usbvcp(evm_t * e);
 
 int evm_module(evm_t * e);
 
-void evm_module_construct(evm_t* e, evm_val_t * p, evm_val_t * v, const char * api_name);
+void evm_module_construct(evm_t* e, evm_val_t * p, int argc, evm_val_t * v, const char * api_name);
 
 #endif
 

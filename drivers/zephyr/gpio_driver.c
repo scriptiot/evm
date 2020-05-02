@@ -6,28 +6,29 @@
 #endif
 
 
-//gpio_init(char pin, char flags)
+//gpio_config(char pin, char flags)
 evm_val_t nevm_driver_gpio_config(evm_t * e, evm_val_t * p, int argc, evm_val_t * v){
     (void)e;(void)p;
 #ifdef EVM_DRIVER_GPIO
-    if( argc > 1 && evm_is_string(v) && evm_is_number(v + 1) ){
+    if( argc > 1 ){
 		struct device * dev = (struct device *)nevm_object_get_ext_data(p);
         if( !dev ) return NEVM_FALSE;
-        if( !gpio_pin_configure(dev, (gpio_pin_t)evm_2_integer(v + 1), (gpio_flags_t)evm_2_integer(v + 2)) )
+        if( !gpio_pin_configure(dev, (gpio_pin_t)evm_2_integer(v), (gpio_flags_t)evm_2_integer(v + 1)) )
 		    return NEVM_TRUE;
     }
 #endif
-    return NEVM_FALSE;
+    return NEVM_TRUE;
 }
 
 //gpio_init(String name)
 evm_val_t nevm_driver_gpio_init(evm_t * e, evm_val_t * p, int argc, evm_val_t * v){
     (void)e;(void)p;
 #ifdef EVM_DRIVER_GPIO
-    if( argc > 2 && evm_is_string(v) && evm_is_number(v + 1) ){
+    if( argc > 0 && evm_is_string(v) ){
 		struct device * dev = device_get_binding(evm_2_string(v));
         if( !dev ) return NEVM_FALSE;
         nevm_object_set_ext_data(p, (intptr_t)dev);
+        return NEVM_TRUE;
     }
 #endif
     return NEVM_FALSE;
