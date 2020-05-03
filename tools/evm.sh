@@ -50,7 +50,7 @@ echo "==========【install .evmrc】==============="
 EVMRC="test -f ~/.evmrc && . ~/.evmrc"
 isEvmInBashrc=$(grep 'test -f ~/.evmrc && . ~/.evmrc' ~/.bash_profile -n)
 if [ -z "${isEvmInBashrc}" ]; then 
-    echo ${EVMRC} >> ${bash_path}
+    echo -e "\n${EVMRC}" >> ${bash_path}
     echo "==========【install .evmrc successfully】==============="
 else
     echo "==========【.evmrc is installed】==============="
@@ -73,11 +73,14 @@ echo "==========【west update successfully】==============="
 echo -e "\n\nCongratulations! You have install 【EVM】 environment successfully!"
 
 echo -e "\r\n\
- ====== \\\\        //   ===== =====  \r\n\
-||       \\\\      //   ||    ||   || \r\n\
-||===     \\\\    //    ||    ||   || \r\n\
-||         \\\\  //     ||    ||   || \r\n\
- ======     \\\\//      ||    ||   || \r\n\
+ _____ __     __ __  __ \r\n\
+| ____|\\ \\   / /|  \\/  | \r\n\
+|  _|   \\ \\ / / | |\\/| | \r\n\
+| |___   \\ V /  | |  | | \r\n\
+|_____|   \\_/   |_|  |_| \r\n\
+                         \r\n\
+Github: https://github.com/scriptiot/evm \r\n\
+Copyright (C) 2020 @scriptiot \r\n\
 \r\n"
 
 echo -e "Please restart Git windows!\n"
