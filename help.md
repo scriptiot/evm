@@ -4,10 +4,7 @@
 
 + 下载Python3 ，如果python3已经安装，跳过。
 
-```
-cd tools
-./evm.sh /c/evm-tools
-```
+
 ### 2. 一键安装EVM开发环境
 
 + evm.sh用法
