@@ -9,7 +9,8 @@ set(BOARD bearpi_stm32l431)
 find_package(Zephyr HINTS $ENV{ZEPHYR_BASE})
 project(ejs)
 
-set(EVM_DIR ${ZEPHYR_BASE}/../../../evm/)
+set(EVM_BASE ${ZEPHYR_BASE}/../../../)
+set(EVM_DIR ${EVM_BASE}/../evm/)
 set(LIBEVM_DIR ${EVM_DIR}/libevm/)
 set(LIBEVM_PRIVATE_DIR ${EVM_DIR}/private/)
 set(EVM_NATIVE_DIR ${EVM_DIR}/native/)
@@ -20,7 +21,7 @@ set(EVM_PYTHON_DIR ${EVM_NATIVE_DIR}/python/)
 set(EVM_DRIVER_DIR ${EVM_NATIVE_DIR}/driver/)
 
 set(ejs_sources
-    ${ZEPHYR_BASE}/../../ejs/evm_main.c 
+    ${EVM_BASE}/ejs/evm_main.c 
 )
 
 set(ejs_common_sources 
@@ -34,34 +35,34 @@ set(ejs_common_sources
 )
 
 set(evm_driver_sources 
-    ${ZEPHYR_BASE}/../../drivers/zephyr/adc_driver.c 
-    ${ZEPHYR_BASE}/../../drivers/zephyr/can_driver.c 
-    ${ZEPHYR_BASE}/../../drivers/zephyr/dac_driver.c
-    ${ZEPHYR_BASE}/../../drivers/zephyr/gpio_driver.c
-    ${ZEPHYR_BASE}/../../drivers/zephyr/i2c_driver.c
-    ${ZEPHYR_BASE}/../../drivers/zephyr/rtc_driver.c
-    ${ZEPHYR_BASE}/../../drivers/zephyr/spi_driver.c
-    ${ZEPHYR_BASE}/../../drivers/zephyr/timer_driver.c
-    ${ZEPHYR_BASE}/../../drivers/zephyr/uart_driver.c
-    ${ZEPHYR_BASE}/../../drivers/zephyr/wdg_driver.c
-    ${ZEPHYR_BASE}/../../drivers/zephyr/pwm_driver.c
+    ${EVM_BASE}/drivers/zephyr/adc_driver.c 
+    ${EVM_BASE}/drivers/zephyr/can_driver.c 
+    ${EVM_BASE}/drivers/zephyr/dac_driver.c
+    ${EVM_BASE}/drivers/zephyr/gpio_driver.c
+    ${EVM_BASE}/drivers/zephyr/i2c_driver.c
+    ${EVM_BASE}/drivers/zephyr/rtc_driver.c
+    ${EVM_BASE}/drivers/zephyr/spi_driver.c
+    ${EVM_BASE}/drivers/zephyr/timer_driver.c
+    ${EVM_BASE}/drivers/zephyr/uart_driver.c
+    ${EVM_BASE}/drivers/zephyr/wdg_driver.c
+    ${EVM_BASE}/drivers/zephyr/pwm_driver.c
 )
 
 set(evm_modules 
-    ${ZEPHYR_BASE}/../../components/evm/evm_module.c 
-    ${ZEPHYR_BASE}/../../components/evm/evm_module_adc.c 
-    ${ZEPHYR_BASE}/../../components/evm/evm_module_can.c
-    ${ZEPHYR_BASE}/../../components/evm/evm_module_dac.c
-    ${ZEPHYR_BASE}/../../components/evm/evm_module_flash.c
-    ${ZEPHYR_BASE}/../../components/evm/evm_module_i2c.c
-    ${ZEPHYR_BASE}/../../components/evm/evm_module_lcd.c
-    ${ZEPHYR_BASE}/../../components/evm/evm_module_led.c
-    ${ZEPHYR_BASE}/../../components/evm/evm_module_pin.c
-    ${ZEPHYR_BASE}/../../components/evm/evm_module_rtc.c
-    ${ZEPHYR_BASE}/../../components/evm/evm_module_spi.c
-    ${ZEPHYR_BASE}/../../components/evm/evm_module_switch.c
-    ${ZEPHYR_BASE}/../../components/evm/evm_module_timer.c
-    ${ZEPHYR_BASE}/../../components/evm/evm_module_uart.c
+    ${EVM_BASE}/components/evm/evm_module.c 
+    ${EVM_BASE}/components/evm/evm_module_adc.c 
+    ${EVM_BASE}/components/evm/evm_module_can.c
+    ${EVM_BASE}/components/evm/evm_module_dac.c
+    ${EVM_BASE}/components/evm/evm_module_flash.c
+    ${EVM_BASE}/components/evm/evm_module_i2c.c
+    ${EVM_BASE}/components/evm/evm_module_lcd.c
+    ${EVM_BASE}/components/evm/evm_module_led.c
+    ${EVM_BASE}/components/evm/evm_module_pin.c
+    ${EVM_BASE}/components/evm/evm_module_rtc.c
+    ${EVM_BASE}/components/evm/evm_module_spi.c
+    ${EVM_BASE}/components/evm/evm_module_switch.c
+    ${EVM_BASE}/components/evm/evm_module_timer.c
+    ${EVM_BASE}/components/evm/evm_module_uart.c
 )
 
 set(evm_repl_sources 
@@ -136,8 +137,8 @@ add_definitions("-DQMAKE_TARGET=\"ejs\"")
 add_definitions("-DQMAKE_VERSION=\"1.0\"")
 remove_definitions("-DWall")
 
-include_directories(app PRIVATE ${ZEPHYR_BASE}/../../include)
-include_directories(app PRIVATE ${ZEPHYR_BASE}/../../ejs)
+include_directories(app PRIVATE ${EVM_BASE}/include)
+include_directories(app PRIVATE ${EVM_BASE}/ejs)
 
 target_sources(app PRIVATE src/main.c)
 target_link_libraries(app PRIVATE ejs)

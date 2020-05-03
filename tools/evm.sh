@@ -15,15 +15,27 @@ fi
 echo "==========【install west】==============="
 pip3 install west -i http://mirrors.aliyun.com/pypi/simple/ --trusted-host mirrors.aliyun.com
 echo "==========【install west successfully】==============="
-echo "==========【install zephyr tools】==============="
+
 EVMTOOLSDIR=$PWD
 EVMDIR=$PWD/..
-cd ${EVMDIR}/components/zephyr/scripts && pip3 install -r requirements.txt -i http://mirrors.aliyun.com/pypi/simple/ --trusted-host mirrors.aliyun.com
 cd ${EVMTOOLSDIR}
-echo "==========【install west tools successfully】==============="
-
 EVM_BASE=$(cd $PWD/..; pwd)
 EVM_TOOLS=$1
+
+echo "==========【git submodule init components/zephyr-rtos/zephyr】==============="
+cd ${EVM_BASE}
+
+ZEPHYR=components/zephyr-rtos/zephyr
+git submodule init ${ZEPHYR}
+echo "==========【git submodule init ${ZEPHYR} successfully】==============="
+echo "==========【git submodule upate】==============="
+git submodule update
+echo "==========【git submodule upate successfully】==============="
+
+echo "==========【install zephyr tools】==============="
+cd ${EVMDIR}/components/zephyr-rtos/zephyr/scripts && pip3 install -r requirements.txt -i http://mirrors.aliyun.com/pypi/simple/ --trusted-host mirrors.aliyun.com
+echo "==========【install west tools successfully】==============="
+
 
 bash_path="${HOME}/.bash_profile"
 evm_path="${HOME}/.evmrc"
@@ -37,6 +49,7 @@ else
 fi
 
 echo "==========【generate .evmrc】==============="
+cd ${EVMTOOLSDIR}
 rm -rf .evmrc.tmp
 touch .evmrc.tmp
 cp .evmrc .evmrc.tmp
@@ -56,16 +69,12 @@ else
     echo "==========【.evmrc is installed】==============="
 fi
 
-echo "==========【git submodule init components/zephyr】==============="
-cd ${EVM_BASE}
-git submodule init components/zephyr
-echo "==========【git submodule init components/zephyr successfully】==============="
-echo "==========【git submodule upate】==============="
-git submodule update
-echo "==========【git submodule upate successfully】==============="
+
 
 echo "==========【west update】==============="
-export ZEPHYR_BASE=$EVM_BASE/components/zephyr
+cd ${EVM_BASE}
+export ZEPHYR_BASE=${ZEPHYR}
+west init -l ${ZEPHYR}
 sed -i "s! url-base: https://github.com/zephyrproject-rtos! url-base: https://gitee.com/evm-zephyr-rtos! g" ${ZEPHYR_BASE}/west.yml
 west update
 echo "==========【west update successfully】==============="
