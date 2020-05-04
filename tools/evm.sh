@@ -77,6 +77,7 @@ export ZEPHYR_BASE=${ZEPHYR}
 west init -l ${ZEPHYR}
 sed -i "s! url-base: https://github.com/zephyrproject-rtos! url-base: https://gitee.com/evm-zephyr-rtos! g" ${ZEPHYR_BASE}/west.yml
 west update
+west zephyr-export
 echo "==========【west update successfully】==============="
 
 echo -e "\n\nCongratulations! You have install 【EVM】 environment successfully!"
