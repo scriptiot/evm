@@ -11,7 +11,7 @@ int evm_module(evm_t * e){
 		{"Pin", evm_class_pin(e)},
 		{"LCD", evm_class_lcd(e)},
 		{"LED", evm_class_led(e)},
-		{"LED", evm_class_flash(e)},
+		{"Flash", evm_class_flash(e)},
 		{"ADC", evm_class_adc(e)},
 		{"DAC", evm_class_dac(e)},
 		{"RTC", evm_class_rtc(e)},

@@ -57,6 +57,14 @@ extern evm_val_t nevm_driver_dac_config(evm_t * e, evm_val_t * p, int argc, evm_
 extern evm_val_t nevm_driver_dac_init(evm_t * e, evm_val_t * p, int argc, evm_val_t * v);
 extern evm_val_t nevm_driver_dac_deinit(evm_t * e, evm_val_t * p, int argc, evm_val_t * v);
 extern evm_val_t nevm_driver_dac_set_value(evm_t * e, evm_val_t * p, int argc, evm_val_t * v);
+/****** flash native api interface *****/
+extern evm_val_t nevm_driver_flash_config(evm_t * e, evm_val_t * p, int argc, evm_val_t * v);
+extern evm_val_t nevm_driver_flash_init(evm_t * e, evm_val_t * p, int argc, evm_val_t * v);
+extern evm_val_t nevm_driver_flash_deinit(evm_t * e, evm_val_t * p, int argc, evm_val_t * v);
+extern evm_val_t nevm_driver_flash_read(evm_t * e, evm_val_t * p, int argc, evm_val_t * v);
+extern evm_val_t nevm_driver_flash_write(evm_t * e, evm_val_t * p, int argc, evm_val_t * v);
+extern evm_val_t nevm_driver_flash_erase(evm_t * e, evm_val_t * p, int argc, evm_val_t * v);
+extern evm_val_t nevm_driver_flash_write_block_size(evm_t * e, evm_val_t * p, int argc, evm_val_t * v);
 /****** gpio native api interface *****/
 extern evm_val_t nevm_driver_gpio_config(evm_t * e, evm_val_t * p, int argc, evm_val_t * v);
 extern evm_val_t nevm_driver_gpio_init(evm_t * e, evm_val_t * p, int argc, evm_val_t * v);

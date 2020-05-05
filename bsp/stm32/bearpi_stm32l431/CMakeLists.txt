@@ -38,6 +38,7 @@ set(evm_driver_sources
     ${EVM_BASE}/drivers/zephyr/adc_driver.c 
     ${EVM_BASE}/drivers/zephyr/can_driver.c 
     ${EVM_BASE}/drivers/zephyr/dac_driver.c
+    ${EVM_BASE}/drivers/zephyr/flash_driver.c
     ${EVM_BASE}/drivers/zephyr/gpio_driver.c
     ${EVM_BASE}/drivers/zephyr/i2c_driver.c
     ${EVM_BASE}/drivers/zephyr/rtc_driver.c
