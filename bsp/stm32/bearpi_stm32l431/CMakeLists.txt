@@ -134,6 +134,8 @@ zephyr_library_include_directories(
     ${LIBEVM_PRIVATE_DIR}
 )
 
+add_dependencies(ejs zephyr_generated_headers)
+
 add_definitions("-DQMAKE_TARGET=\"ejs\"")
 add_definitions("-DQMAKE_VERSION=\"1.0\"")
 remove_definitions("-DWall")
