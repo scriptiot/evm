@@ -145,3 +145,4 @@ target_sources(app PRIVATE src/main.c)
 target_link_libraries(app PRIVATE ejs)
 
 add_definitions("-DEVM_DRIVER_GPIO")
+add_definitions("-DEVM_DRIVER_FLASH")

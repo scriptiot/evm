@@ -39,7 +39,6 @@ static evm_val_t evm_module_uart_readchar(evm_t *e, evm_val_t *p, int argc, evm_
 //UART.readinto(buf[, nbytes])
 static evm_val_t evm_module_uart_readinto(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
 {
-	
 	return EVM_VAL_UNDEFINED;
 }
 
