@@ -120,10 +120,13 @@ extern evm_val_t nevm_driver_uart_read_byte(evm_t * e, evm_val_t * p, int argc, 
 extern evm_val_t nevm_driver_uart_write_byte(evm_t * e, evm_val_t * p, int argc, evm_val_t * v);
 extern evm_val_t nevm_driver_uart_read_bytes(evm_t * e, evm_val_t * p, int argc, evm_val_t * v);
 extern evm_val_t nevm_driver_uart_write_bytes(evm_t * e, evm_val_t * p, int argc, evm_val_t * v);
-/****** wdg native api interface *****/
-extern evm_val_t nevm_driver_wdg_config(evm_t * e, evm_val_t * p, int argc, evm_val_t * v);
-extern evm_val_t nevm_driver_wdg_init(evm_t * e, evm_val_t * p, int argc, evm_val_t * v);
-extern evm_val_t nevm_driver_wdg_deinit(evm_t * e, evm_val_t * p, int argc, evm_val_t * v);
-extern evm_val_t nevm_driver_wdg_refresh(evm_t * e, evm_val_t * p, int argc, evm_val_t * v);
+/****** watchdog native api interface *****/
+extern evm_val_t nevm_driver_watchdog_config(evm_t * e, evm_val_t * p, int argc, evm_val_t * v);
+extern evm_val_t nevm_driver_watchdog_init(evm_t * e, evm_val_t * p, int argc, evm_val_t * v);
+extern evm_val_t nevm_driver_watchdog_deinit(evm_t * e, evm_val_t * p, int argc, evm_val_t * v);
+extern evm_val_t nevm_driver_watchdog_install_timeout(evm_t * e, evm_val_t * p, int argc, evm_val_t * v);
+extern evm_val_t nevm_driver_watchdog_setup(evm_t * e, evm_val_t * p, int argc, evm_val_t * v);
+extern evm_val_t nevm_driver_watchdog_feed(evm_t * e, evm_val_t * p, int argc, evm_val_t * v);
+extern evm_val_t nevm_driver_watchdog_disable(evm_t * e, evm_val_t * p, int argc, evm_val_t * v);
 #endif
 
