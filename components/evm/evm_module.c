@@ -16,6 +16,7 @@ int evm_module(evm_t * e){
 		{"DAC", evm_class_dac(e)},
 		{"RTC", evm_class_rtc(e)},
 		{"Switch", evm_class_switch(e)},
+		{"Watchdog", evm_class_watchdog(e)},
         {NULL, NULL}
     };
     evm_module_create(e, "evm", module);

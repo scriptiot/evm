@@ -45,7 +45,7 @@ set(evm_driver_sources
     ${EVM_BASE}/drivers/zephyr/spi_driver.c
     ${EVM_BASE}/drivers/zephyr/timer_driver.c
     ${EVM_BASE}/drivers/zephyr/uart_driver.c
-    ${EVM_BASE}/drivers/zephyr/wdg_driver.c
+    ${EVM_BASE}/drivers/zephyr/watchdog_driver.c
     ${EVM_BASE}/drivers/zephyr/pwm_driver.c
 )
 
@@ -64,6 +64,7 @@ set(evm_modules
     ${EVM_BASE}/components/evm/evm_module_switch.c
     ${EVM_BASE}/components/evm/evm_module_timer.c
     ${EVM_BASE}/components/evm/evm_module_uart.c
+    ${EVM_BASE}/components/evm/evm_module_watchdog.c
 )
 
 set(evm_repl_sources 
@@ -149,3 +150,4 @@ target_link_libraries(app PRIVATE ejs)
 add_definitions("-DEVM_DRIVER_GPIO")
 add_definitions("-DEVM_DRIVER_FLASH")
 add_definitions("-DEVM_DRIVER_LCD")
+add_definitions("-DEVM_DRIVER_WATCHDOG")
