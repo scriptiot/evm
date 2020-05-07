@@ -21,4 +21,8 @@ config CAN_1
 	default y
 	depends on CAN
 
+config ST7789V
+	default y
+	depends on DISPLAY
+
 endif

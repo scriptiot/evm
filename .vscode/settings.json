@@ -12,6 +12,11 @@
         "optional": "c",
         "system_error": "c",
         "evm_main.h": "c",
-        "output.h": "c"
+        "output.h": "c",
+        "nevm.h": "c",
+        "display.h": "c",
+        "array": "c",
+        "string_view": "c",
+        "pinmux_stm32.h": "c"
     }
 }

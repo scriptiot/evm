@@ -11,7 +11,7 @@
 #define NEVM_STACK_SIZE         (2 * 1000)
 #define NEVM_MODULE_SIZE        3    
 
-#define EVM_HEAP_SIZE          (20 * 1000)
+#define EVM_HEAP_SIZE          (10 * 1000)
 #define EVM_STACK_SIZE         (2 * 1000)
 #define EVM_MODULE_SIZE        5 
 

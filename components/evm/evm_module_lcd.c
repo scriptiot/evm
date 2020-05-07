@@ -1,3 +1,5 @@
+#ifdef EVM_DRIVER_LCD
+
 #include "evm_module.h"
 
 //LCD()
@@ -153,3 +155,5 @@ evm_val_t evm_class_lcd(evm_t * e){
 	};
 	return *evm_class_create(e, (evm_native_fn)evm_module_lcd, class_lcd, NULL);
 }
+
+#endif

@@ -146,3 +146,4 @@ target_link_libraries(app PRIVATE ejs)
 
 add_definitions("-DEVM_DRIVER_GPIO")
 add_definitions("-DEVM_DRIVER_FLASH")
+add_definitions("-DEVM_DRIVER_LCD")
