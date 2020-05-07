@@ -12,6 +12,23 @@
 evm_val_t nevm_driver_adc_config(evm_t * e, evm_val_t * p, int argc, evm_val_t * v){
     (void)e;(void)p;
 #ifdef EVM_DRIVER_ADC
+    struct device * adc_dev = (struct device *)nevm_object_get_ext_data(p);
+    if( !adc_dev ) return NEVM_FALSE;
+
+    struct adc_channel_cfg m_channel_cfg = {
+        .channel_id = 3,
+		.differential = 1,
+		// .input_positive = 0,
+		// .input_negative = 1,
+		.reference = ADC_REF_INTERNAL,
+		.gain = ADC_GAIN_1,
+		.acquisition_time = ADC_ACQ_TIME_DEFAULT,
+    };
+
+    int ret = adc_channel_setup(adc_dev, &m_channel_cfg);
+    if(ret != 0) return NEVM_FALSE;
+
+
     return NEVM_TRUE;
 #endif
     return NEVM_FALSE;
@@ -41,19 +58,18 @@ evm_val_t nevm_driver_adc_get_value(evm_t * e, evm_val_t * p, int argc, evm_val_
     struct device * dev = (struct device *)nevm_object_get_ext_data(p);
     char channel = evm_2_integer(v + 1);
     uint8_t seq_buffer[ADC_BUFFER_SIZE];
-    struct adc_seq_entry entry = {
-        .sampling_delay = 30,
-        .channel_id = channel,
-        .buffer = seq_buffer,
-        .buffer_length = ADC_BUFFER_SIZE,
-    };
 
-    struct adc_seq_table entry_table = {
-        .entries = &entry,
-        .num_entries = 1,
-    };
+    struct adc_sequence seq = {
+		.options = NULL,
+		.channels = channel,
+		.buffer = &seq_buffer,
+		.buffer_size = sizeof(seq_buffer),
+		.resolution = 12,
+		.oversampling = 0,
+		.calibrate = 0
+	};
 
-    if (adc_read(dev, &entry_table) != 0) {
+    if (adc_read(dev, &seq) != 0) {
         return NEVM_FALSE;
     }
 
