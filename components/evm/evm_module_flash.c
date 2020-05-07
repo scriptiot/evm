@@ -12,7 +12,7 @@
  */
 static evm_val_t evm_module_flash(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
 {	
-	evm_module_construct(nevm_runtime, p, argc, v, "FlashCreate");
+	evm_module_construct(nevm_runtime, p, argc, v, "flashCreate");
 	return EVM_VAL_UNDEFINED;
 }
 
