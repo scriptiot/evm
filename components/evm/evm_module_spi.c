@@ -13,8 +13,6 @@ static evm_val_t evm_module_spi_deinit(evm_t *e, evm_val_t *p, int argc, evm_val
 	return EVM_VAL_UNDEFINED;
 }
 
-
-
 evm_val_t evm_class_spi(evm_t * e){
 	evm_builtin_t class_spi[] = {
 		{"deinit", evm_mk_native( (intptr_t)evm_module_spi_deinit )},
