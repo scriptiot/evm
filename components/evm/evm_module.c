@@ -27,6 +27,9 @@
 #ifdef EVM_DRIVER_GPIO
 	extern evm_val_t evm_class_timer(evm_t * e);
 #endif
+#ifdef EVM_DRIVER_LED
+	extern evm_val_t evm_class_led(evm_t * e);
+#endif
 #ifdef EVM_DRIVER_WATCHDOG
 
 #endif

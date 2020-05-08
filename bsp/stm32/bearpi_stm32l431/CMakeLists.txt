@@ -67,6 +67,7 @@ set(evm_modules
     ${EVM_BASE}/components/evm/evm_module_timer.c
     ${EVM_BASE}/components/evm/evm_module_uart.c
     ${EVM_BASE}/components/evm/evm_module_watchdog.c
+    ${EVM_BASE}/components/evm/evm_module_led.c
 )
 
 set(evm_repl_sources 
@@ -145,6 +146,7 @@ remove_definitions("-DWall")
 
 include_directories(app PRIVATE ${EVM_BASE}/include)
 include_directories(app PRIVATE ${EVM_BASE}/ejs)
+include_directories(app PRIVATE src)
 
 target_sources(app PRIVATE src/main.c)
 target_link_libraries(app PRIVATE ejs)
@@ -156,3 +158,4 @@ add_definitions("-DEVM_DRIVER_WATCHDOG")
 add_definitions("-DEVM_DRIVER_ADC")
 add_definitions("-DEVM_DRIVER_DAC")
 add_definitions("-DEVM_DRIVER_TIMER")
+add_definitions("-DEVM_DRIVER_LED")

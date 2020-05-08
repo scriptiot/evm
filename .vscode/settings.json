@@ -20,6 +20,8 @@
         "pinmux_stm32.h": "c",
         "evm.h": "c",
         "chrono": "c",
-        "thread": "c"
+        "thread": "c",
+        "display_st7789v.h": "c",
+        "stdio.h": "c"
     }
 }
