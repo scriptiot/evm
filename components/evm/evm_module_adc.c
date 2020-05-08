@@ -3,13 +3,13 @@
 //ADC(name)
 static evm_val_t evm_module_adc(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
 {
-    evm_module_construct(e, p, argc, v, "adcCreate");
+    evm_module_construct(nevm_runtime, p, argc, v, "adcCreate");
 	return EVM_VAL_UNDEFINED;
 }
 //ADC.read()
 static evm_val_t evm_module_adc_read(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
 {
-	evm_val_t dev = evm_mk_object((void*)evm_object_get_ext_data(p));
+	evm_val_t dev = evm_mk_object((void*)nevm_object_get_ext_data(p));
     return nevm_object_function_invoke(nevm_runtime, &dev, "read", 0, NULL);
 }
 

@@ -8,7 +8,7 @@
 #include <drivers/adc.h>
 #endif
 
-//adc_config()
+//adc_config(char channel)
 evm_val_t nevm_driver_adc_config(evm_t * e, evm_val_t * p, int argc, evm_val_t * v){
     (void)e;(void)p;
 #ifdef EVM_DRIVER_ADC
@@ -16,8 +16,8 @@ evm_val_t nevm_driver_adc_config(evm_t * e, evm_val_t * p, int argc, evm_val_t *
     if( !adc_dev ) return NEVM_FALSE;
 
     struct adc_channel_cfg m_channel_cfg = {
-        .channel_id = 3,
-		.differential = 1,
+        .channel_id = evm_2_integer(v),
+		.differential = 0,
 		// .input_positive = 0,
 		// .input_negative = 1,
 		.reference = ADC_REF_INTERNAL,
@@ -27,7 +27,6 @@ evm_val_t nevm_driver_adc_config(evm_t * e, evm_val_t * p, int argc, evm_val_t *
 
     int ret = adc_channel_setup(adc_dev, &m_channel_cfg);
     if(ret != 0) return NEVM_FALSE;
-
 
     return NEVM_TRUE;
 #endif
@@ -56,12 +55,12 @@ evm_val_t nevm_driver_adc_get_value(evm_t * e, evm_val_t * p, int argc, evm_val_
     (void)p;
 #ifdef EVM_DRIVER_ADC
     struct device * dev = (struct device *)nevm_object_get_ext_data(p);
-    char channel = evm_2_integer(v + 1);
+    char channel = evm_2_integer(v);
     uint8_t seq_buffer[ADC_BUFFER_SIZE];
 
     struct adc_sequence seq = {
 		.options = NULL,
-		.channels = channel,
+		.channels = BIT(channel),
 		.buffer = &seq_buffer,
 		.buffer_size = sizeof(seq_buffer),
 		.resolution = 12,
