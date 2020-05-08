@@ -1,5 +1,5 @@
+#ifdef EVM_DRIVER_LED
 #include "evm_module.h"
-
 
 //LED(name)
 static evm_val_t evm_module_led(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
@@ -41,3 +41,4 @@ evm_val_t evm_class_led(evm_t * e){
 	};
 	return *evm_class_create(e, (evm_native_fn)evm_module_led, class_led, NULL);
 }
+#endif

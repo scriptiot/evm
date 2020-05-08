@@ -1,3 +1,4 @@
+#ifdef EVM_DRIVER_UART
 #include "evm_module.h"
 
 //UART(name)
@@ -82,3 +83,4 @@ evm_val_t evm_class_uart(evm_t * e){
 	};
 	return *evm_class_create(e, (evm_native_fn)evm_module_uart, class_uart, NULL);
 }
+#endif

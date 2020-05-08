@@ -1,3 +1,4 @@
+#ifdef EVM_DRIVER_ADC
 #include "evm_module.h"
 
 //ADC(name)
@@ -20,3 +21,4 @@ evm_val_t evm_class_adc(evm_t * e){
 	};
 	return *evm_class_create(e, (evm_native_fn)evm_module_adc, class_adc, NULL);
 }
+#endif

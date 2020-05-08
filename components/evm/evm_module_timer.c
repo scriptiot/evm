@@ -1,3 +1,4 @@
+#ifdef EVM_DRIVER_TIMER
 #include "evm_module.h"
 
 //Timer(id, ...)
@@ -76,3 +77,4 @@ evm_val_t evm_class_timer(evm_t * e){
 	};
 	return *evm_class_create(e, (evm_native_fn)evm_module_timer, class_timer, NULL);
 }
+#endif

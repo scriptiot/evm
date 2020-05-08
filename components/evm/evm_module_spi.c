@@ -1,3 +1,4 @@
+#ifdef EVM_DRIVER_SPI
 #include "evm_module.h"
 
 //SPI(name)
@@ -21,5 +22,4 @@ evm_val_t evm_class_spi(evm_t * e){
 	};
 	return *evm_class_create(e, (evm_native_fn)evm_module_spi, class_spi, NULL);
 }
-
-
+#endif

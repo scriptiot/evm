@@ -1,3 +1,4 @@
+#ifdef EVM_DRIVER_SWITCH
 #include "evm_module.h"
 
 //Switch(name)
@@ -25,4 +26,4 @@ evm_val_t evm_class_switch(evm_t * e){
 	};
 	return *evm_class_create(e, (evm_native_fn)evm_module_switch, class_switch, NULL);
 }
-
+#endif

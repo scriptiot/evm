@@ -1,3 +1,4 @@
+#ifdef EVM_DRIVER_FLASH
 #include "evm_module.h"
 
 /**
@@ -8,7 +9,7 @@
  *  @return  0 on success, negative errno code on fail.
 
 	@usage: new Flash(name)
-	@demo: new Flash('flash0')
+	@demo: new Flash('FLASH_CTRL')
  */
 static evm_val_t evm_module_flash(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
 {	
@@ -113,3 +114,4 @@ evm_val_t evm_class_flash(evm_t * e){
 	};
 	return  *evm_class_create(e, (evm_native_fn)evm_module_flash, class_flash, NULL);
 }
+#endif

@@ -1,3 +1,4 @@
+#ifdef EVM_DRIVER_RTC
 #include "evm_module.h"
 
 //RTC
@@ -19,4 +20,4 @@ evm_val_t evm_class_rtc(evm_t * e){
 	};
 	return *evm_class_create(e, (evm_native_fn)evm_module_rtc, class_rtc, NULL);
 }
-
+#endif

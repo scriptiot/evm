@@ -1,3 +1,4 @@
+#ifdef EVM_DRIVER_DAC
 #include "evm_module.h" 
 
 //DAC(name)
@@ -24,3 +25,4 @@ evm_val_t evm_class_dac(evm_t * e){
 	};
 	return *evm_class_create(e, (evm_native_fn)evm_module_dac, class_dac, NULL);
 }
+#endif

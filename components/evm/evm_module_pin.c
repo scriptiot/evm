@@ -1,3 +1,5 @@
+#ifdef EVM_DRIVER_GPIO
+
 #include "evm_module.h"
 #include <drivers/gpio.h>
 
@@ -38,3 +40,5 @@ evm_val_t evm_class_pin(evm_t * e){
 	};
 	return *evm_class_create(e, (evm_native_fn)evm_module_pin, cls, NULL);
 }
+
+#endif
