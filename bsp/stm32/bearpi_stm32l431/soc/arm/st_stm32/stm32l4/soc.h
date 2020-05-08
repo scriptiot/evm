@@ -96,6 +96,10 @@
 #include <stm32l4xx_ll_system.h>
 #endif
 
+#ifdef CONFIG_DAC_STM32
+#include <stm32l4xx_ll_dac.h>
+#endif
+
 #endif /* !_ASMLANGUAGE */
 
 #endif /* _STM32L4X_SOC_H_ */
