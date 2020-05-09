@@ -1,4 +1,4 @@
-#ifdef EVM_DRIVER_FLASH
+#ifdef CONFIG_EVM_FLASH
 #include "evm_module.h"
 
 /**

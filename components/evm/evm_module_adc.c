@@ -1,4 +1,4 @@
-#ifdef EVM_DRIVER_ADC
+#ifdef CONFIG_EVM_ADC
 #include "evm_module.h"
 
 /**

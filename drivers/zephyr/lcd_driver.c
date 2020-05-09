@@ -1,6 +1,6 @@
 #include "nevm.h"
 
-#ifdef EVM_DRIVER_LCD
+#ifdef CONFIG_EVM_LCD
 #include <zephyr.h>
 #include <device.h>
 #include <drivers/display.h>
@@ -153,7 +153,7 @@ static void fill_buffer_mono(enum corner corner, u8_t grey, u8_t *buf,
 
 evm_val_t nevm_driver_lcd_config(evm_t * e, evm_val_t * p, int argc, evm_val_t * v){
     (void)p;
-#ifdef EVM_DRIVER_LCD
+#ifdef CONFIG_EVM_LCD
     struct device * dev = (struct device *)nevm_object_get_ext_data(p);
     if( dev == NULL ){
         evm_set_err(e, ec_type, "LCD Device not found");
@@ -165,7 +165,7 @@ evm_val_t nevm_driver_lcd_config(evm_t * e, evm_val_t * p, int argc, evm_val_t *
 
 evm_val_t nevm_driver_lcd_init(evm_t * e, evm_val_t * p, int argc, evm_val_t * v){
     (void)p;
-#ifdef EVM_DRIVER_LCD
+#ifdef CONFIG_EVM_LCD
     struct device * display_dev = device_get_binding(DISPLAY_DEV_NAME);
     if (display_dev == NULL) {
         evm_set_err(e, ec_type, "LCD Device not found");

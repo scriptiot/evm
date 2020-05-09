@@ -1,4 +1,4 @@
-#ifdef EVM_DRIVER_SPI
+#ifdef CONFIG_EVM_SPI
 #include "evm_module.h"
 
 //SPI(name)

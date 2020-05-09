@@ -1,4 +1,4 @@
-#ifdef EVM_DRIVER_TIMER
+#ifdef CONFIG_EVM_TIMER
 #include "evm_module.h"
 
 //Timer(String name)

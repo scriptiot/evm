@@ -1,5 +1,5 @@
 
-#ifdef EVM_DRIVER_CAN
+#ifdef CONFIG_EVM_CAN
 #include "evm_module.h"
 
 //CAN(name)

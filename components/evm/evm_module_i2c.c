@@ -1,4 +1,4 @@
-#ifdef EVM_DRIVER_I2C
+#ifdef CONFIG_EVM_I2C
 #include "evm_module.h"
 
 //I2C(bus, ...)

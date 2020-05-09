@@ -20,7 +20,7 @@ set(EVM_ECMA_DIR ${EVM_NATIVE_DIR}/ecma/)
 set(EVM_REPL_DIR ${EVM_NATIVE_DIR}/repl/)
 set(EVM_QML_DIR ${EVM_NATIVE_DIR}/qml/)
 set(EVM_PYTHON_DIR ${EVM_NATIVE_DIR}/python/)
-set(EVM_DRIVER_DIR ${EVM_NATIVE_DIR}/driver/)
+set(CONFIG_EVM_DIR ${EVM_NATIVE_DIR}/driver/)
 
 set(ejs_sources
     ${EVM_BASE}/ejs/evm_main.c 
@@ -36,7 +36,7 @@ set(ejs_common_sources
     ${LIBEVM_DIR}/jsonparser.c
 )
 
-set(evm_driver_sources 
+set(CONFIG_EVM_sources 
     ${EVM_BASE}/drivers/zephyr/adc_driver.c 
     ${EVM_BASE}/drivers/zephyr/can_driver.c 
     ${EVM_BASE}/drivers/zephyr/dac_driver.c
@@ -103,7 +103,7 @@ set(libejs_sources
     ${ejs_common_sources}
     ${LIBEVM_DIR}/jsparser.c
     ${evm_repl_sources}
-    ${evm_driver_sources}
+    ${CONFIG_EVM_sources}
     ${evm_modules}
 )
 
@@ -120,7 +120,7 @@ set(libepy_sources
     ${ejs_common_sources}
     ${LIBEVM_DIR}/pyparser.c
     ${evm_repl_sources}
-    ${evm_driver_sources}
+    ${CONFIG_EVM_sources}
 )
 
 add_definitions("-DEVM_LANG_ENABLE_JAVASCRIPT")
@@ -152,12 +152,12 @@ target_sources(app PRIVATE src/main.c)
 target_sources(app PRIVATE src/evm_board.c)
 target_link_libraries(app PRIVATE ejs)
 
-add_definitions("-DEVM_DRIVER_GPIO")
-add_definitions("-DEVM_DRIVER_FLASH")
-add_definitions("-DEVM_DRIVER_LCD")
-add_definitions("-DEVM_DRIVER_WATCHDOG")
-add_definitions("-DEVM_DRIVER_ADC")
-add_definitions("-DEVM_DRIVER_DAC")
-add_definitions("-DEVM_DRIVER_TIMER")
-add_definitions("-DEVM_DRIVER_LED")
-add_definitions("-DEVM_DRIVER_SWITCH")
+add_definitions("-DCONFIG_EVM_GPIO")
+add_definitions("-DCONFIG_EVM_FLASH")
+add_definitions("-DCONFIG_EVM_LCD")
+add_definitions("-DCONFIG_EVM_WATCHDOG")
+add_definitions("-DCONFIG_EVM_ADC")
+add_definitions("-DCONFIG_EVM_DAC")
+add_definitions("-DCONFIG_EVM_TIMER")
+add_definitions("-DCONFIG_EVM_LED")
+add_definitions("-DCONFIG_EVM_SWITCH")

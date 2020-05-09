@@ -79,8 +79,8 @@ int evm_main(void){
     evm_t * env = (evm_t*)malloc(sizeof(evm_t));
     memset(env, 0, sizeof(evm_t));
     int err = evm_init(env, EVM_HEAP_SIZE, EVM_STACK_SIZE, EVM_MODULE_SIZE, EVM_VAR_NAME_MAX_LEN, EVM_FILE_NAME_LEN);
-    err = ecma_module(env, 5);
-    err = evm_module(env, EVM_NUMBER_OF_CALLBACKS);
+    err = ecma_module(env, 10);
+    err = evm_module(env);
     err = evm_repl_run(env, 100, EVM_LANG_JS);
     return err;
 }

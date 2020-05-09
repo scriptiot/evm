@@ -1,3 +1,4 @@
+#ifdef CONFIG_EVM_WATCHDOG
 #include "evm_module.h"
 
 /**
@@ -116,3 +117,4 @@ evm_val_t evm_class_watchdog(evm_t * e){
 	};
 	return  *evm_class_create(e, (evm_native_fn)evm_module_watchdog, class_watchdog, NULL);
 }
+#endif

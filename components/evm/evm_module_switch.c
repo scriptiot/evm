@@ -1,8 +1,13 @@
-#ifdef EVM_DRIVER_SWITCH
+#ifdef CONFIG_EVM_SWITCH
 #include "evm_module.h"
-#include "evm_board.h"
 
 //Switch(id)
+/**
+ * @brief Switch class constructor
+ * 
+ * @param id It's an integer which tells the index of your defined switches.
+ * @usage new Switch(0)
+ */
 static evm_val_t evm_module_switch(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
 {
 	int id = evm_2_integer(v);
@@ -17,14 +22,22 @@ static evm_val_t evm_module_switch(evm_t *e, evm_val_t *p, int argc, evm_val_t *
 	evm_module_construct(nevm_runtime, p, 3, &params, "pinCreate");
 	return EVM_VAL_UNDEFINED;
 }
-//Switch.value()
+/**
+ * @brief return the logic level of the pin
+ * 
+ * @usage Switch.value() 
+ */
 static evm_val_t evm_module_switch_value(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
 {
 	evm_val_t dev = evm_mk_object((void*)nevm_object_get_ext_data(p));
 	return nevm_object_function_invoke(nevm_runtime, &dev, "read", 0, NULL);
 }
-
-//Switch.callback(function)
+/**
+ * @brief set a callback function which will be triggered if switch is pressed. 
+ * 
+ * @param callback function
+ * @usage Switch.callback(function)
+ */
 static evm_val_t evm_module_switch_callback(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
 {
 	evm_val_t dev = evm_mk_object((void*)nevm_object_get_ext_data(p));

@@ -1,7 +1,7 @@
 #include "nevm.h"
 #include "evm_module.h"
 
-#ifdef EVM_DRIVER_TIMER
+#ifdef CONFIG_EVM_TIMER
 #include <zephyr.h>
 static void timer_callback(struct k_timer *handle)
 {
@@ -16,7 +16,7 @@ static void timer_callback(struct k_timer *handle)
 //timer_config(callback)
 evm_val_t nevm_driver_timer_config(evm_t * e, evm_val_t * p, int argc, evm_val_t * v){
     (void)p;
-#ifdef EVM_DRIVER_TIMER
+#ifdef CONFIG_EVM_TIMER
     struct k_timer * dev = (struct k_timer*)nevm_object_get_ext_data(p);
     if( !dev ) return NEVM_FALSE;
     k_timer_init(dev, timer_callback, NULL);
@@ -28,7 +28,7 @@ evm_val_t nevm_driver_timer_config(evm_t * e, evm_val_t * p, int argc, evm_val_t
 //timer_init(String name)
 evm_val_t nevm_driver_timer_init(evm_t * e, evm_val_t * p, int argc, evm_val_t * v){
     (void)p;
-#ifdef EVM_DRIVER_TIMER
+#ifdef CONFIG_EVM_TIMER
     struct k_timer * dev = (struct k_timer*)evm_malloc(sizeof(struct k_timer));
     if( !dev ) return NEVM_FALSE;
     nevm_object_set_ext_data(p, (intptr_t)dev);
@@ -45,7 +45,7 @@ evm_val_t nevm_driver_timer_deinit(evm_t * e, evm_val_t * p, int argc, evm_val_t
 //timer_start(period)
 evm_val_t nevm_driver_timer_start(evm_t * e, evm_val_t * p, int argc, evm_val_t * v){
     (void)p;
-#ifdef EVM_DRIVER_TIMER
+#ifdef CONFIG_EVM_TIMER
     if(argc > 0 && evm_is_number(v) ){
         struct k_timer * dev = (struct k_timer*)nevm_object_get_ext_data(p);
         int period = evm_2_integer(v);
@@ -58,7 +58,7 @@ evm_val_t nevm_driver_timer_start(evm_t * e, evm_val_t * p, int argc, evm_val_t 
 
 evm_val_t nevm_driver_timer_stop(evm_t * e, evm_val_t * p, int argc, evm_val_t * v){
     (void)p;
-#ifdef EVM_DRIVER_TIMER
+#ifdef CONFIG_EVM_TIMER
     struct k_timer * dev = (struct k_timer*)nevm_object_get_ext_data(p);
     k_timer_stop(dev);
     return NEVM_TRUE;

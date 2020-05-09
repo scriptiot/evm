@@ -1,4 +1,4 @@
-#ifdef EVM_DRIVER_DAC
+#ifdef CONFIG_EVM_DAC
 #include "evm_module.h" 
 
 /**

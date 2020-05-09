@@ -1,4 +1,4 @@
-#ifdef EVM_DRIVER_LCD
+#ifdef CONFIG_EVM_LCD
 
 #include "evm_module.h"
 
