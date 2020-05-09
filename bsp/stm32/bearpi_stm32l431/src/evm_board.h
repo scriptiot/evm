@@ -3,14 +3,15 @@
 
 #include <drivers/gpio.h>
 
-typedef struct led_group {
+typedef struct pin_group {
 	char* port;
     u8_t  pin;
 	u32_t mode;
-}led_group;
+}pin_group;
 
-const struct led_group ledgroup[] = {
-    {"GPIOC", 13, GPIO_OUTPUT},
-};
+extern const pin_group ledgroup[];
+extern const pin_group keygroup[];
+
+int evm_board_get_pin_group_size(pin_group * group);
 
 #endif

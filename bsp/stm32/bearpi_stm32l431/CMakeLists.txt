@@ -149,6 +149,7 @@ include_directories(app PRIVATE ${EVM_BASE}/ejs)
 include_directories(app PRIVATE src)
 
 target_sources(app PRIVATE src/main.c)
+target_sources(app PRIVATE src/evm_board.c)
 target_link_libraries(app PRIVATE ejs)
 
 add_definitions("-DEVM_DRIVER_GPIO")
@@ -159,3 +160,4 @@ add_definitions("-DEVM_DRIVER_ADC")
 add_definitions("-DEVM_DRIVER_DAC")
 add_definitions("-DEVM_DRIVER_TIMER")
 add_definitions("-DEVM_DRIVER_LED")
+add_definitions("-DEVM_DRIVER_SWITCH")

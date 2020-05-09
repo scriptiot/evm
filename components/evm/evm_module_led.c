@@ -6,7 +6,7 @@
 static evm_val_t evm_module_led(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
 {
 	int id = evm_2_integer(v);
-	if( id >= sizeof(ledgroup) ) {
+	if( id >= evm_board_get_pin_group_size(ledgroup) ) {
 		evm_set_err(e, ec_index, "Out of led index");
 		return EVM_VAL_UNDEFINED;
 	}
