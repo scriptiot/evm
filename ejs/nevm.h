@@ -73,6 +73,7 @@ extern evm_val_t nevm_driver_gpio_init(evm_t * e, evm_val_t * p, int argc, evm_v
 extern evm_val_t nevm_driver_gpio_deinit(evm_t * e, evm_val_t * p, int argc, evm_val_t * v);
 extern evm_val_t nevm_driver_gpio_write_pin(evm_t * e, evm_val_t * p, int argc, evm_val_t * v);
 extern evm_val_t nevm_driver_gpio_read_pin(evm_t * e, evm_val_t * p, int argc, evm_val_t * v);
+extern evm_val_t nevm_driver_gpio_callback(evm_t * e, evm_val_t * p, int argc, evm_val_t * v);
 /****** i2c native api interface *****/
 extern evm_val_t nevm_driver_i2c_gpio_init(evm_t * e, evm_val_t * p, int argc, evm_val_t * v);
 extern evm_val_t nevm_driver_i2c_config(evm_t * e, evm_val_t * p, int argc, evm_val_t * v);

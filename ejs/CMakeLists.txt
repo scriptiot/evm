@@ -2,12 +2,6 @@
 
 cmake_minimum_required(VERSION 3.13.1)
 
-set(BOARD_ROOT ${CMAKE_CURRENT_LIST_DIR})
-
-set(SOC_ROOT ${CMAKE_CURRENT_LIST_DIR})
-
-set(BOARD bearpi_stm32l431)
-
 find_package(Zephyr HINTS $ENV{ZEPHYR_BASE})
 project(ejs)
 
@@ -149,15 +143,13 @@ include_directories(app PRIVATE ${EVM_BASE}/ejs)
 include_directories(app PRIVATE src)
 
 target_sources(app PRIVATE src/main.c)
-target_sources(app PRIVATE src/evm_board.c)
 target_link_libraries(app PRIVATE ejs)
 
-add_definitions("-DEVM_DRIVER_GPIO")
-add_definitions("-DEVM_DRIVER_FLASH")
-add_definitions("-DEVM_DRIVER_LCD")
-add_definitions("-DEVM_DRIVER_WATCHDOG")
-add_definitions("-DEVM_DRIVER_ADC")
-add_definitions("-DEVM_DRIVER_DAC")
-add_definitions("-DEVM_DRIVER_TIMER")
-add_definitions("-DEVM_DRIVER_LED")
-add_definitions("-DEVM_DRIVER_SWITCH")
+# add_definitions("-DEVM_DRIVER_GPIO")
+# add_definitions("-DEVM_DRIVER_FLASH")
+# add_definitions("-DEVM_DRIVER_LCD")
+# add_definitions("-DEVM_DRIVER_WATCHDOG")
+# add_definitions("-DEVM_DRIVER_ADC")
+# add_definitions("-DEVM_DRIVER_DAC")
+# add_definitions("-DEVM_DRIVER_TIMER")
+# add_definitions("-DEVM_DRIVER_LED")

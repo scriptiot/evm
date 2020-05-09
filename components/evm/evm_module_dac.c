@@ -1,14 +1,26 @@
 #ifdef EVM_DRIVER_DAC
 #include "evm_module.h" 
 
-//DAC(name)
+/**
+ * @brief DAC class constructor
+ * 
+ * @param name device name
+ * 
+ * @uasge new DAC('ADC_1') 
+ */
 static evm_val_t evm_module_dac(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
 {
 	evm_module_construct(nevm_runtime, p, argc, v, "dacCreate");
 	return EVM_VAL_UNDEFINED;
 }
 
-//DAC.write(value)
+/**
+ * @brief dac write value
+ * 
+ * @param value 
+ * 
+ * @uasge DAC.write(1024) 
+ */
 static evm_val_t evm_module_dac_write(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
 {
 	if( argc > 0 ){

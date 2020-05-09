@@ -19,6 +19,10 @@
         "string_view": "c",
         "pinmux_stm32.h": "c",
         "evm.h": "c",
-        "uart.h": "c"
+        "uart.h": "c",
+        "chrono": "c",
+        "thread": "c",
+        "display_st7789v.h": "c",
+        "stdio.h": "c"
     }
 }

@@ -24,9 +24,20 @@
 #ifdef EVM_DRIVER_SWITCH
 	extern evm_val_t evm_class_switch(evm_t * e);
 #endif
+#ifdef EVM_DRIVER_GPIO
+	extern evm_val_t evm_class_timer(evm_t * e);
+#endif
+#ifdef EVM_DRIVER_LED
+	extern evm_val_t evm_class_led(evm_t * e);
+#endif
 #ifdef EVM_DRIVER_WATCHDOG
 
 #endif
+
+static evm_val_t * callback_list;
+static evm_val_t * args_list;
+static uint32_t number_of_callbacks;
+evm_t * evm_runtime;
 
 void evm_module_construct(evm_t* e, evm_val_t * p, int argc, evm_val_t * v, const char * api_name){
     evm_val_t dev = nevm_function_invoke(e, api_name, argc, v);
@@ -34,7 +45,46 @@ void evm_module_construct(evm_t* e, evm_val_t * p, int argc, evm_val_t * v, cons
     nevm_object_set_ext_data(p, evm_2_intptr(&dev) );
 }
 
-int evm_module(evm_t * e){
+int evm_module_add_callback(evm_val_t callback, evm_val_t args){
+	if( !evm_is_script(&callback) ) return -1;
+	if( !evm_is_list(&args) && !evm_is_null(&args) && !evm_is_undefined(&args) ) return -1;
+	
+	for(uint32_t i = 0; i < number_of_callbacks; i++){
+		evm_val_t * v = evm_list_get(evm_runtime, callback_list, i);
+		if( evm_is_undefined(v) ){
+			evm_list_set(evm_runtime, callback_list, i, callback);
+			evm_list_set(evm_runtime, args_list, i, args);
+			return i;
+		}
+	}
+	return -1;
+}
+
+evm_val_t * evm_module_get_callback(int id){
+	return evm_list_get(evm_runtime, callback_list, id);
+}
+
+int evm_module_remove_callback(int id){
+	if( id >= number_of_callbacks ) return ec_index;
+	evm_list_set(evm_runtime, callback_list, id, EVM_VAL_UNDEFINED);
+	evm_list_set(evm_runtime, args_list, id, EVM_VAL_UNDEFINED);
+	return ec_ok;
+}
+
+int evm_module(evm_t * e, int nbr_of_callbacks){
+	evm_runtime = e;
+	number_of_callbacks = nbr_of_callbacks;
+	callback_list = evm_list_create(e, GC_LIST, nbr_of_callbacks);
+	if( !callback_list ) return e->err;
+
+	for(uint32_t i = 0; i < nbr_of_callbacks; i++){
+		evm_list_set(e, callback_list, i, EVM_VAL_UNDEFINED);
+	}
+
+	
+	args_list = evm_list_create(e, GC_LIST, nbr_of_callbacks);
+	if( !args_list ) return e->err;
+
 	evm_builtin_t module[] = {
 #ifdef EVM_DRIVER_GPIO
 		{"Pin", evm_class_pin(e)},
@@ -62,6 +112,9 @@ int evm_module(evm_t * e){
 #endif
 #ifdef EVM_DRIVER_WATCHDOG
 		{"Watchdog", evm_class_watchdog(e)},
+#endif
+#ifdef EVM_DRIVER_TIMER
+		{"Timer", evm_class_timer(e)},
 #endif
         {NULL, NULL}
     };
