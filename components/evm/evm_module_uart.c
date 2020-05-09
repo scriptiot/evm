@@ -1,28 +1,21 @@
-#ifdef CONFIG_EVM_UART
+#ifdef EVM_DRIVER_UART
 #include "evm_module.h"
 #include <drivers/uart.h>
 
-//UART(name)
+//UART(name, baudrate, databits, stopbits, stopbits, flow)
 static evm_val_t evm_module_uart(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
 {
+	evm_module_construct(nevm_runtime, p, argc, v, "serialCreate");
 	return EVM_VAL_UNDEFINED;
 }
 
-//UART.init(baudrate, bits=8, parity=None, stop=1, *, timeout=0, flow=0, timeout_char=0, read_buf_len=64)
-static evm_val_t evm_module_uart_init(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
-{
-	return EVM_VAL_UNDEFINED;
-}
-
-//UART.deinit()
-static evm_val_t evm_module_uart_deinit(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
-{
-	return EVM_VAL_UNDEFINED;
-}
-
-//UART.read([nbytes])
+//UART.read(nbytes,timeout)
 static evm_val_t evm_module_uart_read(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
 {
+	if(argc>0){
+		evm_val_t dev = evm_mk_object((void *)nevm_object_get_ext_data(p));
+		return nevm_object_function_invoke(nevm_runtime, &dev, "read", 2, NULL);
+	}
 	return EVM_VAL_UNDEFINED;
 }
 
@@ -30,6 +23,10 @@ static evm_val_t evm_module_uart_read(evm_t *e, evm_val_t *p, int argc, evm_val_
 //UART.write(buf)
 static evm_val_t evm_module_uart_write(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
 {
+	if(argc>0){
+		evm_val_t dev = evm_mk_object((void*)nevm_object_get_ext_data(p));
+		nevm_object_function_invoke(nevm_runtime, &dev, "write", 1, v);
+	}
 	return EVM_VAL_UNDEFINED;
 }
 

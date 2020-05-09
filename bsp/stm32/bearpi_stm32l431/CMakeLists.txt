@@ -172,3 +172,5 @@ add_definitions("-DCONFIG_EVM_DAC")
 add_definitions("-DCONFIG_EVM_TIMER")
 add_definitions("-DCONFIG_EVM_LED")
 add_definitions("-DCONFIG_EVM_SWITCH")
+add_definitions("-DCONFIG_EVM_UART")
+
