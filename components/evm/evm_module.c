@@ -1,36 +1,36 @@
 #include "evm_module.h"
 
-#ifdef EVM_DRIVER_GPIO
+#ifdef CONFIG_EVM_GPIO
 	extern evm_val_t evm_class_pin(evm_t * e);
 #endif
-#ifdef EVM_DRIVER_LCD
+#ifdef CONFIG_EVM_LCD
 	extern evm_val_t evm_class_lcd(evm_t * e);
 #endif
-#ifdef EVM_DRIVER_LED
+#ifdef CONFIG_EVM_LED
 	extern evm_val_t evm_class_led(evm_t * e);
 #endif
-#ifdef EVM_DRIVER_FLASH
+#ifdef CONFIG_EVM_FLASH
 	extern evm_val_t evm_class_flash(evm_t * e);
 #endif
-#ifdef EVM_DRIVER_ADC
+#ifdef CONFIG_EVM_ADC
 	extern evm_val_t evm_class_adc(evm_t * e);
 #endif
-#ifdef EVM_DRIVER_DAC
+#ifdef CONFIG_EVM_DAC
 	extern evm_val_t evm_class_dac(evm_t * e);
 #endif
-#ifdef EVM_DRIVER_RTC
+#ifdef CONFIG_EVM_RTC
 	extern evm_val_t evm_class_rtc(evm_t * e);
 #endif
-#ifdef EVM_DRIVER_SWITCH
+#ifdef CONFIG_EVM_SWITCH
 	extern evm_val_t evm_class_switch(evm_t * e);
 #endif
-#ifdef EVM_DRIVER_GPIO
+#ifdef CONFIG_EVM_GPIO
 	extern evm_val_t evm_class_timer(evm_t * e);
 #endif
-#ifdef EVM_DRIVER_LED
+#ifdef CONFIG_EVM_LED
 	extern evm_val_t evm_class_led(evm_t * e);
 #endif
-#ifdef EVM_DRIVER_WATCHDOG
+#ifdef CONFIG_EVM_WATCHDOG
 
 #endif
 
@@ -71,49 +71,49 @@ int evm_module_remove_callback(int id){
 	return ec_ok;
 }
 
-int evm_module(evm_t * e, int nbr_of_callbacks){
+int evm_module(evm_t * e){
 	evm_runtime = e;
-	number_of_callbacks = nbr_of_callbacks;
-	callback_list = evm_list_create(e, GC_LIST, nbr_of_callbacks);
+	number_of_callbacks = CONFIG_EVM_CALLBACK_SIZE;
+	callback_list = evm_list_create(e, GC_LIST, number_of_callbacks);
 	if( !callback_list ) return e->err;
 
-	for(uint32_t i = 0; i < nbr_of_callbacks; i++){
+	for(uint32_t i = 0; i < number_of_callbacks; i++){
 		evm_list_set(e, callback_list, i, EVM_VAL_UNDEFINED);
 	}
 
 	
-	args_list = evm_list_create(e, GC_LIST, nbr_of_callbacks);
+	args_list = evm_list_create(e, GC_LIST, number_of_callbacks);
 	if( !args_list ) return e->err;
 
 	evm_builtin_t module[] = {
-#ifdef EVM_DRIVER_GPIO
+#ifdef CONFIG_EVM_GPIO
 		{"Pin", evm_class_pin(e)},
 #endif
-#ifdef EVM_DRIVER_LCD
+#ifdef CONFIG_EVM_LCD
 		{"LCD", evm_class_lcd(e)},
 #endif
-#ifdef EVM_DRIVER_LED
+#ifdef CONFIG__LED
 		{"LED", evm_class_led(e)},
 #endif
-#ifdef EVM_DRIVER_FLASH
+#ifdef CONFIG_EVM_FLASH
 		{"Flash", evm_class_flash(e)},
 #endif
-#ifdef EVM_DRIVER_ADC
+#ifdef CONFIG_EVM_ADC
 		{"ADC", evm_class_adc(e)},
 #endif
-#ifdef EVM_DRIVER_DAC
+#ifdef CONFIG_EVM_DAC
 		{"DAC", evm_class_dac(e)},
 #endif
-#ifdef EVM_DRIVER_RTC
+#ifdef CONFIG_EVM_RTC
 		{"RTC", evm_class_rtc(e)},
 #endif
-#ifdef EVM_DRIVER_SWITCH
+#ifdef CONFIG_EVM_SWITCH
 		{"Switch", evm_class_switch(e)},
 #endif
-#ifdef EVM_DRIVER_WATCHDOG
+#ifdef CONFIG_EVM_WATCHDOG
 		{"Watchdog", evm_class_watchdog(e)},
 #endif
-#ifdef EVM_DRIVER_TIMER
+#ifdef CONFIG_EVM_TIMER
 		{"Timer", evm_class_timer(e)},
 #endif
         {NULL, NULL}

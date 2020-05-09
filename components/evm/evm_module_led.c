@@ -1,6 +1,5 @@
-#ifdef EVM_DRIVER_LED
+#ifdef CONFIG_EVM_LED
 #include "evm_module.h"
-#include "evm_board.h"
 
 //LED(id)
 static evm_val_t evm_module_led(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)

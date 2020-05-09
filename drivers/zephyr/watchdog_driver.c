@@ -1,12 +1,9 @@
 #include "nevm.h"
 
-#ifdef EVM_DRIVER_WATCHDOG
+#ifdef CONFIG_EVM_WATCHDOG
 #include <device.h>
 #include <drivers/watchdog.h>
 #endif
-
-#define ARG_LENGTH_ERR { evm_set_err(e, ec_type, "invalid argument length");return evm_mk_undefined(); }
-#define ARG_TYPE_ERR   { evm_set_err(e, ec_type, "invalid argument type");return evm_mk_undefined(); }
 
 evm_val_t nevm_driver_watchdog_config(evm_t * e, evm_val_t * p, int argc, evm_val_t * v){
     (void)e;(void)p;(void)argc;(void)v;
@@ -15,7 +12,7 @@ evm_val_t nevm_driver_watchdog_config(evm_t * e, evm_val_t * p, int argc, evm_va
 
 evm_val_t nevm_driver_watchdog_init(evm_t * e, evm_val_t * p, int argc, evm_val_t * v){
    (void)e;(void)p;(void)argc;(void)v;
-#ifdef EVM_DRIVER_WATCHDOG
+#ifdef CONFIG_EVM_WATCHDOG
     if( argc > 0 && evm_is_string(v) ){
 		struct device * dev = device_get_binding(evm_2_string(v));
         if( !dev ) return NEVM_FALSE;
@@ -33,7 +30,7 @@ evm_val_t nevm_driver_watchdog_deinit(evm_t * e, evm_val_t * p, int argc, evm_va
 
 evm_val_t nevm_driver_watchdog_install_timeout(evm_t * e, evm_val_t * p, int argc, evm_val_t * v){
    (void)e;(void)p;(void)argc;(void)v;
-#ifdef EVM_DRIVER_WATCHDOG
+#ifdef CONFIG_EVM_WATCHDOG
     if( argc >= 2 && evm_is_number(v) && evm_is_number(v+1) ){
         int min = evm_2_integer(v);
         int max = evm_2_integer(v);
@@ -69,7 +66,7 @@ evm_val_t nevm_driver_watchdog_install_timeout(evm_t * e, evm_val_t * p, int arg
 
 evm_val_t nevm_driver_watchdog_setup(evm_t * e, evm_val_t * p, int argc, evm_val_t * v){
     (void)e;(void)p;(void)argc;(void)v;
-#ifdef EVM_DRIVER_WATCHDOG
+#ifdef CONFIG_EVM_WATCHDOG
     if( argc >= 1 && evm_is_number(v)){
         struct device * dev = (struct device *)nevm_object_get_ext_data(p);
         if( !dev ) return NEVM_FALSE;
@@ -85,7 +82,7 @@ evm_val_t nevm_driver_watchdog_setup(evm_t * e, evm_val_t * p, int argc, evm_val
 
 evm_val_t nevm_driver_watchdog_feed(evm_t * e, evm_val_t * p, int argc, evm_val_t * v){
     (void)e;(void)p;(void)argc;(void)v;
-#ifdef EVM_DRIVER_WATCHDOG
+#ifdef CONFIG_EVM_WATCHDOG
     if( argc >= 1 && evm_is_number(v)){
         struct device * dev = (struct device *)nevm_object_get_ext_data(p);
         if( !dev ) return NEVM_FALSE;
@@ -101,7 +98,7 @@ evm_val_t nevm_driver_watchdog_feed(evm_t * e, evm_val_t * p, int argc, evm_val_
 
 evm_val_t nevm_driver_watchdog_disable(evm_t * e, evm_val_t * p, int argc, evm_val_t * v){
     (void)e;(void)p;(void)argc;(void)v;
-#ifdef EVM_DRIVER_WATCHDOG
+#ifdef CONFIG_EVM_WATCHDOG
     struct device * dev = (struct device *)nevm_object_get_ext_data(p);
     if( !dev ) return NEVM_FALSE;
     int err = wdt_disable(dev);

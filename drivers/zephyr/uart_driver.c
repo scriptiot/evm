@@ -1,6 +1,6 @@
 #include "nevm.h"
 
-#ifdef EVM_DRIVER_UART
+#ifdef CONFIG_EVM_UART
 #include <device.h>
 #include <uart.h>
 #include <zephyr.h>
@@ -31,7 +31,7 @@ static void uart_irq_handler(struct device *dev)
 //uart_config(int baudrate, char databits, char parity, char stopbits, Object callback)
 evm_val_t nevm_driver_uart_config(evm_t * e, evm_val_t * p, int argc, evm_val_t * v){
     (void)p;
-#ifdef EVM_DRIVER_UART
+#ifdef CONFIG_EVM_UART
     struct device * dev = (struct device *)nevm_object_get_ext_data(p);
 
     struct uart_config uart_cfg = {
@@ -59,7 +59,7 @@ evm_val_t nevm_driver_uart_config(evm_t * e, evm_val_t * p, int argc, evm_val_t 
 
 evm_val_t nevm_driver_uart_init(evm_t * e, evm_val_t * p, int argc, evm_val_t * v){
     (void)p;
-#ifdef EVM_DRIVER_UART
+#ifdef CONFIG_EVM_UART
     struct device * dev = device_get_binding(evm_2_string(v));
     nevm_object_set_ext_data(p, (intptr_t)dev);
     
@@ -80,7 +80,7 @@ evm_val_t nevm_driver_uart_read_byte(evm_t * e, evm_val_t * p, int argc, evm_val
 //uart_write_byte(char data)
 evm_val_t nevm_driver_uart_write_byte(evm_t * e, evm_val_t * p, int argc, evm_val_t * v){
     (void)p;
-#ifdef EVM_DRIVER_UART
+#ifdef CONFIG_EVM_UART
     struct device * dev = (struct device *)nevm_object_get_ext_data(p);
     uart_irq_tx_enable(dev);
     char data = evm_2_integer(v);
@@ -97,7 +97,7 @@ evm_val_t nevm_driver_uart_read_bytes(evm_t * e, evm_val_t * p, int argc, evm_va
 //uart_write_bytes(buf, offset, len)
 evm_val_t nevm_driver_uart_write_bytes(evm_t * e, evm_val_t * p, int argc, evm_val_t * v){
     (void)p;
-#ifdef EVM_DRIVER_UART
+#ifdef CONFIG_EVM_UART
     struct device * dev = (struct device *)nevm_object_get_ext_data(p);
     uart_irq_tx_enable(dev);
     int sent = 0;

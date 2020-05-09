@@ -1,4 +1,4 @@
-#ifdef EVM_DRIVER_RTC
+#ifdef CONFIG_EVM_RTC
 #include "evm_module.h"
 
 //RTC

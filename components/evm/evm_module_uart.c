@@ -1,4 +1,4 @@
-#ifdef EVM_DRIVER_UART
+#ifdef CONFIG_EVM_UART
 #include "evm_module.h"
 #include <drivers/uart.h>
 
