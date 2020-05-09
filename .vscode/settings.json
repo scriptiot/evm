@@ -18,6 +18,7 @@
         "array": "c",
         "string_view": "c",
         "pinmux_stm32.h": "c",
-        "evm.h": "c"
+        "evm.h": "c",
+        "uart.h": "c"
     }
 }

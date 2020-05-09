@@ -21,6 +21,7 @@ static void uart_irq_handler(struct device *dev)
     }
 
     if (uart_irq_rx_ready(dev)) {
+		uart_fifo_read(dev, &recvData, 1);
 
     }
 }
@@ -32,12 +33,23 @@ evm_val_t nevm_driver_uart_config(evm_t * e, evm_val_t * p, int argc, evm_val_t 
     (void)p;
 #ifdef EVM_DRIVER_UART
     struct device * dev = (struct device *)nevm_object_get_ext_data(p);
+
+    struct uart_config uart_cfg = {
+        .baudrate = evm_2_integer(V),
+        .parity = evm_2_integer(V+2),
+        .stop_bits = evm_2_integer(V+3),
+        .data_bits = evm_2_integer(V+1),
+        .flow_ctrl = UART_CFG_FLOW_CTRL_NONE
+    };
+    uart_configure(dev, &uart_cfg);
+
 #ifdef CONFIG_UART_LINE_CTRL
     int ret = uart_line_ctrl_set(dev, LINE_CTRL_BAUD_RATE, evm_2_integer(v));
     if (ret) {
         return NEVM_FALSE;
     }
 #endif
+
     uart_irq_callback_set(dev, uart_irq_handler);
     uart_irq_rx_enable(dev);
     return NEVM_TRUE;
