@@ -44,6 +44,7 @@ int nevm_runtime_setup(void){
     }
     err = nevm_start(nevm_runtime);
     if(err) {return err;}
+    printk("heap usage = %d\r\n", nevm_runtime->heap->free);
     return ec_ok;
 }
 
