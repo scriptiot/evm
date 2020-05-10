@@ -1,0 +1,30 @@
+{
+    "files.associations": {
+        "device.h": "c",
+        "evm_board.h": "c",
+        "zephyr.h": "c",
+        "gpio.h": "c",
+        "adc.h": "c",
+        "dac.h": "c",
+        "typeinfo": "c",
+        "evm_module.h": "c",
+        "*.tcc": "c",
+        "optional": "c",
+        "system_error": "c",
+        "evm_main.h": "c",
+        "output.h": "c",
+        "nevm.h": "c",
+        "display.h": "c",
+        "array": "c",
+        "string_view": "c",
+        "pinmux_stm32.h": "c",
+        "evm.h": "c",
+        "uart.h": "c",
+        "chrono": "c",
+        "thread": "c",
+        "display_st7789v.h": "c",
+        "stdio.h": "c",
+        "future": "c",
+        "mutex": "c"
+    }
+}

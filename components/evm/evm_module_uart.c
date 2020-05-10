@@ -1,71 +1,35 @@
-#ifdef CONFIG_EVM_UART
+#ifdef EVM_DRIVER_UART
 #include "evm_module.h"
+#include <drivers/uart.h>
 
-//UART(name)
+//UART(name, baudrate, databits, stopbits, stopbits, flow)
 static evm_val_t evm_module_uart(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
 {
+	evm_module_construct(nevm_runtime, p, argc, v, "serialCreate");
 	return EVM_VAL_UNDEFINED;
 }
 
-//UART.init(baudrate, bits=8, parity=None, stop=1, *, timeout=0, flow=0, timeout_char=0, read_buf_len=64)
-static evm_val_t evm_module_uart_init(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
-{
-	return EVM_VAL_UNDEFINED;
-}
-
-//UART.deinit()
-static evm_val_t evm_module_uart_deinit(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
-{
-	return EVM_VAL_UNDEFINED;
-}
-
-//UART.any()
-static evm_val_t evm_module_uart_any(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
-{
-	return EVM_VAL_UNDEFINED;
-}
-
-//UART.read([nbytes])
+//UART.read(nbytes,timeout)
 static evm_val_t evm_module_uart_read(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
 {
+	if(argc>0){
+		evm_val_t dev = evm_mk_object((void *)nevm_object_get_ext_data(p));
+		return nevm_object_function_invoke(nevm_runtime, &dev, "read", 2, NULL);
+	}
 	return EVM_VAL_UNDEFINED;
 }
 
-//UART.readchar()
-static evm_val_t evm_module_uart_readchar(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
-{
-	return EVM_VAL_UNDEFINED;
-}
-
-//UART.readinto(buf[, nbytes])
-static evm_val_t evm_module_uart_readinto(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
-{
-	return EVM_VAL_UNDEFINED;
-}
-
-//UART.readline()
-static evm_val_t evm_module_uart_readline(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
-{
-	return EVM_VAL_UNDEFINED;
-}
 
 //UART.write(buf)
 static evm_val_t evm_module_uart_write(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
 {
+	if(argc>0){
+		evm_val_t dev = evm_mk_object((void*)nevm_object_get_ext_data(p));
+		nevm_object_function_invoke(nevm_runtime, &dev, "write", 1, v);
+	}
 	return EVM_VAL_UNDEFINED;
 }
 
-//UART.writechar(char)
-static evm_val_t evm_module_uart_writechar(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
-{
-	return EVM_VAL_UNDEFINED;
-}
-
-//UART.sendbreak()
-static evm_val_t evm_module_uart_sendbreak(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
-{
-	return EVM_VAL_UNDEFINED;
-}
 
 evm_val_t evm_class_uart(evm_t * e){
 	evm_builtin_t class_uart[] = {
@@ -73,12 +37,25 @@ evm_val_t evm_class_uart(evm_t * e){
 		{"deinit", evm_mk_native( (intptr_t)evm_module_uart_deinit )},
 		{"any", evm_mk_native( (intptr_t)evm_module_uart_any )},
 		{"read", evm_mk_native( (intptr_t)evm_module_uart_read )},
-		{"readchar", evm_mk_native( (intptr_t)evm_module_uart_readchar )},
-		{"readinto", evm_mk_native( (intptr_t)evm_module_uart_readinto )},
-		{"readline", evm_mk_native( (intptr_t)evm_module_uart_readline )},
 		{"write", evm_mk_native( (intptr_t)evm_module_uart_write )},
-		{"writechar", evm_mk_native( (intptr_t)evm_module_uart_writechar )},
-		{"sendbreak", evm_mk_native( (intptr_t)evm_module_uart_sendbreak )},
+
+		{"PARITY_NONE",evm_mk_native((intptr_t)UART_CFG_PARITY_NONE)},
+		{"PARITY_ODD",evm_mk_native((intptr_t)UART_CFG_PARITY_ODD)},
+		{"PARITY_EVEN",evm_mk_native((intptr_t)UART_CFG_PARITY_EVEN)},
+		{"PARITY_MARK",evm_mk_native((intptr_t)UART_CFG_PARITY_MARK)},
+		{"PARITY_SPACE",evm_mk_native((intptr_t)UART_CFG_PARITY_SPACE)},
+
+		{"STOP_BITS_0_5",evm_mk_native((intptr_t)UART_CFG_STOP_BITS_0_5)},
+		{"STOP_BITS_1",evm_mk_native((intptr_t)UART_CFG_STOP_BITS_1)},
+		{"STOP_BITS_1_5",evm_mk_native((intptr_t)UART_CFG_STOP_BITS_1_5)},
+		{"STOP_BITS_2",evm_mk_native((intptr_t)UART_CFG_STOP_BITS_2)},
+
+		{"DATA_BITS_5",evm_mk_native((intptr_t)UART_CFG_DATA_BITS_5)},
+		{"DATA_BITS_6",evm_mk_native((intptr_t)UART_CFG_DATA_BITS_6)},
+		{"DATA_BITS_7",evm_mk_native((intptr_t)UART_CFG_DATA_BITS_7)},
+		{"DATA_BITS_8",evm_mk_native((intptr_t)UART_CFG_DATA_BITS_8)},
+		{"DATA_BITS_9",evm_mk_native((intptr_t)UART_CFG_DATA_BITS_9)},
+
 		{NULL, NULL}
 	};
 	return *evm_class_create(e, (evm_native_fn)evm_module_uart, class_uart, NULL);
