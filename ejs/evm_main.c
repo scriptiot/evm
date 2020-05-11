@@ -2,8 +2,6 @@
 #include "uol_output.h"
 #include <drivers/gpio.h>
 
-#define EVM_NUMBER_OF_CALLBACKS 20
-
 evm_t * nevm_runtime;
 
 char evm_repl_tty_read(evm_t * e)
