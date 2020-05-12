@@ -39,9 +39,9 @@ static evm_val_t * args_list;
 static uint32_t number_of_callbacks;
 evm_t * evm_runtime;
 
-void evm_module_construct(evm_t* e, evm_val_t * p, int argc, evm_val_t * v, const char * api_name){
-    evm_val_t dev = nevm_function_invoke(e, api_name, argc, v);
-    nevm_object_function_invoke(e, &dev, "open", 0, NULL);
+void evm_module_construct(evm_t* e, evm_val_t * p, int argc, evm_val_t * v, uint16_t constructor_api, uint16_t open_api){
+    evm_val_t dev = nevm_function_invoke(e, constructor_api, argc, v);
+    nevm_object_function_invoke(e, &dev, open_api, 0, NULL);
     nevm_object_set_ext_data(p, evm_2_intptr(&dev) );
 }
 

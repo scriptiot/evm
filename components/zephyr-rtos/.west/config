@@ -2,5 +2,3 @@
 path = zephyr
 [zephyr]
 base = zephyr
-[build]
-dir-fmt = build/{board}/{app}

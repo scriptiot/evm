@@ -6,7 +6,7 @@
 static void timer_callback(struct k_timer *handle)
 {
     evm_val_t obj = evm_mk_object(handle->user_data);
-    evm_val_t val_id = nevm_object_get_value(nevm_runtime, &obj, "id");
+    evm_val_t val_id = nevm_object_function_invoke(nevm_runtime, &obj, EXPORT_TimerDevice_getId, 0, NULL);
     int id = evm_2_integer(&val_id);
     evm_val_t * fn = evm_module_get_callback(id);
     evm_run_callback(evm_runtime, fn, NULL, NULL, 0);

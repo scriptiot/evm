@@ -10,7 +10,7 @@
  */
 static evm_val_t evm_module_adc(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
 {
-	evm_module_construct(nevm_runtime, p, argc, v, "adcCreate");
+	evm_module_construct(nevm_runtime, p, argc, v, EXPORT_main_adcCreate, EXPORT_ADCDeivce_open);
 	return EVM_VAL_UNDEFINED;
 }
 /**
@@ -21,7 +21,7 @@ static evm_val_t evm_module_adc(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
 static evm_val_t evm_module_adc_read(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
 {
 	evm_val_t dev = evm_mk_object((void *)nevm_object_get_ext_data(p));
-	return nevm_object_function_invoke(nevm_runtime, &dev, "read", 0, NULL);
+	return nevm_object_function_invoke(nevm_runtime, &dev, EXPORT_ADCDeivce_read, 0, NULL);
 }
 
 evm_val_t evm_class_adc(evm_t *e)

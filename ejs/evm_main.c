@@ -2,8 +2,6 @@
 #include "uol_output.h"
 #include <drivers/gpio.h>
 
-#define EVM_NUMBER_OF_CALLBACKS 20
-
 evm_t * nevm_runtime;
 
 char evm_repl_tty_read(evm_t * e)
@@ -44,6 +42,7 @@ int nevm_runtime_setup(void){
     }
     err = nevm_start(nevm_runtime);
     if(err) {return err;}
+    printk("heap usage = %d\r\n", nevm_runtime->heap->free);
     return ec_ok;
 }
 
@@ -61,8 +60,6 @@ void console_setup(){
     console_init();	
 }
 
-extern int ecma_module(evm_t * e, int num_of_timers);
-
 int evm_main(void){
     console_setup();
 
@@ -79,7 +76,6 @@ int evm_main(void){
     evm_t * env = (evm_t*)malloc(sizeof(evm_t));
     memset(env, 0, sizeof(evm_t));
     int err = evm_init(env, EVM_HEAP_SIZE, EVM_STACK_SIZE, EVM_MODULE_SIZE, EVM_VAR_NAME_MAX_LEN, EVM_FILE_NAME_LEN);
-    err = ecma_module(env, 10);
     err = evm_module(env);
     err = evm_repl_run(env, 100, EVM_LANG_JS);
     return err;

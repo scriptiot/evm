@@ -12,7 +12,7 @@ find_package(Zephyr HINTS $ENV{ZEPHYR_BASE})
 project(ejs)
 
 set(EVM_BASE ${ZEPHYR_BASE}/../../../)
-set(LIBEJS ${EVM_BASE}/lib/arm-none-eabi-gcc/cortex-m4/libejs.a)
+# set(LIBEJS ${EVM_BASE}/lib/arm-none-eabi-gcc/cortex-m4/libejs.a)
 
 
 if(EXISTS ${LIBEJS})
@@ -22,7 +22,6 @@ else()
     set(LIBEVM_DIR ${EVM_DIR}/libevm/)
     set(LIBEVM_PRIVATE_DIR ${EVM_DIR}/private/)
     set(EVM_NATIVE_DIR ${EVM_DIR}/native/)
-    set(EVM_ECMA_DIR ${EVM_NATIVE_DIR}/ecma/)
     set(EVM_REPL_DIR ${EVM_NATIVE_DIR}/repl/)
     set(EVM_QML_DIR ${EVM_NATIVE_DIR}/qml/)
     set(EVM_PYTHON_DIR ${EVM_NATIVE_DIR}/python/)
@@ -66,7 +65,6 @@ else()
     )
 
     set(libejs_sources 
-        ${evm_ecma_sources}
         ${evm_common_sources}
         ${LIBEVM_DIR}/jsparser.c
         ${evm_repl_sources}
@@ -76,7 +74,6 @@ else()
         ${evm_common_sources}
         ${LIBEVM_DIR}/jsparser.c
         ${LIBEVM_DIR}/qmlparser.c
-        ${evm_ecma_sources}
         ${evm_qml_sources}
         ${evm_repl_sources}
     )
@@ -158,6 +155,7 @@ target_sources(app PRIVATE ${libevm_module_sources})
 target_sources(app PRIVATE src/main.c)
 target_sources(app PRIVATE ${EVM_BASE}/ejs/evm_main.c)
 target_sources(app PRIVATE src/evm_board.c)
+target_sources(app PRIVATE ${EVM_BASE}/ejs/uol_output.c)
 
 if(EXISTS ${LIBEJS})
     target_link_libraries(app PRIVATE ${LIBEJS})

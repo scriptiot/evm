@@ -4,7 +4,7 @@
 //Timer(String name)
 static evm_val_t evm_module_timer(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
 {
-	evm_module_construct(nevm_runtime, p, argc, v, "timerCreate");
+	evm_module_construct(nevm_runtime, p, argc, v, EXPORT_main_timerCreate, EXPORT_TimerDevice_open);
 	return EVM_VAL_UNDEFINED;
 }
 
@@ -12,7 +12,7 @@ static evm_val_t evm_module_timer(evm_t *e, evm_val_t *p, int argc, evm_val_t *v
 static evm_val_t evm_module_timer_setInterval(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
 {
 	evm_val_t dev = evm_mk_object((void*)nevm_object_get_ext_data(p));
-	return nevm_object_function_invoke(nevm_runtime, &dev, "start", 2, v);
+	return nevm_object_function_invoke(nevm_runtime, &dev, EXPORT_TimerDevice_start, 2, v);
 }
 
 //Timer.clearInterval(id)

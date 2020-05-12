@@ -70,7 +70,7 @@ evm_val_t nevm_driver_gpio_read_pin(evm_t * e, evm_val_t * p, int argc, evm_val_
     return evm_mk_number( gpio_pin_get(dev, (gpio_pin_t)evm_2_integer(v) ) );
 #endif
     return EVM_VAL_UNDEFINED;
-}
+} 
 //gpio_callback(Object callback, char pin)
 evm_val_t nevm_driver_gpio_callback(evm_t * e, evm_val_t * p, int argc, evm_val_t * v){
     (void)e;(void)p;

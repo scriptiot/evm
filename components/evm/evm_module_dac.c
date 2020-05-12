@@ -10,7 +10,7 @@
  */
 static evm_val_t evm_module_dac(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
 {
-	evm_module_construct(nevm_runtime, p, argc, v, "dacCreate");
+	evm_module_construct(nevm_runtime, p, argc, v, EXPORT_main_dacCreate, EXPORT_DACDevice_open);
 	return EVM_VAL_UNDEFINED;
 }
 
@@ -25,7 +25,7 @@ static evm_val_t evm_module_dac_write(evm_t *e, evm_val_t *p, int argc, evm_val_
 {
 	if( argc > 0 ){
 		evm_val_t dev = evm_mk_object((void*)nevm_object_get_ext_data(p));
-		nevm_object_function_invoke(nevm_runtime, &dev, "write", 1, v);
+		nevm_object_function_invoke(nevm_runtime, &dev, EXPORT_DACDevice_write, 1, v);
 	}
 	return EVM_VAL_UNDEFINED;
 }
