@@ -16,7 +16,6 @@ static evm_val_t evm_module_led(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
 	evm_module_construct(nevm_runtime, p, 3, &params, EXPORT_main_pinCreate, EXPORT_PinDevice_open);
 	return EVM_VAL_UNDEFINED;
 }
-
 //off()
 static evm_val_t evm_module_led_off(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
 {
@@ -25,7 +24,6 @@ static evm_val_t evm_module_led_off(evm_t *e, evm_val_t *p, int argc, evm_val_t 
 	nevm_object_function_invoke(nevm_runtime, &dev, EXPORT_PinDevice_write, 1, &val);
 	return EVM_VAL_UNDEFINED;
 }
-
 //on()
 static evm_val_t evm_module_led_on(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
 {
