@@ -28,18 +28,18 @@ static void uart_irq_handler(struct device *dev)
 
 #endif
 
-//uart_config(int baudrate, char databits, char parity, char stopbits, Object callback)
+//uart_config(int baudrate, char databits, char parity, char stopbits, char flow)
 evm_val_t nevm_driver_uart_config(evm_t * e, evm_val_t * p, int argc, evm_val_t * v){
     (void)p;
 #ifdef EVM_DRIVER_UART
     struct device * dev = (struct device *)nevm_object_get_ext_data(p);
 
     struct uart_config uart_cfg = {
-        .baudrate = evm_2_integer(V),
-        .parity = evm_2_integer(V+2),
-        .stop_bits = evm_2_integer(V+3),
-        .data_bits = evm_2_integer(V+1),
-        .flow_ctrl = evm_2_integer(V+4)
+        .baudrate = evm_2_integer(v),
+        .data_bits = evm_2_integer(v+1),
+        .parity = evm_2_integer(v+2),
+        .stop_bits = evm_2_integer(v+3),
+        .flow_ctrl = evm_2_integer(v+4)
     };
     uart_configure(dev, &uart_cfg);
 
