@@ -56,6 +56,10 @@ evm_val_t evm_class_uart(evm_t * e){
 		{"DATA_BITS_8",evm_mk_native((intptr_t)UART_CFG_DATA_BITS_8)},
 		{"DATA_BITS_9",evm_mk_native((intptr_t)UART_CFG_DATA_BITS_9)},
 
+		{"FLOW_CTRL_NONE",evm_mk_native((intptr_t)UART_CFG_FLOW_CTRL_NONE)},
+		{"FLOW_CTRL_RTS_CTS",evm_mk_native((intptr_t)UART_CFG_FLOW_CTRL_RTS_CTS)},
+		{"FLOW_CTRL_DTR_DSR",evm_mk_native((intptr_t)UART_CFG_FLOW_CTRL_DTR_DSR)},
+
 		{NULL, NULL}
 	};
 	return *evm_class_create(e, (evm_native_fn)evm_module_uart, class_uart, NULL);
