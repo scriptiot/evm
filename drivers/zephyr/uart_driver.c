@@ -45,6 +45,8 @@ evm_val_t nevm_driver_uart_config(evm_t * e, evm_val_t * p, int argc, evm_val_t 
 
     // uart_irq_callback_set(dev, uart_irq_handler);
     // uart_irq_rx_enable(dev);
+    // uart_irq_tx_enable(dev);
+
     return NEVM_TRUE;
 #endif
     return EVM_VAL_UNDEFINED;
@@ -65,22 +67,19 @@ evm_val_t nevm_driver_uart_deinit(evm_t * e, evm_val_t * p, int argc, evm_val_t 
     return EVM_VAL_UNDEFINED;
 }
 
-//uart_read_byte(char rec_data,int timeout=100)
+//uart_read_byte(char rec_data)
 evm_val_t nevm_driver_uart_read_byte(evm_t * e, evm_val_t * p, int argc, evm_val_t * v){
     (void)p;
 #ifdef EVM_DRIVER_UART
     struct device * dev = (struct device *)nevm_object_get_ext_data(p);
     char recv_char ;
-    int timeout = evm_2_integer(v+1); 
-    int start = k_cycle_get_32();
-    while ((k_cycle_get_32()- start)/(1000*1000)>timeout) 
+
+    if(uart_poll_in(dev, &recv_char) >= 0)
     {
-        if(uart_poll_in(dev, &recv_char) >= 0)
-        {
-            *v = evm_mk_number(recv_char) ;
-            return NEVM_TRUE;
-        }
+        *v = evm_mk_number(recv_char) ;
+        return NEVM_TRUE;
     }
+    
     return NEVM_FALSE;
 
 #endif
@@ -100,20 +99,19 @@ evm_val_t nevm_driver_uart_write_byte(evm_t * e, evm_val_t * p, int argc, evm_va
     return EVM_VAL_UNDEFINED;
 }
 
-//uart_read_bytes(len, timeout)
+//uart_read_bytes(buffer,len)
 evm_val_t nevm_driver_uart_read_bytes(evm_t * e, evm_val_t * p, int argc, evm_val_t * v){
     (void)p;
 #ifdef EVM_DRIVER_UART
     struct device * dev = (struct device *)nevm_object_get_ext_data(p);
 
-    int len = evm_2_integer(v);
-    int timeout = evm_2_integer(v + 1);
+	uint8_t *buf = evm_buffer_addr(v);
+    int len = evm_2_integer(v+1);
 
     char *buff = (char *)malloc(sizeof(char)*len);
 
     int index = 0;
-    int start = k_cycle_get_32();
-    while ((k_cycle_get_32()- start)/(1000*1000)>timeout) 
+    while (index < len) 
     {
         if(uart_poll_in(dev, &recv_char) >= 0)
         {
@@ -132,18 +130,17 @@ evm_val_t nevm_driver_uart_read_bytes(evm_t * e, evm_val_t * p, int argc, evm_va
 #endif
     return EVM_VAL_UNDEFINED;
 }
-//uart_write_bytes(buf, offset, len)
+//uart_write_bytes(buf, len)
 evm_val_t nevm_driver_uart_write_bytes(evm_t * e, evm_val_t * p, int argc, evm_val_t * v){
     (void)p;
 #ifdef EVM_DRIVER_UART
     struct device * dev = (struct device *)nevm_object_get_ext_data(p);
 
     char * buf = evm_buffer_addr(v);
-    int offset = evm_2_integer(v + 1);
-    int len = evm_2_integer(v + 2);
+    int len = evm_2_integer(v + 1);
 
     for (i = 0; i <len; i++) {
-        uart_poll_out(dev, buf[i+offset]);
+        uart_poll_out(dev, buf[i]);
 
     return evm_mk_number(len);
 #endif
