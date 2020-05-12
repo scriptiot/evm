@@ -22,7 +22,6 @@ else()
     set(LIBEVM_DIR ${EVM_DIR}/libevm/)
     set(LIBEVM_PRIVATE_DIR ${EVM_DIR}/private/)
     set(EVM_NATIVE_DIR ${EVM_DIR}/native/)
-    set(EVM_ECMA_DIR ${EVM_NATIVE_DIR}/ecma/)
     set(EVM_REPL_DIR ${EVM_NATIVE_DIR}/repl/)
     set(EVM_QML_DIR ${EVM_NATIVE_DIR}/qml/)
     set(EVM_PYTHON_DIR ${EVM_NATIVE_DIR}/python/)
@@ -66,7 +65,6 @@ else()
     )
 
     set(libejs_sources 
-        ${evm_ecma_sources}
         ${evm_common_sources}
         ${LIBEVM_DIR}/jsparser.c
         ${evm_repl_sources}
@@ -76,7 +74,6 @@ else()
         ${evm_common_sources}
         ${LIBEVM_DIR}/jsparser.c
         ${LIBEVM_DIR}/qmlparser.c
-        ${evm_ecma_sources}
         ${evm_qml_sources}
         ${evm_repl_sources}
     )
