@@ -3,6 +3,18 @@
 #include <drivers/uart.h>
 
 //UART(name, baudrate, databits, parity, stopbits, rxBufSize)
+/**
+ * @brief UART constructor. if only device name is given, the rest parameters are set to default
+ * 
+ * @param name	serial port name 
+ * @param baudrate	baudrate of serial port
+ * @param databits	databits
+ * @param parity	parity
+ * @param stopbits	stopbits
+ * @param rxBufSize	receiving buffer size
+ * 
+ * @usage new UART('UART_2') 
+ */
 static evm_val_t evm_module_uart(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
 {
 	if( argc == 1 ){
@@ -21,6 +33,11 @@ static evm_val_t evm_module_uart(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
 }
 
 //UART.any()
+/**
+ * @brief get the number of bytes remained in buffer
+ * 
+ * @usage UART.any() 
+ */
 static evm_val_t evm_module_uart_any(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
 {
 	evm_val_t dev = evm_mk_object((void *)nevm_object_get_ext_data(p));
@@ -28,6 +45,14 @@ static evm_val_t evm_module_uart_any(evm_t *e, evm_val_t *p, int argc, evm_val_t
 }
 
 //UART.read(buf, offset, size)
+/**
+ * @brief read data into a given buffer
+ * 
+ * @param buf		a buffer object
+ * @param offset	buffer offset	
+ * @param size		the size of data
+ * @usage UART(buf, 0, 10) 
+ */
 static evm_val_t evm_module_uart_read(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
 {
 	if(argc>2){
@@ -39,6 +64,16 @@ static evm_val_t evm_module_uart_read(evm_t *e, evm_val_t *p, int argc, evm_val_
 
 
 //UART.write(buf, offset, size) | UART.write(str)
+/**
+ * @brief write the content of buffer into serial port
+ * 
+ * @param str		String object
+ * 
+ * @param buf		buffer object 
+ * @param offset	buffer offset
+ * @param size		size of data to be written 
+ * @usage UART.write('evm'), UART.write(buf, 0, 10) 
+ */
 static evm_val_t evm_module_uart_write(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
 {
 	evm_val_t dev = evm_mk_object((void*)nevm_object_get_ext_data(p));
