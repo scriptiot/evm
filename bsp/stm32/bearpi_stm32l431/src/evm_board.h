@@ -2,6 +2,7 @@
 #define EVM_BOARD_H
 
 #include <drivers/gpio.h>
+#include <drivers/uart.h>
 
 typedef struct pin_group {
 	char* port;
@@ -28,5 +29,20 @@ int evm_board_get_pin_group_size(pin_group * group);
 #define CONFIG_EVM_GPIO_PUD_PULL_DOWN         GPIO_PUD_PULL_DOWN
 #define CONFIG_EVM_GPIO_OPEN_SOURCE           GPIO_OPEN_SOURCE
 #define CONFIG_EVM_GPIO_OPEN_DRAIN            GPIO_OPEN_DRAIN
+
+
+#define CONFIG_EVM_UART_PARITY_NONE           UART_CFG_PARITY_NONE
+#define CONFIG_EVM_UART_PARITY_ODD            UART_CFG_PARITY_ODD
+#define CONFIG_EVM_UART_PARITY_EVEN           UART_CFG_PARITY_EVEN
+#define CONFIG_EVM_UART_STOP_BITS_0_5     UART_CFG_STOP_BITS_0_5
+#define CONFIG_EVM_UART_STOP_BITS_1       UART_CFG_STOP_BITS_1
+#define CONFIG_EVM_UART_STOP_BITS_1_5     UART_CFG_STOP_BITS_1_5
+#define CONFIG_EVM_UART_STOP_BITS_2       UART_CFG_STOP_BITS_2
+
+#define CONFIG_EVM_UART_DATA_BITS_5       UART_CFG_DATA_BITS_5
+#define CONFIG_EVM_UART_DATA_BITS_6       UART_CFG_DATA_BITS_6
+#define CONFIG_EVM_UART_DATA_BITS_7       UART_CFG_DATA_BITS_7
+#define CONFIG_EVM_UART_DATA_BITS_8       UART_CFG_DATA_BITS_8
+#define CONFIG_EVM_UART_DATA_BITS_9       UART_CFG_DATA_BITS_9
 
 #endif

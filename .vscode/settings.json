@@ -24,6 +24,9 @@
         "display_st7789v.h": "c",
         "stdio.h": "c",
         "console.h": "c",
-        "uol_output.h": "c"
+        "uol_output.h": "c",
+        "eeprom.h": "c",
+        "uart.h": "c",
+        "sstream": "c"
     }
 }

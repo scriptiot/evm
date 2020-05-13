@@ -30,8 +30,8 @@
 #ifdef CONFIG_EVM_LED
 	extern evm_val_t evm_class_led(evm_t * e);
 #endif
-#ifdef CONFIG_EVM_WATCHDOG
-
+#ifdef CONFIG_EVM_UART
+	extern evm_val_t evm_class_uart(evm_t * e);
 #endif
 
 static evm_val_t * callback_list;
@@ -115,6 +115,9 @@ int evm_module(evm_t * e){
 #endif
 #ifdef CONFIG_EVM_TIMER
 		{"Timer", evm_class_timer(e)},
+#endif
+#ifdef CONFIG_EVM_UART
+		{"UART", evm_class_uart(e)},
 #endif
         {NULL, NULL}
     };

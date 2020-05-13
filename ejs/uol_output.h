@@ -7,6 +7,14 @@ extern const char uol_binary_buf[];
 #define EXPORT_FlashDevice_write    16    
 #define EXPORT_FlashDevice_erase    20    
 #define EXPORT_FlashDevice_write_block_size    24    
+#define EXPORT_SerialDevice_open    15    
+#define EXPORT_SerialDevice_close    19    
+#define EXPORT_SerialDevice_read    23    
+#define EXPORT_SerialDevice_readPoll    27    
+#define EXPORT_SerialDevice_write    31    
+#define EXPORT_SerialDevice_writeString    35    
+#define EXPORT_SerialDevice_writeToBuffer    39    
+#define EXPORT_SerialDevice_count    43    
 #define EXPORT_PinDevice_open    9    
 #define EXPORT_PinDevice_close    13    
 #define EXPORT_PinDevice_read    17    
@@ -28,10 +36,11 @@ extern const char uol_binary_buf[];
 #define EXPORT_WatchDogDevice_setup    16    
 #define EXPORT_WatchDogDevice_feed    20    
 #define EXPORT_WatchDogDevice_disable    24    
-#define EXPORT_main_flashCreate    40    
-#define EXPORT_main_timerCreate    44    
-#define EXPORT_main_pinCreate    48    
-#define EXPORT_main_adcCreate    52    
-#define EXPORT_main_dacCreate    56    
-#define EXPORT_main_watchdogCreate    60    
+#define EXPORT_main_serialCreate    44    
+#define EXPORT_main_flashCreate    48    
+#define EXPORT_main_timerCreate    52    
+#define EXPORT_main_pinCreate    56    
+#define EXPORT_main_adcCreate    60    
+#define EXPORT_main_dacCreate    64    
+#define EXPORT_main_watchdogCreate    68    
 #endif

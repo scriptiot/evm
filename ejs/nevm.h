@@ -21,14 +21,11 @@ intptr_t nevm_object_get_ext_data(evm_val_t *o);
 evm_val_t *nevm_object_create_by_class(evm_t *e, evm_val_t * cls);
 void nevm_builtin_init(nevm_builtin_t * builtins);
 
-
 extern evm_t * nevm_runtime;
 
 /**** invokable interface for evm *****/
-evm_val_t nevm_function_invoke(evm_t * ne, const char * name, int argc, evm_val_t *args);
-evm_val_t nevm_object_function_invoke(evm_t * ne, evm_val_t * obj, const char * name, int argc, evm_val_t * args);
-int nevm_object_set_value(evm_t * ne, evm_val_t * obj, const char * name, evm_val_t v);
-evm_val_t nevm_object_get_value(evm_t * ne, evm_val_t * obj, const char * name);
+evm_val_t nevm_function_invoke(evm_t * ne, uint16_t export_addr, int argc, evm_val_t *args);
+evm_val_t nevm_object_function_invoke(evm_t * ne, evm_val_t * obj, uint16_t export_addr, int argc, evm_val_t * args);
 /**************************************/
 
 #define NEVM_ARG_LENGTH_ERR { evm_set_err(e, ec_type, "Invalid argument length");return EVM_VAL_UNDEFINED; }
@@ -119,8 +116,6 @@ extern evm_val_t nevm_driver_timer_stop(evm_t * e, evm_val_t * p, int argc, evm_
 extern evm_val_t nevm_driver_uart_config(evm_t * e, evm_val_t * p, int argc, evm_val_t * v);
 extern evm_val_t nevm_driver_uart_init(evm_t * e, evm_val_t * p, int argc, evm_val_t * v);
 extern evm_val_t nevm_driver_uart_deinit(evm_t * e, evm_val_t * p, int argc, evm_val_t * v);
-extern evm_val_t nevm_driver_uart_read_byte(evm_t * e, evm_val_t * p, int argc, evm_val_t * v);
-extern evm_val_t nevm_driver_uart_write_byte(evm_t * e, evm_val_t * p, int argc, evm_val_t * v);
 extern evm_val_t nevm_driver_uart_read_bytes(evm_t * e, evm_val_t * p, int argc, evm_val_t * v);
 extern evm_val_t nevm_driver_uart_write_bytes(evm_t * e, evm_val_t * p, int argc, evm_val_t * v);
 /****** watchdog native api interface *****/
