@@ -74,6 +74,28 @@ int evm_module_remove_callback(int id){
 	evm_list_set(evm_runtime, args_list, id, EVM_VAL_UNDEFINED);
 	return ec_ok;
 }
+/**
+ * @brief 硬件延时
+ * 
+ * @param ms 延时毫秒
+ * @usage m.delay_ms(100) 
+ */
+static evm_val_t evm_module_delay_ms(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
+{
+	nevm_function_invoke(nevm_runtime, EXPORT_main_sysDelayMs, argc, v);
+	return EVM_VAL_UNDEFINED;
+}
+/**
+ * @brief 硬件延时
+ * 
+ * @param ms 延时微秒
+ * @usage m.delay_us(100) 
+ */
+static evm_val_t evm_module_delay_us(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
+{
+	nevm_function_invoke(nevm_runtime, EXPORT_main_sysDelayUs, argc, v);
+	return EVM_VAL_UNDEFINED;
+}
 
 int evm_module(evm_t * e){
 	evm_runtime = e;
@@ -90,6 +112,8 @@ int evm_module(evm_t * e){
 	if( !args_list ) return e->err;
 
 	evm_builtin_t module[] = {
+		{"delay_ms", evm_mk_native((intptr_t)evm_module_delay_ms)},
+		{"delay_us", evm_mk_native((intptr_t)evm_module_delay_us)},
 #ifdef CONFIG_EVM_GPIO
 		{"Pin", evm_class_pin(e)},
 #endif

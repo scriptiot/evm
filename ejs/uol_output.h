@@ -36,11 +36,13 @@ extern const char uol_binary_buf[];
 #define EXPORT_WatchDogDevice_setup    16    
 #define EXPORT_WatchDogDevice_feed    20    
 #define EXPORT_WatchDogDevice_disable    24    
-#define EXPORT_main_serialCreate    44    
-#define EXPORT_main_flashCreate    48    
-#define EXPORT_main_timerCreate    52    
-#define EXPORT_main_pinCreate    56    
-#define EXPORT_main_adcCreate    60    
-#define EXPORT_main_dacCreate    64    
-#define EXPORT_main_watchdogCreate    68    
+#define EXPORT_main_sysDelayMs    44    
+#define EXPORT_main_sysDelayUs    48    
+#define EXPORT_main_serialCreate    52    
+#define EXPORT_main_flashCreate    56    
+#define EXPORT_main_timerCreate    60    
+#define EXPORT_main_pinCreate    64    
+#define EXPORT_main_adcCreate    68    
+#define EXPORT_main_dacCreate    72    
+#define EXPORT_main_watchdogCreate    76    
 #endif

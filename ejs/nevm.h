@@ -125,6 +125,7 @@ extern evm_val_t nevm_driver_watchdog_feed(evm_t * e, evm_val_t * p, int argc, e
 extern evm_val_t nevm_driver_watchdog_disable(evm_t * e, evm_val_t * p, int argc, evm_val_t * v);
 /****** system native api interface *****/
 extern evm_val_t nevm_driver_system_delay_ms(evm_t * e, evm_val_t * p, int argc, evm_val_t * v);
+extern evm_val_t nevm_driver_system_delay_us(evm_t * e, evm_val_t * p, int argc, evm_val_t * v);
 extern evm_val_t nevm_driver_system_is_device_valid(evm_t * e, evm_val_t * p, int argc, evm_val_t * v);
 #endif
 
