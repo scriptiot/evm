@@ -117,6 +117,7 @@ set(evm_driver_sources
     ${EVM_BASE}/drivers/zephyr/uart_driver.c
     ${EVM_BASE}/drivers/zephyr/watchdog_driver.c
     ${EVM_BASE}/drivers/zephyr/pwm_driver.c
+    ${EVM_BASE}/drivers/zephyr/sys_driver.c
 )
 
 set(evm_modules_sources 
