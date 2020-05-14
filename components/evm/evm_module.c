@@ -92,7 +92,7 @@ int evm_module(evm_t * e){
 #ifdef CONFIG_EVM_LCD
 		{"LCD", evm_class_lcd(e)},
 #endif
-#ifdef CONFIG__LED
+#ifdef CONFIG_EVM_LED
 		{"LED", evm_class_led(e)},
 #endif
 #ifdef CONFIG_EVM_FLASH
