@@ -38,3 +38,16 @@ west build -b bearpi_stm32l431 bsp/stm32/bearpi_stm32l431
 west flash
 ```
 
+### 4. 快速体验ejs
+
++ 根据指定的board芯片类型进行编译
+
+```
+west build -b qemu_cortex_m3 bsp/qemu_cortex_m3/ejs -d build/qemu_cortex_m3/ejs
+```
+
++ 运行程序
+
+```
+west build -t run -d build/qemu_cortex_m3/ejs
+```
