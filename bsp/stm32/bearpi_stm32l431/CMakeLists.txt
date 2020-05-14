@@ -16,7 +16,7 @@ set(EVM_BASE ${ZEPHYR_BASE}/../../../)
 
 
 if(EXISTS ${LIBEJS})
-    message(${LIBEJS})
+    target_link_libraries(app PRIVATE ${LIBEJS})
 else()
     set(EVM_DIR ${EVM_BASE}/../evm/)
     set(LIBEVM_DIR ${EVM_DIR}/libevm/)
@@ -157,10 +157,6 @@ target_sources(app PRIVATE src/main.c)
 target_sources(app PRIVATE ${EVM_BASE}/ejs/evm_main.c)
 target_sources(app PRIVATE src/evm_board.c)
 target_sources(app PRIVATE ${EVM_BASE}/ejs/uol_output.c)
-
-if(EXISTS ${LIBEJS})
-    target_link_libraries(app PRIVATE ${LIBEJS})
-endif()
 
 add_definitions("-DCONFIG_EVM_GPIO")
 add_definitions("-DCONFIG_EVM_FLASH")
