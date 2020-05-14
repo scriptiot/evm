@@ -24,7 +24,7 @@
 #ifdef CONFIG_EVM_SWITCH
 	extern evm_val_t evm_class_switch(evm_t * e);
 #endif
-#ifdef CONFIG_EVM_GPIO
+#ifdef CONFIG_EVM_TIMER
 	extern evm_val_t evm_class_timer(evm_t * e);
 #endif
 #ifdef CONFIG_EVM_LED
