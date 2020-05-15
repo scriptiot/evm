@@ -1,7 +1,7 @@
 #! /bin/bash
 OS=$(expr substr $(uname -s) 1 5)
 echo ${OS}
-if [ ${OS}=='Linux' ]; then
+if [ ${OS} == 'Linux' ]; then
     sudo apt install --no-install-recommends git cmake ninja-build gperf \
           ccache dfu-util device-tree-compiler wget \
           python3-dev python3-pip python3-setuptools python3-tk python3-wheel xz-utils file \
@@ -54,7 +54,7 @@ if [ ${OS}=='Linux' ]; then
     west update
     west zephyr-export
 
-elif [ ${OS}=='MINGW' ]; then
+elif [ ${OS} == 'MINGW' ]; then
 
     if [ $# != 1 ] ; then 
         echo "USAGE: $0 [path of evm-tools]" 
