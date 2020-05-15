@@ -444,6 +444,7 @@ evm_val_t * ecma_math_init(evm_t * e){
     evm_prop_set(e, ecma_math_object, 42, "trunc", evm_mk_native((intptr_t)ecma_math_trunc));
 
     ecma_object_attrs_apply(e, ecma_math_object, ecma_object_prototype);
+    
     return ecma_math_object;
 }
 #endif
