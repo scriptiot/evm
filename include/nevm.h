@@ -12,7 +12,7 @@
 
 typedef struct nevm_builtin_t{
     const char * name;
-    evm_native_fn func;
+    evm_val_t (*func)(evm_t * e, evm_val_t * self, int vc, evm_val_t * v);
 }nevm_builtin_t;
 
 void nevm_object_set_ext_data(evm_val_t * o, intptr_t ptr);
@@ -41,7 +41,6 @@ extern evm_val_t nevm_driver_adc_init(evm_t * e, evm_val_t * p, int argc, evm_va
 extern evm_val_t nevm_driver_adc_deinit(evm_t * e, evm_val_t * p, int argc, evm_val_t * v);
 extern evm_val_t nevm_driver_adc_get_value(evm_t * e, evm_val_t * p, int argc, evm_val_t * v);
 /****** can native api interface *****/
-extern evm_val_t nevm_driver_can_gpio_init(evm_t * e, evm_val_t * p, int argc, evm_val_t * v);
 extern evm_val_t nevm_driver_can_config(evm_t * e, evm_val_t * p, int argc, evm_val_t * v);
 extern evm_val_t nevm_driver_can_init(evm_t * e, evm_val_t * p, int argc, evm_val_t * v);
 extern evm_val_t nevm_driver_can_deinit(evm_t * e, evm_val_t * p, int argc, evm_val_t * v);
@@ -72,7 +71,6 @@ extern evm_val_t nevm_driver_gpio_write_pin(evm_t * e, evm_val_t * p, int argc, 
 extern evm_val_t nevm_driver_gpio_read_pin(evm_t * e, evm_val_t * p, int argc, evm_val_t * v);
 extern evm_val_t nevm_driver_gpio_callback(evm_t * e, evm_val_t * p, int argc, evm_val_t * v);
 /****** i2c native api interface *****/
-extern evm_val_t nevm_driver_i2c_gpio_init(evm_t * e, evm_val_t * p, int argc, evm_val_t * v);
 extern evm_val_t nevm_driver_i2c_config(evm_t * e, evm_val_t * p, int argc, evm_val_t * v);
 extern evm_val_t nevm_driver_i2c_init(evm_t * e, evm_val_t * p, int argc, evm_val_t * v);
 extern evm_val_t nevm_driver_i2c_deinit(evm_t * e, evm_val_t * p, int argc, evm_val_t * v);
@@ -98,7 +96,6 @@ extern evm_val_t nevm_driver_rtc_set_alarm(evm_t * e, evm_val_t * p, int argc, e
 extern evm_val_t nevm_driver_rtc_get_alarm(evm_t * e, evm_val_t * p, int argc, evm_val_t * v);
 extern evm_val_t nevm_driver_rtc_deactivate_alarm(evm_t * e, evm_val_t * p, int argc, evm_val_t * v);
 /****** spi native api interface *****/
-extern evm_val_t nevm_driver_spi_gpio_init(evm_t * e, evm_val_t * p, int argc, evm_val_t * v);
 extern evm_val_t nevm_driver_spi_config(evm_t * e, evm_val_t * p, int argc, evm_val_t * v);
 extern evm_val_t nevm_driver_spi_init(evm_t * e, evm_val_t * p, int argc, evm_val_t * v);
 extern evm_val_t nevm_driver_spi_deinit(evm_t * e, evm_val_t * p, int argc, evm_val_t * v);
@@ -116,8 +113,6 @@ extern evm_val_t nevm_driver_timer_stop(evm_t * e, evm_val_t * p, int argc, evm_
 extern evm_val_t nevm_driver_uart_config(evm_t * e, evm_val_t * p, int argc, evm_val_t * v);
 extern evm_val_t nevm_driver_uart_init(evm_t * e, evm_val_t * p, int argc, evm_val_t * v);
 extern evm_val_t nevm_driver_uart_deinit(evm_t * e, evm_val_t * p, int argc, evm_val_t * v);
-extern evm_val_t nevm_driver_uart_read_byte(evm_t * e, evm_val_t * p, int argc, evm_val_t * v);
-extern evm_val_t nevm_driver_uart_write_byte(evm_t * e, evm_val_t * p, int argc, evm_val_t * v);
 extern evm_val_t nevm_driver_uart_read_bytes(evm_t * e, evm_val_t * p, int argc, evm_val_t * v);
 extern evm_val_t nevm_driver_uart_write_bytes(evm_t * e, evm_val_t * p, int argc, evm_val_t * v);
 /****** watchdog native api interface *****/
@@ -128,5 +123,9 @@ extern evm_val_t nevm_driver_watchdog_install_timeout(evm_t * e, evm_val_t * p, 
 extern evm_val_t nevm_driver_watchdog_setup(evm_t * e, evm_val_t * p, int argc, evm_val_t * v);
 extern evm_val_t nevm_driver_watchdog_feed(evm_t * e, evm_val_t * p, int argc, evm_val_t * v);
 extern evm_val_t nevm_driver_watchdog_disable(evm_t * e, evm_val_t * p, int argc, evm_val_t * v);
+/****** system native api interface *****/
+extern evm_val_t nevm_driver_system_delay_ms(evm_t * e, evm_val_t * p, int argc, evm_val_t * v);
+extern evm_val_t nevm_driver_system_delay_us(evm_t * e, evm_val_t * p, int argc, evm_val_t * v);
+extern evm_val_t nevm_driver_system_is_device_valid(evm_t * e, evm_val_t * p, int argc, evm_val_t * v);
 #endif
 
