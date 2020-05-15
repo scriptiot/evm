@@ -29,7 +29,7 @@ cd tools
 + 根据指定的board芯片类型进行编译
 
 ```
-west build -b bearpi_stm32l431 bsp/stm32/bearpi_stm32l431
+west build -b bearpi_stm32l431 bsp/stm32/bearpi_stm32l431 -d build/stm32/bearpi_stm32l431
 ```
 
 + 烧写程序
