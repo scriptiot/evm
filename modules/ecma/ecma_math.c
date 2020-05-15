@@ -394,20 +394,8 @@ evm_val_t ecma_math_trunc(evm_t * e, evm_val_t * p, int argc, evm_val_t * v){
     return ecma_math_args(e, p, argc, v, Trunc);
 }
 
-
-evm_val_t ecma_math_undefined(evm_t * e, evm_val_t * p, int argc, evm_val_t * v){
-    (void)e;
-    (void)p;
-    (void)argc;
-    (void)v;
-    return evm_mk_undefined();
-}
-
-
-
 extern void ecma_object_attrs_apply(evm_t * e, evm_val_t * o, evm_val_t * prototype);
 evm_val_t * ecma_math_init(evm_t * e){
-    //此处注意，GC_NATIVE_OBJECT表示内部OBJECT，防止被垃圾回收干掉，GC尚未实现GC_NATIVE_OBJECT
     evm_val_t * ecma_math_object = evm_object_create(e, GC_NATIVE_OBJECT, 43, 0);
     if( ecma_math_object == NULL ) return NULL;
     evm_prop_set(e, ecma_math_object, 0, "E", evm_mk_number(2.718281828459045));

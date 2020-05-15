@@ -102,10 +102,8 @@ evm_val_t ecma_array(evm_t * e, evm_val_t * p, int argc, evm_val_t * v){
     (void)p;
     evm_val_t *o = NULL;
     if(argc == 0) {
-        //创建一个数组（这里list即为数组）
         o = evm_list_create(e, GC_LIST, 0);
     } else if( argc == 1){
-        //创建数组，并指定数组内容个数
         if( evm_is_number(v) ) {
             o = evm_list_create(e, GC_LIST, evm_2_integer(v));
         } else {
@@ -113,7 +111,6 @@ evm_val_t ecma_array(evm_t * e, evm_val_t * p, int argc, evm_val_t * v){
             evm_list_set(e, o, 0, *v);
         }
     } else {
-        //创建一定数量的数组，并赋值内容
         o = evm_list_create(e, GC_LIST, argc);
         for(int i = 0; i < argc; i++){
             evm_list_set(e, o, i, *(v + i));
@@ -167,7 +164,6 @@ evm_val_t ecma_array_indexOf(evm_t * e, evm_val_t * p, int argc, evm_val_t * v){
     }
     return evm_mk_number(-1);
 }
-
 
 evm_val_t * ecma_array_init(evm_t * e){
     evm_val_t * o = evm_native_function_create(e, (evm_native_fn)ecma_array, 1);
