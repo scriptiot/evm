@@ -172,4 +172,4 @@ add_definitions("-DCONFIG_EVM_UART")
 
 # ecma module config
 add_definitions("-DCONFIG_EVM_ECMA_OBJECT")
-add_definitions("-DCONFIG_EVM_ECMA_ARRAY")
+add_definitions("-DCONFIG_EVM_ECMA_MATH")

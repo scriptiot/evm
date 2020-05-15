@@ -4,6 +4,8 @@
 #include <ctype.h>
 #include <time.h>
 
+evm_val_t * ecma_Math;
+
 enum MathFuncs
 {
     Abs = 0,
@@ -42,8 +44,6 @@ enum MathFuncs
     Tanh,
     Trunc
 };
-
-extern evm_val_t* object_prototype;
 
 evm_val_t ecma_math_args(evm_t * e, evm_val_t * p, int argc, evm_val_t * v, int type){
     (void)e;
@@ -443,7 +443,7 @@ evm_val_t * ecma_math_init(evm_t * e){
     evm_prop_set(e, ecma_math_object, 41, "tanh", evm_mk_native((intptr_t)ecma_math_tanh));
     evm_prop_set(e, ecma_math_object, 42, "trunc", evm_mk_native((intptr_t)ecma_math_trunc));
 
-    ecma_object_attrs_apply(e, ecma_math_object, object_prototype);
+    ecma_object_attrs_apply(e, ecma_math_object, ecma_object_prototype);
     return ecma_math_object;
 }
 #endif
