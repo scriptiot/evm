@@ -136,19 +136,18 @@ elif [ ${OS}=='MINGW' ]; then
     west update
     west zephyr-export
     echo "==========【west update successfully】==============="
-
-    echo -e "\n\nCongratulations! You have install 【EVM】 environment successfully!"
-
-    echo -e "\r\n\
-    _____ __     __ __  __ \r\n\
-    | ____|\\ \\   / /|  \\/  | \r\n\
-    |  _|   \\ \\ / / | |\\/| | \r\n\
-    | |___   \\ V /  | |  | | \r\n\
-    |_____|   \\_/   |_|  |_| \r\n\
-                            \r\n\
-    Github: https://github.com/scriptiot/evm \r\n\
-    Copyright (C) 2020 @scriptiot \r\n\
-    \r\n"
-
-    echo -e "Please restart Git windows!\n"
 fi
+echo -e "\n\nCongratulations! You have install 【EVM & Zephyr】 environment successfully!"
+
+echo -e "\r\n\
+_____ __     __ __  __ \r\n\
+| ____|\\ \\   / /|  \\/  | \r\n\
+|  _|   \\ \\ / / | |\\/| | \r\n\
+| |___   \\ V /  | |  | | \r\n\
+|_____|   \\_/   |_|  |_| \r\n\
+                        \r\n\
+Github: https://github.com/scriptiot/evm \r\n\
+Copyright (C) 2020 @scriptiot \r\n\
+\r\n"
+
+echo -e "Please restart your Git windows or Terminal!\n"
