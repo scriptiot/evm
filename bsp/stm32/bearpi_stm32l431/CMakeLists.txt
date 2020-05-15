@@ -51,19 +51,6 @@ else()
         ${EVM_PYTHON_DIR}/python_builtins.c
     )
 
-    set(evm_ecma_sources 
-        ${EVM_ECMA_DIR}/ecma.c
-        ${EVM_ECMA_DIR}/ecma_object.c
-        ${EVM_ECMA_DIR}/ecma_array.c
-        ${EVM_ECMA_DIR}/ecma_math.c
-        ${EVM_ECMA_DIR}/ecma_regexp.c
-        ${EVM_ECMA_DIR}/ecma_number.c
-        ${EVM_ECMA_DIR}/ecma_date.c
-        ${EVM_ECMA_DIR}/ecma_string.c
-        ${EVM_ECMA_DIR}/ecma_date.c
-        ${EVM_ECMA_DIR}/re.c
-    )
-
     set(libejs_sources 
         ${evm_common_sources}
         ${LIBEVM_DIR}/jsparser.c
@@ -103,6 +90,16 @@ else()
     target_link_libraries(app PRIVATE ejs)
 endif()
 
+set(evm_ecma_sources 
+    ${EVM_BASE}/modules/ecma/ecma.c
+    ${EVM_BASE}/modules/ecma/ecma_object.c
+    ${EVM_BASE}/modules/ecma/ecma_array.c
+    ${EVM_BASE}/modules/ecma/ecma_math.c
+    ${EVM_BASE}/modules/ecma/ecma_regexp.c
+    ${EVM_BASE}/modules/ecma/ecma_number.c
+    ${EVM_BASE}/modules/ecma/ecma_string.c
+    ${EVM_BASE}/modules/ecma/re.c
+)
 
 set(evm_driver_sources 
     ${EVM_BASE}/drivers/zephyr/adc_driver.c 
@@ -121,27 +118,28 @@ set(evm_driver_sources
 )
 
 set(evm_modules_sources 
-    ${EVM_BASE}/components/evm/evm_module.c 
-    ${EVM_BASE}/components/evm/evm_module_adc.c 
-    ${EVM_BASE}/components/evm/evm_module_can.c
-    ${EVM_BASE}/components/evm/evm_module_dac.c
-    ${EVM_BASE}/components/evm/evm_module_flash.c
-    ${EVM_BASE}/components/evm/evm_module_i2c.c
-    ${EVM_BASE}/components/evm/evm_module_lcd.c
-    ${EVM_BASE}/components/evm/evm_module_led.c
-    ${EVM_BASE}/components/evm/evm_module_pin.c
-    ${EVM_BASE}/components/evm/evm_module_rtc.c
-    ${EVM_BASE}/components/evm/evm_module_spi.c
-    ${EVM_BASE}/components/evm/evm_module_switch.c
-    ${EVM_BASE}/components/evm/evm_module_timer.c
-    ${EVM_BASE}/components/evm/evm_module_uart.c
-    ${EVM_BASE}/components/evm/evm_module_watchdog.c
-    ${EVM_BASE}/components/evm/evm_module_led.c
+    ${EVM_BASE}/modules/evm/evm_module.c 
+    ${EVM_BASE}/modules/evm/evm_module_adc.c 
+    ${EVM_BASE}/modules/evm/evm_module_can.c
+    ${EVM_BASE}/modules/evm/evm_module_dac.c
+    ${EVM_BASE}/modules/evm/evm_module_flash.c
+    ${EVM_BASE}/modules/evm/evm_module_i2c.c
+    ${EVM_BASE}/modules/evm/evm_module_lcd.c
+    ${EVM_BASE}/modules/evm/evm_module_led.c
+    ${EVM_BASE}/modules/evm/evm_module_pin.c
+    ${EVM_BASE}/modules/evm/evm_module_rtc.c
+    ${EVM_BASE}/modules/evm/evm_module_spi.c
+    ${EVM_BASE}/modules/evm/evm_module_switch.c
+    ${EVM_BASE}/modules/evm/evm_module_timer.c
+    ${EVM_BASE}/modules/evm/evm_module_uart.c
+    ${EVM_BASE}/modules/evm/evm_module_watchdog.c
+    ${EVM_BASE}/modules/evm/evm_module_led.c
 )
 
 set(libevm_module_sources 
     ${evm_driver_sources}
     ${evm_modules_sources}
+    ${evm_ecma_sources}
 )
 
 add_definitions("-DQMAKE_TARGET=\"ejs\"")
@@ -150,6 +148,8 @@ remove_definitions("-DWall")
 
 include_directories(app PRIVATE ${EVM_BASE}/include)
 include_directories(app PRIVATE ${EVM_BASE}/ejs)
+include_directories(app PRIVATE ${EVM_BASE}/modules/ecma)
+include_directories(app PRIVATE ${EVM_BASE}/modules/evm)
 include_directories(app PRIVATE src)
 
 target_sources(app PRIVATE ${libevm_module_sources})
@@ -158,6 +158,7 @@ target_sources(app PRIVATE ${EVM_BASE}/ejs/evm_main.c)
 target_sources(app PRIVATE src/evm_board.c)
 target_sources(app PRIVATE ${EVM_BASE}/ejs/uol_output.c)
 
+# evm module config
 add_definitions("-DCONFIG_EVM_GPIO")
 add_definitions("-DCONFIG_EVM_FLASH")
 add_definitions("-DCONFIG_EVM_LCD")
@@ -169,3 +170,6 @@ add_definitions("-DCONFIG_EVM_LED")
 add_definitions("-DCONFIG_EVM_SWITCH")
 add_definitions("-DCONFIG_EVM_UART")
 
+# ecma module config
+add_definitions("-DCONFIG_EVM_ECMA_OBJECT")
+add_definitions("-DCONFIG_EVM_ECMA_ARRAY")
