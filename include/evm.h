@@ -8,8 +8,9 @@
 **  Version	: 1.0
 **  Email	: scriptiot@aliyun.com
 **  Website	: https://github.com/scriptiot
-**  Licence: 个人免费，企业授权
+**  Licence: Apache-2.0
 ****************************************************************************/
+
 #ifndef EVM_H
 #define EVM_H
 

@@ -108,4 +108,10 @@
 	status = "okay";
 };
 
+&wwdg {
+	status = "okay";
+};
 
+&iwdg {
+	status = "okay";
+};
