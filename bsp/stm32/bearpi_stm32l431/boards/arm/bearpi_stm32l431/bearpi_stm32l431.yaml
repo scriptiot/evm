@@ -1,0 +1,17 @@
+identifier: bearpi_stm32l431
+name: BEARPI-STM32L431
+type: mcu
+arch: arm
+toolchain:
+  - zephyr
+  - gnuarmemb
+  - xtools
+ram: 64
+flash: 256
+supported:
+  - gpio
+  - i2c
+  - spi
+  - uart
+  - adc
+  - dac

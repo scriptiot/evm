@@ -1,0 +1,117 @@
+/*
+ * Copyright (c) 2017 Linaro Limited
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+/dts-v1/;
+#include <st/l4/stm32l433Xc.dtsi>
+
+/ {
+	model = "STMicroelectronics STM32L432KC-NUCLEO board";
+	compatible = "st,stm32l433";
+
+	chosen {
+		zephyr,console = &usart1;
+		zephyr,shell-uart = &usart1;
+		zephyr,sram = &sram0;
+		zephyr,flash = &flash0;
+	};
+
+	leds{
+		compatible = "gpio-leds";
+		led0: led_0 {
+			gpios = <&gpioc 13 GPIO_ACTIVE_HIGH>;
+			label = "LED0";
+		};
+	};
+
+	soc {
+		dac1: dac@40007400 {
+			compatible = "st,stm32-dac";
+			reg = <0x40007400 0x400>;
+			clocks = <&rcc STM32_CLOCK_BUS_APB1 0x20000000>;
+			status = "disabled";
+			label = "DAC_1";
+			#io-channel-cells = <1>;
+		};
+	};
+};
+
+&usart1 {
+	current-speed = <115200>;
+	status = "okay";
+};
+
+&usart2 {
+	current-speed = <115200>;
+	status = "okay";
+};
+
+&spi2 {
+	status = "okay";
+	st7789v@0 {
+		compatible = "sitronix,st7789v";
+		label = "ST7789V";
+		spi-max-frequency = <2000000>;
+		reg = <0>;
+		cmd-data-gpios = <&gpioc 6 (GPIO_ACTIVE_LOW)>;	/* D9 */
+		reset-gpios = <&gpioc 7 (GPIO_ACTIVE_LOW)>;	/* D8 */
+		width = <240>;
+		height = <240>;
+		x-offset = <0>;
+		y-offset = <35>;
+		vcom = <0x3D>;
+		gctrl = <0x72>;
+		vrhs = <0x19>;
+		vdvs = <0x20>;
+		mdac = <0x00>;
+		gamma = <0x01>;
+		colmod = <0x65>;
+		lcm = <0x2c>;
+		porch-param = [0c 0c 00 33 33];
+		cmd2en-param = [5a 69 02 00];
+		pwctrl1-param = [a4 a1];
+		pvgam-param = [D0 04 0D 11 13 2B 3F 54 4C 18 0D 0B 1F 23];
+		nvgam-param = [D0 04 0C 11 13 2C 3F 44 51 2F 1F 1F 20 23];
+		ram-param = [00 F0];
+		rgb-param = [40 02 14];
+	};
+};
+
+&timers2 {
+	status = "okay";
+
+	pwm {
+		status = "okay";
+	};
+};
+
+&can1 {
+	bus-speed = <125000>;
+	status = "okay";
+};
+
+&rtc {
+	status = "okay";
+};
+
+&lptim1 {
+	status = "okay";
+};
+
+&adc1 {
+	status = "okay";
+};
+
+&dac1 {
+	status = "okay";
+};
+
+&wwdg {
+	status = "okay";
+};
+
+&iwdg {
+	status = "okay";
+};
