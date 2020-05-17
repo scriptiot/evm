@@ -28,9 +28,7 @@ evm_val_t nevm_driver_watchdog_init(evm_t * e, evm_val_t * p, int argc, evm_val_
 #ifdef CONFIG_EVM_WATCHDOG
     if( argc > 0 && evm_is_string(v) ){
 		struct device * dev = device_get_binding(evm_2_string(v));
-        printk("===1===");
         if( !dev ) return NEVM_FALSE;
-        printk("===2===");
         nevm_object_set_ext_data(p, (intptr_t)dev);
         return NEVM_TRUE;
     }

@@ -46,6 +46,9 @@
 #ifdef CONFIG_EVM_UART
 	extern evm_val_t evm_class_uart(evm_t * e);
 #endif
+#ifdef CONFIG_EVM_WATCHDOG
+	extern evm_val_t evm_class_watchdog(evm_t * e);
+#endif
 
 static evm_val_t * callback_list;
 static evm_val_t * args_list;
