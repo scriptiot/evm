@@ -27,7 +27,7 @@ typedef struct pin_group {
 extern const pin_group ledgroup[];
 extern const pin_group keygroup[];
 
-int evm_board_get_pin_group_size(pin_group * group);
+int evm_board_get_pin_group_size(const pin_group * group);
 
 #define CONFIG_EVM_CALLBACK_SIZE              10
 

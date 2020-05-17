@@ -31,6 +31,9 @@
  */
 static evm_val_t evm_module_uart(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
 {
+	EVM_UNUSED(p);
+	EVM_UNUSED(argc);
+	EVM_UNUSED(v);
 	if( argc == 1 ){
 		evm_val_t params[6];
 		params[0] = *v;
@@ -54,6 +57,9 @@ static evm_val_t evm_module_uart(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
  */
 static evm_val_t evm_module_uart_any(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
 {
+	EVM_UNUSED(e);
+	EVM_UNUSED(argc);
+	EVM_UNUSED(v);
 	evm_val_t dev = evm_mk_object((void *)nevm_object_get_ext_data(p));
 	return nevm_object_function_invoke(nevm_runtime, &dev, EXPORT_SerialDevice_count, 0, NULL);
 }
@@ -69,6 +75,8 @@ static evm_val_t evm_module_uart_any(evm_t *e, evm_val_t *p, int argc, evm_val_t
  */
 static evm_val_t evm_module_uart_read(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
 {
+	EVM_UNUSED(e);
+
 	if(argc>2){
 		evm_val_t dev = evm_mk_object((void *)nevm_object_get_ext_data(p));
 		return nevm_object_function_invoke(nevm_runtime, &dev, EXPORT_SerialDevice_read, 3, v);
@@ -90,6 +98,8 @@ static evm_val_t evm_module_uart_read(evm_t *e, evm_val_t *p, int argc, evm_val_
  */
 static evm_val_t evm_module_uart_write(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
 {
+	EVM_UNUSED(e);
+
 	evm_val_t dev = evm_mk_object((void*)nevm_object_get_ext_data(p));
 	if(argc>2){
 		if( evm_is_buffer(v) )

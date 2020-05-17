@@ -18,6 +18,8 @@
 //Timer(String name)
 static evm_val_t evm_module_timer(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
 {
+	EVM_UNUSED(e);
+
 	evm_module_construct(nevm_runtime, p, argc, v, EXPORT_main_timerCreate, EXPORT_TimerDevice_open);
 	return EVM_VAL_UNDEFINED;
 }
@@ -25,6 +27,8 @@ static evm_val_t evm_module_timer(evm_t *e, evm_val_t *p, int argc, evm_val_t *v
 //Timer.setInterval(callback, period)
 static evm_val_t evm_module_timer_setInterval(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
 {
+	EVM_UNUSED(e);
+	EVM_UNUSED(argc);
 	evm_val_t dev = evm_mk_object((void*)nevm_object_get_ext_data(p));
 	return nevm_object_function_invoke(nevm_runtime, &dev, EXPORT_TimerDevice_start, 2, v);
 }
@@ -32,6 +36,10 @@ static evm_val_t evm_module_timer_setInterval(evm_t *e, evm_val_t *p, int argc, 
 //Timer.clearInterval(id)
 static evm_val_t evm_module_timer_clearInterval(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
 {
+	EVM_UNUSED(e);
+	EVM_UNUSED(p);
+	EVM_UNUSED(argc);
+	EVM_UNUSED(v);
 	return EVM_VAL_UNDEFINED;
 }
 

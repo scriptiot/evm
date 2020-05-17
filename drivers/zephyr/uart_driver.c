@@ -64,7 +64,7 @@ evm_val_t nevm_driver_uart_config(evm_t * e, evm_val_t * p, int argc, evm_val_t 
     uart_handle_t * uart_handle = evm_malloc(sizeof(uart_handle_t));
     uart_handle->dev = dev;
     uart_handle->obj = *p;
-    uart_irq_callback_user_data_set(dev, uart_irq_handler, uart_handle);
+    uart_irq_callback_user_data_set(dev, (uart_irq_callback_user_data_t)uart_irq_handler, uart_handle);
     uart_irq_rx_enable(dev);
     return NEVM_TRUE;
 #endif
@@ -119,11 +119,11 @@ evm_val_t nevm_driver_uart_write_bytes(evm_t * e, evm_val_t * p, int argc, evm_v
     (void)p;
 #ifdef CONFIG_EVM_UART
     struct device * dev = (struct device *)nevm_object_get_ext_data(p);
-    uint8_t *buf;
+    uint8_t *buf = NULL;
     if( evm_is_buffer(v) ){
         buf = evm_buffer_addr(v);
     } else if( evm_is_foreign_string(v) ){
-        buf = (const char *)evm_2_intptr(v);
+        buf = (char *)evm_2_intptr(v);
     } else if( evm_is_heap_string(v) ){
         buf = evm_heap_string_addr(v);
     }
