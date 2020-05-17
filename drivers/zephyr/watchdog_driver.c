@@ -46,7 +46,7 @@ evm_val_t nevm_driver_watchdog_install_timeout(evm_t * e, evm_val_t * p, int arg
 #ifdef CONFIG_EVM_WATCHDOG
     if( argc >= 2 && evm_is_number(v) && evm_is_number(v+1) ){
         int min = evm_2_integer(v);
-        int max = evm_2_integer(v);
+        int max = evm_2_integer(v+1);
         if (min < max){
 		    struct device * dev = (struct device *)nevm_object_get_ext_data(p);
             if( !dev ) return NEVM_FALSE;
