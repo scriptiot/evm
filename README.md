@@ -16,6 +16,7 @@
 
 ### 3. EVM 优势特点
 
++ 纯C开发、零依赖、跨平台、内置REPL；
 + 最小编译体积40KB，最小内存占用2KB;
 + 支持多语言混合开发，目前支持Javascript、Python、Lua、QML、Json、XML等语言;
 + 先进的内存管理，无内存泄露和内存碎片问题;
@@ -34,50 +35,45 @@
 ======================================== 
 
 
+## 2. 目录结构介绍
+
 | 文件      |    说明|
 | :-------- | --------:|
-| **ejs**| ejs目录 |
-| **ejs/bin/ejs**| ejs二进制程序 |
-| **ejs/bin/ejs.json**| ejs二进制程序堆栈信息配置 |
-| **ejs/bin/ejs_modules**| ejs二进制程序库寻找路径 |
-| **ejs/test**|   ejs语法测试用例  | 
-| **ejs/README.md**|   ejs说明文档 |
-| **inlcude**|    evm虚拟机接口头文件目录|
-| **inlcude/evm.h**|    evm虚拟机接口头文件|
-| **include/qml_module.h**| qml接口头文件|
-| **lib**|    静态库目录 |
-| **lib/arm_windows_armcc/libqml.lib**|  windows平台libqml静态库(armcc, Keil)|
-| **lib/x86_64_linux_gnu/linux/libejs.a**|  Linux平台libejs静态库 （gcc7 64位）|
-| **lib/x86_64_linux_gnu/linux/libqml.a**|  Linux平台libqml静态库 （gcc7 64位）|
-| **lib/x86_64_windows_mingw/libejs.a**|  windows平台libejs静态库(MinGW-gcc 64位)|
-| **lib/x86_64_windows_mingw/libqml.a**|  windows平台libqml静态库(MinGW-gcc 64位)|
-| **thirds/littevgl_qml**| littevgl_qml模块| 
-| **thirds/littevgl_qml/lvgl_module**| 基于littlelvgl的qml封装| 
-| **thirds/littevgl_qml/ports**| 第三方平台适配| 
-| **thirds/littevgl_qml/ports/Qt**| Qt平台适配|
-| **thirds/littevgl_qml/ports/stm32**| stm32平台(Keil工程)适配| 
-| **thirds/littlevgl_qml/ports/stm32/stm32f103-fire-arbitrary**| stm32平台(Keil工程)野火开发板适配| 
-| **thirds/littevgl_qml/test/**|    测试用例目录 |
-| **thirds/littevgl_qml/README.md**|    littevgl_qml说明文档 |
-| **README.md**|   evm说明文档 |
+| **bsp**| 开发板适配目录 |
+| **bsp/stm32/bearpi_stm32l431**| 小熊派开发板 |
+| **bsp/qemu_cortex_m3**|qemu_cortex_m3目录 |
+| **components**| 第三方组件目录 |
+| **components/zephyr**| zephyr rtos组件目录 |
+| **doc**| 图片文档资源目录 |
+| **drivers**| 驱动适配层 |
+| **ejs**|   ejs主程序evm_main.c目录  | 
+| **include**|   头文件目录  | 
+| **lib**|   ejs静态库  |
+| **lib/arm-none-eabi-gcc/cortext_m3**|   cortext_m4系列libejs静态库  |
+| **lib/arm-none-eabi-gcc/cortext_m4**|   cortext_m4系列libjese静态库  |
+| **modules**|  模块目录  |
+| **modules/ecma**|  je标准库ecma模块  | 
+| **modules/ecma**|  硬件外设驱动evm模块  | 
+| **tools**|  工具目录|
+| **tools/evm.sh**|  一键安装evm.sh脚本|
+| **README.md**|   项目说明文档|
 
 
-三、EVM 相关参考文档
+三、EVM 在线帮助手册
 ========================================
 
-+ [ejs 帮助文档](ejs/README.md)
-+ [littevgl_qml 帮助文档](thirds/littlevgl_qml/README.md)
-+ [stm32f103-fire-arbitrary野火开发板移植帮助文档](thirds/littlevgl_qml/ports/stm32/stm32f103-fire-arbitrary/README.md)
++ [evm在线帮助手册Github](https://scriptiot.github.io/evm_doc/#/zh-cn/evm_what)
++ [evm在线帮助手册Gitee](https://scriptiot.gitee.io/evm_doc/#/zh-cn/evm_what)
 
-四、EVM 相关demo展示
+四、EVM 适配开发板
 ========================================
 
-+ [watch](thirds/littlevgl_qml/test/qml/watch.qml)
+参考  **`bsp目录`**， 未来会适配更多的开发板
 
-|      |
-| :--------: |
-| ![evm](./doc/watch.gif)|
-|![watch_stm32](./doc/watch_stm32.gif)|
++ stm32系列
+  + bearpi_stm32l431 小熊派开发板
+  + qemu_cortex_m3  基于qemu模拟cortex_m3
+
 
 五、 EVM问卷调查
 ========================================
