@@ -49,11 +49,11 @@
 | **ejs**|   ejs主程序evm_main.c目录  | 
 | **include**|   头文件目录  | 
 | **lib**|   ejs静态库  |
-| **lib/arm-none-eabi-gcc/cortext_m3**|   cortext_m4系列libejs静态库  |
+| **lib/arm-none-eabi-gcc/cortext_m3**|   cortext_m3系列libejs静态库  |
 | **lib/arm-none-eabi-gcc/cortext_m4**|   cortext_m4系列libjese静态库  |
 | **modules**|  模块目录  |
 | **modules/ecma**|  je标准库ecma模块  | 
-| **modules/ecma**|  硬件外设驱动evm模块  | 
+| **modules/evm**|  硬件外设驱动evm模块  | 
 | **tools**|  工具目录|
 | **tools/evm.sh**|  一键安装evm.sh脚本|
 | **README.md**|   项目说明文档|
