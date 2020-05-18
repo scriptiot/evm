@@ -18,6 +18,11 @@
 //CAN(name)
 static evm_val_t evm_module_can(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
 {
+	EVM_UNUSED(e);
+	EVM_UNUSED(p);
+	EVM_UNUSED(argc);
+	EVM_UNUSED(v);
+
 	return EVM_VAL_UNDEFINED;
 }
 

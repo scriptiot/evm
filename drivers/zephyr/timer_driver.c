@@ -46,7 +46,7 @@ evm_val_t nevm_driver_timer_init(evm_t * e, evm_val_t * p, int argc, evm_val_t *
     struct k_timer * dev = (struct k_timer*)evm_malloc(sizeof(struct k_timer));
     if( !dev ) return NEVM_FALSE;
     nevm_object_set_ext_data(p, (intptr_t)dev);
-    dev->user_data = evm_2_intptr(p);
+    dev->user_data = (void *)evm_2_intptr(p);
     return NEVM_TRUE;
 #endif
     return NEVM_FALSE;

@@ -25,7 +25,7 @@ const struct pin_group keygroup[] = {
     {NULL, 0, 0},
 };
 
-int evm_board_get_pin_group_size(pin_group * group){
+int evm_board_get_pin_group_size(const pin_group * group){
     int i = 0;
     while( group[i].port != NULL ){
         i++;

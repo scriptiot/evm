@@ -27,6 +27,8 @@
  */
 static evm_val_t evm_module_flash(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
 {	
+	EVM_UNUSED(e);
+
 	evm_module_construct(nevm_runtime, p, argc, v, EXPORT_main_flashCreate, EXPORT_FlashDevice_open);
 	return EVM_VAL_UNDEFINED;
 }
@@ -48,6 +50,9 @@ static evm_val_t evm_module_flash(evm_t *e, evm_val_t *p, int argc, evm_val_t *v
  */
 static evm_val_t evm_module_flash_read(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
 {
+	EVM_UNUSED(e);
+	EVM_UNUSED(argc);
+	
 	evm_val_t dev = evm_mk_object((void*)nevm_object_get_ext_data(p));
 	return nevm_object_function_invoke(nevm_runtime, &dev, EXPORT_FlashDevice_read, 3, v);
 }
@@ -68,6 +73,8 @@ static evm_val_t evm_module_flash_read(evm_t *e, evm_val_t *p, int argc, evm_val
  */
 static evm_val_t evm_module_flash_write(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
 {
+	EVM_UNUSED(e);
+	EVM_UNUSED(argc);
 	evm_val_t dev = evm_mk_object((void*)nevm_object_get_ext_data(p));
 	return nevm_object_function_invoke(nevm_runtime, &dev, EXPORT_FlashDevice_write, 3, v);
 }
@@ -96,6 +103,8 @@ static evm_val_t evm_module_flash_write(evm_t *e, evm_val_t *p, int argc, evm_va
  */
 static evm_val_t evm_module_flash_erase(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
 {
+	EVM_UNUSED(e);
+	EVM_UNUSED(argc);
 	evm_val_t dev = evm_mk_object((void*)nevm_object_get_ext_data(p));
 	return nevm_object_function_invoke(nevm_runtime, &dev, EXPORT_FlashDevice_erase, 2, v);
 }
@@ -114,6 +123,9 @@ static evm_val_t evm_module_flash_erase(evm_t *e, evm_val_t *p, int argc, evm_va
  */
 static evm_val_t evm_module_flash_write_block_size(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
 {
+	EVM_UNUSED(e);
+	EVM_UNUSED(argc);
+	EVM_UNUSED(v);
 	evm_val_t dev = evm_mk_object((void*)nevm_object_get_ext_data(p));
 	return nevm_object_function_invoke(nevm_runtime, &dev, EXPORT_FlashDevice_write_block_size, 0, NULL);
 }

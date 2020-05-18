@@ -27,6 +27,8 @@
  */
 static evm_val_t evm_module_watchdog(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
 {	
+	EVM_UNUSED(e);
+
 	evm_module_construct(nevm_runtime, p, argc, v, EXPORT_main_watchdogCreate, EXPORT_WatchDogDevice_open);
 	return EVM_VAL_UNDEFINED;
 }
@@ -51,6 +53,8 @@ static evm_val_t evm_module_watchdog(evm_t *e, evm_val_t *p, int argc, evm_val_t
  */
 static evm_val_t evm_module_watchdog_setup(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
 {
+	EVM_UNUSED(e);
+	EVM_UNUSED(argc);
 	evm_val_t dev = evm_mk_object((void*)nevm_object_get_ext_data(p));
 	return nevm_object_function_invoke(nevm_runtime, &dev, EXPORT_WatchDogDevice_setup, 1, v);
 }
@@ -81,6 +85,8 @@ static evm_val_t evm_module_watchdog_setup(evm_t *e, evm_val_t *p, int argc, evm
  */
 static evm_val_t evm_module_watchdog_install_timeout(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
 {
+	EVM_UNUSED(e);
+	EVM_UNUSED(argc);
 	evm_val_t dev = evm_mk_object((void*)nevm_object_get_ext_data(p));
 	return nevm_object_function_invoke(nevm_runtime, &dev, EXPORT_WatchDogDevice_intall_timeout, 2, v);
 }
@@ -97,6 +103,8 @@ static evm_val_t evm_module_watchdog_install_timeout(evm_t *e, evm_val_t *p, int
  */
 static evm_val_t evm_module_watchdog_feed(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
 {
+	EVM_UNUSED(e);
+	EVM_UNUSED(argc);
 	evm_val_t dev = evm_mk_object((void*)nevm_object_get_ext_data(p));
 	return nevm_object_function_invoke(nevm_runtime, &dev, EXPORT_WatchDogDevice_feed, 1, v);
 }
@@ -117,6 +125,8 @@ static evm_val_t evm_module_watchdog_feed(evm_t *e, evm_val_t *p, int argc, evm_
  */
 static evm_val_t evm_module_watch_disable(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
 {
+	EVM_UNUSED(e);
+	EVM_UNUSED(argc);
 	evm_val_t dev = evm_mk_object((void*)nevm_object_get_ext_data(p));
 	return nevm_object_function_invoke(nevm_runtime, &dev, "disable", 0, v);
 }

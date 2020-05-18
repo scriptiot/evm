@@ -62,7 +62,7 @@ void evm_module_construct(evm_t* e, evm_val_t * p, int argc, evm_val_t * v, uint
 		evm_set_err(evm_runtime, ec_type, "Driver is not found");
 		return;
 	}
-    evm_val_t res = nevm_object_function_invoke(e, &dev, open_api, 0, NULL);
+    nevm_object_function_invoke(e, &dev, open_api, 0, NULL);
     nevm_object_set_ext_data(p, evm_2_intptr(&dev) );
 }
 

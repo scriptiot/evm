@@ -19,12 +19,16 @@
 //Pin(name, pin, flags)
 static evm_val_t evm_module_pin(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
 {
+	EVM_UNUSED(e);
+
 	evm_module_construct(nevm_runtime, p, argc, v, EXPORT_main_pinCreate, EXPORT_PinDevice_open);
 	return EVM_VAL_UNDEFINED;
 }
 //Pin.value(value)
 static evm_val_t evm_module_pin_value(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
 {
+	EVM_UNUSED(e);
+
 	evm_val_t dev = evm_mk_object((void*)nevm_object_get_ext_data(p));
 	if( argc == 0 ){
 		return nevm_object_function_invoke(nevm_runtime, &dev, EXPORT_PinDevice_read, 0, NULL);
