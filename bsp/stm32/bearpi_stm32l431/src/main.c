@@ -20,5 +20,5 @@
 
 void main(void)
 {
-    evm_main();
+    //evm_main();
 }

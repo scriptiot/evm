@@ -38,6 +38,17 @@
 	};
 };
 
+&lpuart1 {
+	current-speed = <115200>;
+	status = "okay";
+	esp@0 {
+		status = "okay";
+		compatible = "espressif,esp";
+		reg = <0x0>;
+		label = "espressif_esp";
+	};
+};
+
 &usart1 {
 	current-speed = <115200>;
 	status = "okay";

@@ -15,3 +15,4 @@ supported:
   - uart
   - adc
   - dac
+  - wifi
