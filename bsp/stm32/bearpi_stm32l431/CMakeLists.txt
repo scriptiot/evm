@@ -61,6 +61,7 @@ set(evm_modules_sources
     ${EVM_BASE}/modules/evm/evm_module_uart.c
     ${EVM_BASE}/modules/evm/evm_module_watchdog.c
     ${EVM_BASE}/modules/evm/evm_module_led.c
+    ${EVM_BASE}/modules/evm/evm_module_wifi.c
 )
 
 set(libevm_module_sources 
@@ -96,6 +97,7 @@ add_definitions("-DCONFIG_EVM_TIMER")
 add_definitions("-DCONFIG_EVM_LED")
 add_definitions("-DCONFIG_EVM_SWITCH")
 add_definitions("-DCONFIG_EVM_UART")
+add_definitions("-DCONFIG_EVM_WIFI")
 
 # ecma module config
 add_definitions("-DCONFIG_EVM_ECMA_OBJECT")

@@ -50,6 +50,9 @@
 #ifdef CONFIG_EVM_WATCHDOG
 	extern evm_val_t evm_class_watchdog(evm_t * e);
 #endif
+#ifdef CONFIG_EVM_WIFI
+	extern evm_val_t evm_class_wifi(evm_t * e);
+#endif
 
 static evm_val_t * callback_list;
 static evm_val_t * args_list;
@@ -164,7 +167,10 @@ int evm_module(evm_t * e){
 #ifdef CONFIG_EVM_UART
 		{"UART", evm_class_uart(e)},
 #endif
-        {NULL, NULL}
+#ifdef CONFIG_EVM_WIFI
+		{"WIFI", evm_class_wifi(e)},
+#endif
+        {NULL, EVM_VAL_UNDEFINED}
     };
     evm_module_create(e, "evm", module);
 	return e->err;

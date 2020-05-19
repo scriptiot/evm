@@ -29,7 +29,7 @@
 
 /* pin assignments for NUCLEO-L432KC board */
 static const struct pin_config pinconf[] = {
-	#if DT_HAS_NODE(DT_NODELABEL(lpuart1))
+#if DT_HAS_NODE(DT_NODELABEL(lpuart1))
 	{STM32_PIN_PC0,  STM32_PINMUX_ALT_FUNC_8 | STM32_PUPDR_NO_PULL},
 	{STM32_PIN_PC1,  STM32_PINMUX_ALT_FUNC_8 | STM32_PUSHPULL_PULLUP},
 #endif

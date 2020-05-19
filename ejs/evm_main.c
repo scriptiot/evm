@@ -64,7 +64,7 @@ int nevm_runtime_setup(void){
 const struct uart_config uart_cfg = {
     .baudrate = 115200,
     .parity = UART_CFG_PARITY_NONE,
-    .stop_bits = UART_CFG_STOP_BITS_1,
+    .stop_bits = UART_CFG_STOP_BITS_1, 
     .data_bits = UART_CFG_DATA_BITS_8,
     .flow_ctrl = UART_CFG_FLOW_CTRL_NONE
 };
@@ -91,8 +91,19 @@ int evm_main(void){
     evm_t * env = (evm_t*)malloc(sizeof(evm_t));
     memset(env, 0, sizeof(evm_t));
     int err = evm_init(env, EVM_HEAP_SIZE, EVM_STACK_SIZE, EVM_MODULE_SIZE, EVM_VAR_NAME_MAX_LEN, EVM_FILE_NAME_LEN);
+    if( err ) {
+        evm_print("Failed to initialize evm\r\n");
+        return err;
+    }
     err = ecma_module(env);
+    if( err ) {
+        evm_print("Failed to add ecma module\r\n");
+    }
     err = evm_module(env);
-    err = evm_repl_run(env, 100, EVM_LANG_JS);
+    if( err ) {
+        evm_print("Failed to add evm module\r\n");
+        return err;
+    }
+    err = evm_repl_run(env, 20, EVM_LANG_JS);
     return err;
 }
