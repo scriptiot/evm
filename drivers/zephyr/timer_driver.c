@@ -63,7 +63,7 @@ evm_val_t nevm_driver_timer_start(evm_t * e, evm_val_t * p, int argc, evm_val_t 
     if(argc > 0 && evm_is_number(v) ){
         struct k_timer * dev = (struct k_timer*)nevm_object_get_ext_data(p);
         int period = evm_2_integer(v);
-        k_timer_start(dev, period, period);
+        k_timer_start(dev, K_MSEC(period), K_MSEC(period));
         return NEVM_TRUE;
     }
 #endif
