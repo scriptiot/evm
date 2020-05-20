@@ -20,7 +20,7 @@
  * 
  * @param name device name
  * 
- * @uasge new DAC('ADC_1') 
+ * @uasge new DAC('DAC_1') 
  */
 static evm_val_t evm_module_dac(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
 {
