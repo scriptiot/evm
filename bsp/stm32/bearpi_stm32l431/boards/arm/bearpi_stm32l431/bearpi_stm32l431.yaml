@@ -16,3 +16,5 @@ supported:
   - adc
   - dac
   - wifi
+  # - sdhc
+

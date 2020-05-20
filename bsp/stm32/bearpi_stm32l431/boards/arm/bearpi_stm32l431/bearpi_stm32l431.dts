@@ -46,6 +46,14 @@
 			status = "disabled";
 			label = "LPUART_1";
 		};
+
+		sdmmc1: sdmmc@40012800 {
+			compatible = "st,stm32-sdmmc";
+			reg = <0x40012800 0x400>;
+			clocks = <&rcc STM32_CLOCK_BUS_APB2 0x00000400>;
+			status = "disabled";
+			label = "SDMMC_1";
+		};
 	};
 };
 
@@ -137,3 +145,9 @@
 &iwdg {
 	status = "okay";
 };
+
+&sdmmc1 {
+	status = "okay";
+};
+
+
