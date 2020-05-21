@@ -12,9 +12,16 @@ find_package(Zephyr HINTS $ENV{ZEPHYR_BASE})
 project(ejs)
 
 set(EVM_BASE ${ZEPHYR_BASE}/../../../)
-set(LIBEJS ${EVM_BASE}/lib/arm-none-eabi-gcc/cortex-m4/libejs.a)
 
-if(EXISTS ${LIBEJS})
+
+if (EXISTS ${EVM_DEV})
+    message(${EVM_DEV})
+    set(CMAKE_MODULE_PATH ${EVM_DEV})
+    find_package(ejs)
+    target_link_libraries(app PRIVATE ejs)
+else()
+    set(LIBEJS ${EVM_BASE}/lib/arm-none-eabi-gcc/cortex-m4/libejs.a)
+    message(${LIBEJS})
     target_link_libraries(app PRIVATE ${LIBEJS})
 endif()
 

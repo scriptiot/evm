@@ -9,24 +9,13 @@ if BOARD_BEARPI_STM32L431
 config BOARD
 	default "bearpi_stm32l431"
 
-config PWM_STM32_2
-	default y
-	depends on PWM
-
 config SPI_STM32_INTERRUPT
 	default y
 	depends on SPI
-
-config CAN_1
-	default y
-	depends on CAN
 
 config ST7789V
 	default y
 	depends on DISPLAY
 
-config ADC_1
-	default y
-	depends on ADC
 
 endif
