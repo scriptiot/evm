@@ -32,7 +32,11 @@ void ecma_array_set_length(evm_t * e, evm_val_t * o, int len){
 }
 
 int ecma_array_get_length(evm_t * e, evm_val_t * o){
-    return evm_2_integer( evm_attr_get_by_index(e, o, 8) );
+#ifdef CONFIG_EVM_ECMA_OBJECT
+    return evm_2_integer( evm_attr_get_by_index(e, o, ECMA_OBJECT_ATTR_SIZE) );
+#else
+    return evm_2_integer( evm_attr_get_by_index(e, o, 0) );
+#endif
 }
 
 void ecma_array_attrs_apply(evm_t * e, evm_val_t * o){
@@ -139,6 +143,18 @@ evm_val_t ecma_array(evm_t * e, evm_val_t * p, int argc, evm_val_t * v){
     }
 }
 
+
+// evm_val_t ecma_array_filter(evm_t * e, evm_val_t * p, int argc, evm_val_t * v){
+//     if( argc > 0 && evm_is_script(v) ){
+//         int len = evm_list_len(p);
+//         for(int i = 0; i < len; i++) {
+//             evm_val_t * arg = evm_list_get(e, p, i);
+//             if( evm_run_callback(e, v, p, arg, 1) == EVM_VAL_TRUE ) {
+
+//             }
+//         }
+//     }
+// }
 
 evm_val_t ecma_array_indexOf(evm_t * e, evm_val_t * p, int argc, evm_val_t * v){
     (void)e;

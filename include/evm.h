@@ -785,7 +785,7 @@ evm_err_t evm_start(evm_t * e);
  * @param p_this，当前对象
  * @param args，参数
  * @param argc，参数长度
- * @return
+ * @return 脚本函数返回值
  */
 evm_val_t evm_run_callback(evm_t * e, evm_val_t * scope, evm_val_t *p_this, evm_val_t *args, int argc);
 /**

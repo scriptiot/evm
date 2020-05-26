@@ -8,7 +8,7 @@
 #include <st/l4/stm32l433Xc.dtsi>
 
 / {
-	model = "STMicroelectronics STM32L432KC-NUCLEO board";
+	model = "stm32l431 bearpi board";
 	compatible = "st,stm32l433";
 
 	chosen {

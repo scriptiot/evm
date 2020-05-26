@@ -36,3 +36,5 @@ CONFIG_UART_CONSOLE=y
 
 #enable pwm
 CONFIG_PWM=y
+
+
