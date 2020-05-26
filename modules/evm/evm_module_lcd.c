@@ -15,6 +15,10 @@
 #ifdef CONFIG_EVM_LCD
 
 #include "evm_module.h"
+#include <drivers/display.h>
+
+
+uint16_t evm_lcd_color = 0;
 
 //LCD()
 static evm_val_t evm_module_lcd(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
@@ -23,6 +27,12 @@ static evm_val_t evm_module_lcd(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
 	EVM_UNUSED(p);
 	EVM_UNUSED(argc);
 	EVM_UNUSED(v);
+	const char * name = evm_2_string(v);
+	struct device * dev = device_get_binding(name);
+	if (dev == NULL) {
+		evm_set_err(evm_runtime, ec_type, "Driver is not found");
+	}
+	evm_object_set_ext_data(p, (intptr_t)dev);
 	return EVM_VAL_UNDEFINED;
 }
 
@@ -32,6 +42,8 @@ static evm_val_t evm_module_lcd_on(evm_t *e, evm_val_t *p, int argc, evm_val_t *
 	EVM_UNUSED(p);
 	EVM_UNUSED(argc);
 	EVM_UNUSED(v);
+	struct device * dev = (struct device *)evm_object_get_ext_data(p);
+	display_blanking_off(dev);
 	return EVM_VAL_UNDEFINED;
 }
 
@@ -41,6 +53,8 @@ static evm_val_t evm_module_lcd_off(evm_t *e, evm_val_t *p, int argc, evm_val_t 
 	EVM_UNUSED(p);
 	EVM_UNUSED(argc);
 	EVM_UNUSED(v);
+	struct device * dev = (struct device *)evm_object_get_ext_data(p);
+	display_blanking_on(dev);
 	return EVM_VAL_UNDEFINED;
 }
 
@@ -51,6 +65,16 @@ static evm_val_t evm_module_lcd_set_pixel(evm_t *e, evm_val_t *p, int argc, evm_
 	EVM_UNUSED(p);
 	EVM_UNUSED(argc);
 	EVM_UNUSED(v);
+	struct device * dev = (struct device *)evm_object_get_ext_data(p);
+	struct display_buffer_descriptor buf_desc;
+	buf_desc.buf_size = 2;
+	buf_desc.pitch = 1;
+	buf_desc.width = 1;
+	buf_desc.height = 1;
+
+	int x = evm_2_integer(v);
+	int y = evm_2_integer(v + 1);
+	display_write(dev, x, y, &buf_desc, &evm_lcd_color);
 	return EVM_VAL_UNDEFINED;
 }
 //color = LCD.get_pixel(x, y)

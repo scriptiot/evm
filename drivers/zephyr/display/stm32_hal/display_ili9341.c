@@ -325,7 +325,7 @@ static int ili9341_write(const struct device *dev, const u16_t x,
 	ili9341_set_mem_area(data, x, y, desc->width, desc->height);
 
     ili9341_write_cmd ( ILI9341_CMD_MEM_WRITE );	
-	uint32_t nbr_of_points = desc->height * desc->height;	
+	uint32_t nbr_of_points = desc->width * desc->height;	
     uint32_t pixel_index = 0;
 	for (uint32_t i = 0; i < nbr_of_points; i ++ ) {
         ili9341_write_data ( write_data_start[pixel_index++] | write_data_start[pixel_index++] >> 8 );
