@@ -288,6 +288,7 @@ static int ili9341_init(struct device *dev)
 	
 	/* Display ON (29h) */
 	ili9341_write_cmd ( 0x29 ); 
+
 	return 0;
 }
 

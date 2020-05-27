@@ -104,6 +104,7 @@ int evm_main(void){
         evm_print("Failed to add evm module\r\n");
         return err;
     }
+
     err = evm_repl_run(env, 20, EVM_LANG_JS);
     return err;
 }
