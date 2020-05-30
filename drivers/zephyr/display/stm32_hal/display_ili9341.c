@@ -1,5 +1,6 @@
 #define DT_DRV_COMPAT ilitek_ili9341
 
+
 #include "display_ili9341.h"
 #include <drivers/display.h>
 

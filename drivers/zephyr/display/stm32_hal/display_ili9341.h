@@ -1,7 +1,7 @@
 #ifndef ZEPHYR_DRIVERS_DISPLAY_DISPLAY_ILI9341_H_
 #define ZEPHYR_DRIVERS_DISPLAY_DISPLAY_ILI9341_H_
 
-#include "stm32f1xx.h"
+#include <soc.h>
 
 #define      ILI9341_FSMC_Addr_CMD         ( ( uint32_t ) 0x6C000000 )     
 #define      ILI9341_FSMC_Addr_DATA        ( ( uint32_t ) 0x6D000000 )

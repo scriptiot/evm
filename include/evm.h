@@ -387,29 +387,11 @@ intptr_t evm_object_get_ext_data(evm_val_t * o);
  */
 void evm_object_set_ext_data(evm_val_t *o, intptr_t v);
 /**
- * @brief 对象获取init函数
+ * @brief 获取对象hash值
  * @param o
- * @return
+ * @return hash值
  */
-evm_init_fn evm_object_get_init(evm_val_t * o);
-/**
- * @brief 对象设置init函数
- * @param o
- * @param v
- */
-void evm_object_set_init(evm_val_t *o, evm_init_fn fn);
-/**
- * @brief 对象设置destroy函数，当对象被当做垃圾回收时，触发该函数
- * @param o
- * @return
- */
-evm_destroy_fn evm_object_get_destroy(evm_val_t * o);
-/**
- * @brief 对象获取destroy函数，当对象被当做垃圾回收时，触发该函数
- * @param o
- * @param v
- */
-void evm_object_set_set_destroy(evm_val_t *o, evm_destroy_fn fn);
+uint32_t evm_object_get_hash(evm_val_t *o);
 /**
  * @brief 设置对象继承的父类对象
  * @param e，虚拟机参数
@@ -785,7 +767,7 @@ evm_err_t evm_start(evm_t * e);
  * @param p_this，当前对象
  * @param args，参数
  * @param argc，参数长度
- * @return 脚本函数返回值
+ * @return
  */
 evm_val_t evm_run_callback(evm_t * e, evm_val_t * scope, evm_val_t *p_this, evm_val_t *args, int argc);
 /**
