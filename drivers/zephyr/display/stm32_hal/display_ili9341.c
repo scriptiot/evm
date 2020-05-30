@@ -330,7 +330,7 @@ static int ili9341_write(const struct device *dev, const u16_t x,
 	uint32_t nbr_of_points = desc->width * desc->height;	
     uint32_t pixel_index = 0;
 	for (uint32_t i = 0; i < nbr_of_points; i ++ ) {
-        ili9341_write_data ( write_data_start[pixel_index++] | write_data_start[pixel_index++] >> 8 );
+        ili9341_write_data ( write_data_start[pixel_index++] | write_data_start[pixel_index++] << 8 );
     }
 	return 0;
 }

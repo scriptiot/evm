@@ -15,6 +15,13 @@
 #include "evm_main.h"
 #include "ecma.h"
 
+const char * qml_text = "Rectangle {\n"
+"color: 'red';\n"
+"gradient: 'red';\n"
+"width:100;\n"
+"height:100;\n"
+"}";
+
 evm_t * nevm_runtime;
 
 char evm_repl_tty_read(evm_t * e)
@@ -25,10 +32,7 @@ char evm_repl_tty_read(evm_t * e)
 }
 
 const char * vm_load(evm_t * e, char * path, int type){
-    if( !strcmp(path, "uol_output.ubc") ){
-        return uol_binary_buf;
-    }
-    return NULL;
+    return qml_text;
 }
 
 void * vm_malloc(int size)
@@ -87,6 +91,8 @@ int evm_main(void){
     if( err ) {
         evm_print("Failed to add qml module\r\n");
     }
+
+    evm_boot(env, "main.qml");
     
     evm_start(env);
 
