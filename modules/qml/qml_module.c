@@ -4,6 +4,10 @@
 #define ARG_TYPE_ERR   { evm_set_err(e, ec_type, "Invalid argument type");return EVM_VAL_UNDEFINED; }
 #define MEMORY_ERR   { evm_set_err(e, ec_memory, "Insufficient static memory");return NULL; }
 
+/**
+ * @brief the definition of qml's basic value
+ * 
+ */
 typedef struct qml_value_t{
     int type;
     intptr_t name;
@@ -16,7 +20,6 @@ typedef struct qml_binding_t{
     evm_val_t tar_obj;
     uint32_t tar_name;
     evm_val_t tar_value;
-
     struct qml_binding_t * next;
 }qml_binding_t;
 
@@ -188,10 +191,6 @@ evm_val_t evm_qml_write(evm_t * e, evm_val_t * p, int argc, evm_val_t * v){
         if( local_v ) {
             if( *local_v != *v ){
                 *local_v = *v;
-//                __writeValue(e, src_obj, (intptr_t)name, v);
-//                if( qml_capture ){
-//                    __triggerBinding(e, src_obj, name);
-//                }
             }
         }
     } else if(argc == 4){
@@ -435,7 +434,6 @@ void __qml_object_build_group_and_parent(evm_t * e, qml_object_t * qml_obj,
 
 void * __qml_object_create(evm_t * e, evm_val_t * parent, uint32_t name, evm_val_t * v){
     evm_val_t * obj = v;
-//    evm_object_set_init(obj, (evm_init_fn)qml_object_gc_init);
     qml_object_t * qml_obj = (qml_object_t*)evm_malloc(sizeof(qml_object_t));
     if(!qml_obj) MEMORY_ERR;
     evm_object_set_ext_data(obj, (intptr_t)qml_obj);
@@ -589,6 +587,5 @@ int qml_module(evm_t * e, evm_native_fn init_api){
     qml_init_api = init_api;
     qml_root = evm_object_create(e, GC_OBJECT, 0, 0);
     qml_bindings_root = evm_object_create(e, GC_OBJECT, 0, 0);
-//    evm_object_set_init(qml_root, (evm_init_fn)qml_root_gc_init);
     return evm_native_add(e, natives);
 }

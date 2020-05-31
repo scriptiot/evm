@@ -76,8 +76,8 @@ set(evm_modules_sources
 )
 
 set(qml_module_sources 
-    ${EVM_BASE}/modules/qml/qml_lvgl_module.c 
-    ${EVM_BASE}/modules/qml/qml_lvgl_utils.c 
+    ${EVM_BASE}/modules/qml/lvgl/qml_lvgl_module.c 
+    ${EVM_BASE}/modules/qml/lvgl/qml_lvgl_utils.c 
     ${EVM_BASE}/modules/qml/qml_module.c 
 )
 
@@ -93,6 +93,7 @@ include_directories(app PRIVATE ${EVM_BASE}/eqml)
 include_directories(app PRIVATE ${EVM_BASE}/modules/ecma)
 include_directories(app PRIVATE ${EVM_BASE}/modules/evm)
 include_directories(app PRIVATE ${EVM_BASE}/modules/qml)
+include_directories(app PRIVATE ${EVM_BASE}/modules/qml/lvgl)
 
 include_directories(app PRIVATE ${EVM_BASE}/drivers/zephry/display/stm32_hal)
 include_directories(app PRIVATE src)
