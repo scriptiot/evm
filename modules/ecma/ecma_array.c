@@ -28,7 +28,11 @@ evm_val_t ecma_array_push(evm_t * e, evm_val_t * p, int argc, evm_val_t * v);
 evm_val_t ecma_array_pop(evm_t * e, evm_val_t * p, int argc, evm_val_t * v);
 
 void ecma_array_set_length(evm_t * e, evm_val_t * o, int len){
-    evm_attr_set_by_index(e, o, 8, evm_mk_number(len));
+#ifdef CONFIG_EVM_ECMA_OBJECT
+    evm_attr_set_by_index(e, o, ECMA_OBJECT_ATTR_SIZE, evm_mk_number(len));
+#else
+    evm_attr_set_by_index(e, o, 0, evm_mk_number(len));
+#endif
 }
 
 int ecma_array_get_length(evm_t * e, evm_val_t * o){
