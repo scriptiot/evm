@@ -28,7 +28,7 @@ evm_val_t ecma_array_push(evm_t * e, evm_val_t * p, int argc, evm_val_t * v);
 evm_val_t ecma_array_pop(evm_t * e, evm_val_t * p, int argc, evm_val_t * v);
 evm_val_t ecma_array_shift(evm_t * e, evm_val_t * p, int argc, evm_val_t * v);
 evm_val_t ecma_array_slice(evm_t * e, evm_val_t * p, int argc, evm_val_t * v);
-evm_val_t ecma_array_copy_with_in(evm_t * e, evm_val_t * p, int argc, evm_val_t * v);
+evm_val_t ecma_array_copyWithin(evm_t * e, evm_val_t * p, int argc, evm_val_t * v);
 evm_val_t ecma_array_unshift(evm_t * e, evm_val_t * p, int argc, evm_val_t * v);
 evm_val_t ecma_array_filter(evm_t * e, evm_val_t * p, int argc, evm_val_t * v);
 evm_val_t ecma_array_map(evm_t * e, evm_val_t * p, int argc, evm_val_t * v);
@@ -67,11 +67,11 @@ void ecma_array_attrs_apply(evm_t * e, evm_val_t * o){
         evm_attr_set(e, o, index++, "indexOf", evm_mk_native((intptr_t)ecma_array_indexOf));
         evm_attr_set(e, o, index++, "shift", evm_mk_native((intptr_t)ecma_array_shift));
         evm_attr_set(e, o, index++, "slice", evm_mk_native((intptr_t)ecma_array_slice));
-        evm_attr_set(e, o, index++, "copyWithin", evm_mk_native((intptr_t)ecma_array_copy_with_in));
+        evm_attr_set(e, o, index++, "copyWithin", evm_mk_native((intptr_t)ecma_array_copyWithin));
         evm_attr_set(e, o, index++, "unshift", evm_mk_native((intptr_t)ecma_array_unshift));
         evm_attr_set(e, o, index++, "filter", evm_mk_native((intptr_t)ecma_array_filter));
-        evm_attr_set(e, o, index++, "map", evm_mk_native((intptr_t)ecma_array_filter));
-        evm_attr_set(e, o, index++, "find", evm_mk_native((intptr_t)ecma_array_filter));
+        evm_attr_set(e, o, index++, "map", evm_mk_native((intptr_t)ecma_array_map));
+        evm_attr_set(e, o, index++, "find", evm_mk_native((intptr_t)ecma_array_find));
         evm_set_parent(o, ecma_object_prototype);
     }
 }
@@ -177,7 +177,7 @@ evm_val_t ecma_array_slice(evm_t * e, evm_val_t * p, int argc, evm_val_t * v){
     return EVM_VAL_UNDEFINED;
 }
 
-evm_val_t ecma_array_copy_with_in(evm_t * e, evm_val_t * p, int argc, evm_val_t * v){
+evm_val_t ecma_array_copyWithin(evm_t * e, evm_val_t * p, int argc, evm_val_t * v){
     if( evm_is_list(p) && argc > 0 ){
         int len = evm_list_len(p);
         int target = 0;
@@ -281,8 +281,8 @@ evm_val_t ecma_array_map(evm_t * e, evm_val_t * p, int argc, evm_val_t * v){
         evm_val_t *o = evm_list_create(e, GC_LIST, len);
         for (int i = 0; i < len; i++) {
             evm_val_t * arg = evm_list_get(e, p, i);
-            evm_run_callback(e, v, p, arg, 1);
-            evm_list_set(e, o, i, *arg);
+            evm_val_t val = evm_run_callback(e, v, p, arg, 1);
+            evm_list_set(e, o, i, val);
         }
         ecma_array_attrs_apply(e, o);
         return *o;
@@ -308,6 +308,7 @@ evm_val_t ecma_array_indexOf(evm_t * e, evm_val_t * p, int argc, evm_val_t * v){
     if(argc == 0) ARG_LENGTH_ERR;
     int len = evm_list_len(p);
     int fromIndex = 0;
+
     if(argc == 2 && evm_is_integer(v+1)){
         fromIndex = evm_2_integer(v+1);
     }
@@ -316,22 +317,12 @@ evm_val_t ecma_array_indexOf(evm_t * e, evm_val_t * p, int argc, evm_val_t * v){
         return evm_mk_number(-1);
     }
 
-    if(evm_is_string(v)){
-        for(int i = 0; i < len; i++){
-            if(i >= fromIndex){
-                evm_val_t * local_val = evm_list_get(e, p, i);
-                if (evm_is_string( local_val )){
-                    if (strcmp(evm_2_string(local_val), evm_2_string(v)) == 0){
-                        return evm_mk_number(i);
-                    }
-                }
-            }
-        }
-    }else{
-        for(int i = 0; i < len; i++){
-            if (evm_type(evm_list_get(e, p, i)) == evm_type(v)){
-                return evm_mk_number(i);
-            }
+    for(int i = fromIndex; i < len; i++){
+        evm_val_t * local_val = evm_list_get(e, p, i);
+        if (evm_is_string(local_val) && strcmp(evm_2_string(local_val), evm_2_string(v)) == 0){
+            return evm_mk_number(i);
+        } else if (*evm_list_get(e, p, i) == *v){
+            return evm_mk_number(i);
         }
     }
     return evm_mk_number(-1);
