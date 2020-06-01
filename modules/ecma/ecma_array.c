@@ -26,6 +26,13 @@ evm_val_t ecma_array_fill(evm_t * e, evm_val_t * p, int argc, evm_val_t * v);
 evm_val_t ecma_array_indexOf(evm_t * e, evm_val_t * p, int argc, evm_val_t * v);
 evm_val_t ecma_array_push(evm_t * e, evm_val_t * p, int argc, evm_val_t * v);
 evm_val_t ecma_array_pop(evm_t * e, evm_val_t * p, int argc, evm_val_t * v);
+evm_val_t ecma_array_shift(evm_t * e, evm_val_t * p, int argc, evm_val_t * v);
+evm_val_t ecma_array_slice(evm_t * e, evm_val_t * p, int argc, evm_val_t * v);
+evm_val_t ecma_array_copy_with_in(evm_t * e, evm_val_t * p, int argc, evm_val_t * v);
+evm_val_t ecma_array_unshift(evm_t * e, evm_val_t * p, int argc, evm_val_t * v);
+evm_val_t ecma_array_filter(evm_t * e, evm_val_t * p, int argc, evm_val_t * v);
+evm_val_t ecma_array_map(evm_t * e, evm_val_t * p, int argc, evm_val_t * v);
+evm_val_t ecma_array_find(evm_t * e, evm_val_t * p, int argc, evm_val_t * v);
 
 void ecma_array_set_length(evm_t * e, evm_val_t * o, int len){
 #ifdef CONFIG_EVM_ECMA_OBJECT
@@ -58,20 +65,26 @@ void ecma_array_attrs_apply(evm_t * e, evm_val_t * o){
         evm_attr_set(e, o, index++, "concat", evm_mk_native((intptr_t)ecma_array_concat));
         evm_attr_set(e, o, index++, "fill", evm_mk_native((intptr_t)ecma_array_fill));
         evm_attr_set(e, o, index++, "indexOf", evm_mk_native((intptr_t)ecma_array_indexOf));
+        evm_attr_set(e, o, index++, "shift", evm_mk_native((intptr_t)ecma_array_shift));
+        evm_attr_set(e, o, index++, "slice", evm_mk_native((intptr_t)ecma_array_slice));
+        evm_attr_set(e, o, index++, "copyWithin", evm_mk_native((intptr_t)ecma_array_copy_with_in));
+        evm_attr_set(e, o, index++, "unshift", evm_mk_native((intptr_t)ecma_array_unshift));
+        evm_attr_set(e, o, index++, "filter", evm_mk_native((intptr_t)ecma_array_filter));
+        evm_attr_set(e, o, index++, "map", evm_mk_native((intptr_t)ecma_array_filter));
+        evm_attr_set(e, o, index++, "find", evm_mk_native((intptr_t)ecma_array_filter));
         evm_set_parent(o, ecma_object_prototype);
     }
 }
 
 evm_val_t ecma_array_push(evm_t * e, evm_val_t * p, int argc, evm_val_t * v){
-    if( evm_is_list(p) && argc == 1){
+    if( evm_is_list(p) && argc >= 1 ){
         int len = ecma_array_get_length(e, p);
         int real_len = evm_list_len(p);
-        if( real_len > 0 && len < real_len)
+        if( real_len > 0 && len < real_len )
             evm_list_set(e, p, len, *v);
-        else{
+        else
             evm_list_push(e, p, argc, v);
-        }
-        ecma_array_set_length(e, p, len + 1);
+        ecma_array_set_length(e, p, len + argc);
     }
     return EVM_VAL_UNDEFINED;
 }
@@ -79,28 +92,28 @@ evm_val_t ecma_array_push(evm_t * e, evm_val_t * p, int argc, evm_val_t * v){
 evm_val_t ecma_array_pop(evm_t * e, evm_val_t * p, int argc, evm_val_t * v){
     (void)argc;
     (void)v;
-    if( evm_is_list(p)){
-        if( evm_list_len(p) ){
-            int len = ecma_array_get_length(e, p);
-            evm_val_t val = * evm_list_get(e, p, len - 1);
-            evm_list_set(e, p, len - 1, EVM_VAL_UNDEFINED);
-            ecma_array_set_length(e, p, len - 1);
-            return val;
-        }
+
+    if( evm_list_len(p) ){
+        int len = ecma_array_get_length(e, p);
+        evm_val_t val = *evm_list_get(e, p, len - 1);
+        evm_list_set(e, p, len - 1, EVM_VAL_UNDEFINED);
+        ecma_array_set_length(e, p, len - 1);
+        return val;
     }
+
     return EVM_VAL_UNDEFINED;
 }
 
 evm_val_t ecma_array_concat(evm_t * e, evm_val_t * p, int argc, evm_val_t * v){
-    if( argc == 1 && evm_is_list(v) && p && evm_is_list(p) ){
-        int s_len = evm_list_len(p);
-        int t_len = evm_list_len(v);
-        evm_val_t * o = evm_list_create(e, GC_LIST, s_len + t_len);
-        for(int i = 0; i < s_len; i++){
+    if( p && evm_is_list(p) && argc >= 1 ){
+        int len = evm_list_len(p);
+
+        evm_val_t * o = evm_list_create(e, GC_LIST, len + argc);
+        for(int i = 0; i < len; i++){
             evm_list_set(e, o, i, *evm_list_get(e, p, i));
         }
-        for(int i = 0; i < t_len; i++){
-            evm_list_set(e, o, i + s_len, *evm_list_get(e, v, i));
+        for(int i = 0; i < argc; i++){
+            evm_list_set(e, o, i + len, *(v + i));
         }
         ecma_array_attrs_apply(e, o);
         return *o;
@@ -109,13 +122,219 @@ evm_val_t ecma_array_concat(evm_t * e, evm_val_t * p, int argc, evm_val_t * v){
 }
 
 evm_val_t ecma_array_fill(evm_t * e, evm_val_t * p, int argc, evm_val_t * v){
-    if( argc == 1 && evm_is_list(p) ){
-        int s_len = evm_list_len(p);
-        for(int i = 0; i < s_len; i++){
+    if( evm_is_list(p) && argc >= 1 ){
+        int len = evm_list_len(p);
+        int start = 0;
+        int end = len;
+        if (argc == 2 && evm_is_integer(v + 1)) start = evm_2_integer(v + 1);
+        if (argc == 3 && evm_is_integer(v + 2)) end = evm_2_integer(v + 2);
+        for(int i = start; i < end; i++){
             evm_list_set(e, p, i, *v);
         }
     }
     return EVM_VAL_UNDEFINED;
+}
+
+evm_val_t ecma_array_shift(evm_t * e, evm_val_t * p, int argc, evm_val_t * v){
+    (void)argc;
+    (void)v;
+    if( evm_is_list(p) && evm_list_len(p) ){
+        int len = ecma_array_get_length(e, p);
+        evm_val_t val = * evm_list_get(e, p, 0);
+        for(int i = 0; i < len - 1; i++){
+            evm_list_set(e, p, i, *evm_list_get(e, p, i + 1));
+        }
+        ecma_array_set_length(e, p, len - 1);
+        evm_list_set(e, p, len - 1, EVM_VAL_UNDEFINED);
+        return val;
+    }
+    return EVM_VAL_UNDEFINED;
+}
+
+evm_val_t ecma_array_slice(evm_t * e, evm_val_t * p, int argc, evm_val_t * v){
+    if( evm_is_list(p) ){
+        int len = evm_list_len(p);
+        int begin = 0;
+        int end = len;
+        evm_val_t *o = NULL;
+
+        if (argc >= 1 && evm_is_integer(v)) begin = evm_2_integer(v);
+        if (begin < 0) begin = begin + len;
+        if (argc == 2 && evm_is_integer(v + 1)) end = evm_2_integer(v + 1);
+        if (end < 0) end = end + len;
+
+        if (end < begin) len = 0;
+        else len = end - begin;
+
+        o = evm_list_create(e, GC_LIST, len);
+        for(int i = 0; i < len; i++){
+            evm_list_set(e, o, i, *evm_list_get(e, p, i + begin));
+        }
+
+        ecma_array_attrs_apply(e, o);
+        return *o;
+    }
+    return EVM_VAL_UNDEFINED;
+}
+
+evm_val_t ecma_array_copy_with_in(evm_t * e, evm_val_t * p, int argc, evm_val_t * v){
+    if( evm_is_list(p) && argc > 0 ){
+        int len = evm_list_len(p);
+        int target = 0;
+        int begin = 0;
+        int end = len;
+
+        if (argc >= 1 && evm_is_integer(v)) {
+            target = evm_2_integer(v);
+
+            if (target >= len) return EVM_VAL_UNDEFINED;
+            if (argc >= 2 && evm_is_integer(v+1)) begin = evm_2_integer(v+1);
+            if (begin < 0) begin = begin + len;
+            if (argc == 3 && evm_is_integer(v+2)) end = evm_2_integer(v+2);
+            if (end < 0) end = end + len;
+            if (end < begin) return EVM_VAL_UNDEFINED;
+            
+            for (int i = begin; i < end; i++) {
+                evm_list_set(e, p, target + (i - begin), *evm_list_get(e, p, i));
+            }
+
+            return *p;
+        }
+    }
+    return EVM_VAL_UNDEFINED;
+}
+
+evm_val_t ecma_array_unshift(evm_t * e, evm_val_t * p, int argc, evm_val_t * v){
+    if( evm_is_list(p) ){
+        int len = ecma_array_get_length(e, p);
+        int real_len = evm_list_len(p);
+        if( real_len > 0 && len < real_len )
+            evm_list_set(e, p, len, *v);
+        else
+            evm_list_push(e, p, argc, v);
+
+        for(int i = len - 1; i > -1; i--){
+            evm_list_set(e, p, i + argc, *evm_list_get(e, p, i));
+        }
+        for(int i = 0; i < argc; i++){
+            evm_list_set(e, p, i, *(v + i));
+        }
+
+        ecma_array_set_length(e, p, len + argc);
+        return evm_mk_number(len + argc);
+    }
+    return EVM_VAL_UNDEFINED;
+}
+
+// evm_val_t ecma_array_join(evm_t * e, evm_val_t * p, int argc, evm_val_t * v){
+//     if( evm_is_list(p) && evm_list_len(p) ){
+//         // const char *c = ',';
+//         int c_len = 0;
+//         if (argc == 1) c_len = strlen(evm_2_string(v));
+
+//         evm_val_t *s = evm_heap_string_create(e, (char*)c, c_len);
+
+//         int s_len = 0;
+//         // evm_val_t * t = NULL;
+//         int len = evm_list_len(p);
+//         for (int i = 0; i < len; i++) {
+//             s_len = s_len + strlen(evm_2_string(evm_list_get(e, p, i)));
+//         }
+
+//         evm_val_t *o = evm_heap_string_create(e, (char*)s, s_len);
+
+//         // for (int i = 0; i < len; i++) {
+//         //     t =  evm_2_string(evm_list_get(e, p, i));
+//         //     if (i < len - 1) strcat(o, s);
+//         //     if (evm_is_string(t)) {
+//         //         strcat(o, t)
+//         //     } else {
+//         //         strcat(o, evm_2_string(t))
+//         //     }
+//         // }
+//         return *o;
+//     }
+//     return EVM_VAL_UNDEFINED;
+// }
+
+evm_val_t ecma_array_filter(evm_t * e, evm_val_t * p, int argc, evm_val_t * v){
+    if (evm_is_list(p) && argc > 0 && evm_is_script(v)) {
+        evm_val_t *o = evm_list_create(e, GC_LIST, 0);
+        int len = evm_list_len(p);
+        int arr_len = 0;
+        for (int i = 0; i < len; i++) {
+            evm_val_t * arg = evm_list_get(e, p, i);
+            if (evm_run_callback(e, v, p, arg, 1) == EVM_VAL_TRUE) {
+                arr_len++;
+                evm_list_push(e, o, 1, arg);
+            }
+        }
+        ecma_array_attrs_apply(e, o);
+        return *o;
+    }
+    return EVM_VAL_UNDEFINED;
+}
+
+evm_val_t ecma_array_map(evm_t * e, evm_val_t * p, int argc, evm_val_t * v){
+    if (evm_is_list(p) && argc > 0 && evm_is_script(v)) {
+        int len = evm_list_len(p);
+        evm_val_t *o = evm_list_create(e, GC_LIST, len);
+        for (int i = 0; i < len; i++) {
+            evm_val_t * arg = evm_list_get(e, p, i);
+            evm_run_callback(e, v, p, arg, 1);
+            evm_list_set(e, o, i, *arg);
+        }
+        ecma_array_attrs_apply(e, o);
+        return *o;
+    }
+    return EVM_VAL_UNDEFINED;
+}
+
+evm_val_t ecma_array_find(evm_t * e, evm_val_t * p, int argc, evm_val_t * v){
+    if (evm_is_list(p) && argc > 0 && evm_is_script(v)) {
+        int len = evm_list_len(p);
+        evm_val_t * o = NULL;
+        for (int i = 0; i < len; i++) {
+            o = evm_list_get(e, p, i);
+            if (evm_run_callback(e, v, p, o, 1) == EVM_VAL_TRUE) break;
+        }
+        if (evm_is_null(o)) return EVM_VAL_UNDEFINED;
+        else return *o;
+    }
+    return EVM_VAL_UNDEFINED;
+}
+
+evm_val_t ecma_array_indexOf(evm_t * e, evm_val_t * p, int argc, evm_val_t * v){
+    if(argc == 0) ARG_LENGTH_ERR;
+    int len = evm_list_len(p);
+    int fromIndex = 0;
+    if(argc == 2 && evm_is_integer(v+1)){
+        fromIndex = evm_2_integer(v+1);
+    }
+
+    if (fromIndex >= len){
+        return evm_mk_number(-1);
+    }
+
+    if(evm_is_string(v)){
+        for(int i = 0; i < len; i++){
+            if(i >= fromIndex){
+                evm_val_t * local_val = evm_list_get(e, p, i);
+                if (evm_is_string( local_val )){
+                    if (strcmp(evm_2_string(local_val), evm_2_string(v)) == 0){
+                        return evm_mk_number(i);
+                    }
+                }
+            }
+        }
+    }else{
+        for(int i = 0; i < len; i++){
+            if (evm_type(evm_list_get(e, p, i)) == evm_type(v)){
+                return evm_mk_number(i);
+            }
+        }
+    }
+    return evm_mk_number(-1);
 }
 
 evm_val_t ecma_array(evm_t * e, evm_val_t * p, int argc, evm_val_t * v){
@@ -145,58 +364,6 @@ evm_val_t ecma_array(evm_t * e, evm_val_t * p, int argc, evm_val_t * v){
     } else {
         return EVM_VAL_UNDEFINED;
     }
-}
-
-
-// evm_val_t ecma_array_filter(evm_t * e, evm_val_t * p, int argc, evm_val_t * v){
-//     if( argc > 0 && evm_is_script(v) ){
-//         int len = evm_list_len(p);
-//         for(int i = 0; i < len; i++) {
-//             evm_val_t * arg = evm_list_get(e, p, i);
-//             if( evm_run_callback(e, v, p, arg, 1) == EVM_VAL_TRUE ) {
-
-//             }
-//         }
-//     }
-// }
-
-evm_val_t ecma_array_indexOf(evm_t * e, evm_val_t * p, int argc, evm_val_t * v){
-    (void)e;
-    (void)p;
-    (void)argc;
-    (void)v;
-    if(argc == 0) ARG_LENGTH_ERR;
-    int len = evm_list_len(p);
-    int fromIndex = 0;
-    if(argc == 2){
-        if (evm_is_integer(v+1)){
-            fromIndex = evm_2_integer(v+1);
-        }
-    }
-
-    if (fromIndex >= len){
-        return evm_mk_number(-1);
-    }
-
-    if(evm_is_string(v)){
-        for(int i = 0; i < len; i++){
-            if(i >= fromIndex){
-                evm_val_t * local_val = evm_list_get(e, p, i);
-                if (evm_is_string( local_val )){
-                    if (strcmp(evm_2_string(local_val), evm_2_string(v)) == 0){
-                        return evm_mk_number(i);
-                    }
-                }
-            }
-        }
-    }else{
-        for(int i = 0; i < len; i++){
-            if (evm_type(evm_list_get(e, p, i)) == evm_type(v)){
-                return evm_mk_number(i);
-            }
-        }
-    }
-    return evm_mk_number(-1);
 }
 
 evm_val_t * ecma_array_init(evm_t * e){
