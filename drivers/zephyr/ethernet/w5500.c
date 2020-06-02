@@ -28,7 +28,7 @@
 #include <net/ethernet.h>
 #include <ethernet/eth_stats.h>
 
-#include "eth_enc424j600_priv.h"
+#include "w5500.h"
 
 LOG_MODULE_REGISTER(ethdrv, CONFIG_ETHERNET_LOG_LEVEL);
 
@@ -605,7 +605,7 @@ static const struct ethernet_api api_funcs = {
 
 static int w5500_init(struct device *dev)
 {
-	const struct enc424j600_config *config = dev->config_info;
+	const struct w5500_config *config = dev->config_info;
 	struct enc424j600_runtime *context = dev->driver_data;
 	u8_t retries = ENC424J600_DEFAULT_NUMOF_RETRIES;
 	u16_t tmp;
@@ -755,17 +755,14 @@ static int w5500_init(struct device *dev)
 	return 0;
 }
 
-static struct enc424j600_runtime enc424j600_0_runtime = {
-	.tx_rx_sem = Z_SEM_INITIALIZER(enc424j600_0_runtime.tx_rx_sem,
+static struct w5500_runtime w5500_0_runtime = {
+	.tx_rx_sem = Z_SEM_INITIALIZER(w5500_0_runtime.tx_rx_sem,
 				       1,  UINT_MAX),
-	.int_sem  = Z_SEM_INITIALIZER(enc424j600_0_runtime.int_sem,
+	.int_sem  = Z_SEM_INITIALIZER(w5500_0_runtime.int_sem,
 				      0, UINT_MAX),
 };
 
-static const struct enc424j600_config enc424j600_0_config = {
-	.gpio_port = DT_INST_GPIO_LABEL(0, int_gpios),
-	.gpio_pin = DT_INST_GPIO_PIN(0, int_gpios),
-	.gpio_flags = DT_INST_GPIO_FLAGS(0, int_gpios),
+static const struct w5500_config w5500_0_config = {
 	.spi_port = DT_INST_BUS_LABEL(0),
 	.spi_freq  = DT_INST_PROP(0, spi_max_frequency),
 	.spi_slave = DT_INST_REG_ADDR(0),
@@ -776,8 +773,8 @@ static const struct enc424j600_config enc424j600_0_config = {
 	.timeout = CONFIG_ETH_ENC424J600_TIMEOUT,
 };
 
-ETH_NET_DEVICE_INIT(enc424j600_0, DT_INST_LABEL(0),
-		    enc424j600_init, device_pm_control_nop,
-		    &enc424j600_0_runtime, &enc424j600_0_config,
+ETH_NET_DEVICE_INIT(w5500_0, DT_INST_LABEL(0),
+		    w5500_init, device_pm_control_nop,
+		    &w5500_0_runtime, &w5500_0_config,
 		    CONFIG_ETH_INIT_PRIORITY, &api_funcs, NET_ETH_MTU);
 
