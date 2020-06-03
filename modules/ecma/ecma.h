@@ -24,7 +24,7 @@ extern evm_val_t * ecma_Object;
 #endif
 
 #ifdef CONFIG_EVM_ECMA_ARRAY
-#define ECMA_ARRAY_ATTR_SIZE    13
+#define ECMA_ARRAY_ATTR_SIZE    14
 extern evm_val_t * ecma_Array;
 #endif
 

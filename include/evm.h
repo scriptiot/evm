@@ -335,8 +335,9 @@ evm_err_t evm_buffer_set(evm_val_t * o, uint8_t * buffer, uint32_t index, uint32
 /**
  * @brief 创建堆字符串
  * @param e，虚拟机参数
- * @param len，字符串长度
- * @return 字符串对象，如果失败，返回UNDEFINED
+ * @param str, 初始化内容
+ * @param len，字符串长度，不能小于str的长度
+ * @return 字符串对象，如果失败，返回NULL
  */
 evm_val_t *evm_heap_string_create(evm_t *e, char *str, int len);
 /**

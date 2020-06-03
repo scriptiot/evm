@@ -33,6 +33,7 @@ evm_val_t ecma_array_unshift(evm_t * e, evm_val_t * p, int argc, evm_val_t * v);
 evm_val_t ecma_array_filter(evm_t * e, evm_val_t * p, int argc, evm_val_t * v);
 evm_val_t ecma_array_map(evm_t * e, evm_val_t * p, int argc, evm_val_t * v);
 evm_val_t ecma_array_find(evm_t * e, evm_val_t * p, int argc, evm_val_t * v);
+evm_val_t ecma_array_join(evm_t * e, evm_val_t * p, int argc, evm_val_t * v);
 
 void ecma_array_set_length(evm_t * e, evm_val_t * o, int len){
 #ifdef CONFIG_EVM_ECMA_OBJECT
@@ -72,6 +73,7 @@ void ecma_array_attrs_apply(evm_t * e, evm_val_t * o){
         evm_attr_set(e, o, index++, "filter", evm_mk_native((intptr_t)ecma_array_filter));
         evm_attr_set(e, o, index++, "map", evm_mk_native((intptr_t)ecma_array_map));
         evm_attr_set(e, o, index++, "find", evm_mk_native((intptr_t)ecma_array_find));
+        evm_attr_set(e, o, index++, "join", evm_mk_native((intptr_t)ecma_array_join));
         evm_set_parent(o, ecma_object_prototype);
     }
 }
@@ -226,36 +228,71 @@ evm_val_t ecma_array_unshift(evm_t * e, evm_val_t * p, int argc, evm_val_t * v){
     return EVM_VAL_UNDEFINED;
 }
 
-// evm_val_t ecma_array_join(evm_t * e, evm_val_t * p, int argc, evm_val_t * v){
-//     if( evm_is_list(p) && evm_list_len(p) ){
-//         // const char *c = ',';
-//         int c_len = 0;
-//         if (argc == 1) c_len = strlen(evm_2_string(v));
+evm_val_t ecma_array_join(evm_t * e, evm_val_t * p, int argc, evm_val_t * v){
+    if( evm_is_list(p) && evm_list_len(p) ){
+        int c_len = 1;
+        int s_len = 0;
+        char * ch = ",";
+        if (argc == 1 && evm_is_string(v)) {
+            ch = (char*)evm_2_string(v);
+            c_len = strlen(ch);
+        }
+        
+        int len = evm_list_len(p);
+        if (len == 1) return *evm_list_get(e, p, 0);
 
-//         evm_val_t *s = evm_heap_string_create(e, (char*)c, c_len);
+        evm_val_t *t = NULL;
+        for (int i = 0; i < len; i++) {
+            t = evm_list_get(e, p, i);
+            if (evm_is_string(t)) {
+                s_len = s_len + strlen(evm_2_string(t));
+            } else {
+                evm_val_t * toString_val = evm_attr_get(e, t, "toString");
+                if( toString_val ) {
+                    evm_val_t local_str_val = evm_run_callback(e, toString_val, t, NULL, 0);
+                    if( evm_is_string(&local_str_val) ) {
+                        char * local_addr = evm_2_string(&local_str_val);
+                        int local_len = strlen(local_addr);
+                        s_len += local_len;
+                    }
+                }
+            }
+        }
 
-//         int s_len = 0;
-//         // evm_val_t * t = NULL;
-//         int len = evm_list_len(p);
-//         for (int i = 0; i < len; i++) {
-//             s_len = s_len + strlen(evm_2_string(evm_list_get(e, p, i)));
-//         }
+        evm_val_t *s = evm_heap_string_create(e, "", s_len + (c_len * (len - 1)));
 
-//         evm_val_t *o = evm_heap_string_create(e, (char*)s, s_len);
+        int current_idx = 0;
+        evm_val_t *tmp = NULL;
+        
+        for (int i = 0; i < len; i++) {
+            t =  evm_list_get(e, p, i);
+            if( evm_is_string(t) ){
+                char * local_addr = evm_2_string(t);
+                int local_len = strlen(local_addr);
+                evm_heap_string_set(s, local_addr, current_idx, local_len);
+                current_idx += local_len;
+            } else {
+                evm_val_t * toString_val = evm_attr_get(e, t, "toString");
+                if( toString_val ) {
+                    evm_val_t local_str_val = evm_run_callback(e, toString_val, t, NULL, 0);
+                    if( evm_is_string(&local_str_val) ) {
+                        char * local_addr = evm_2_string(&local_str_val);
+                        int local_len = strlen(local_addr);
+                        evm_heap_string_set(s, local_addr, current_idx, local_len);
+                        current_idx += local_len;
+                    }
+                }
+            }
 
-//         // for (int i = 0; i < len; i++) {
-//         //     t =  evm_2_string(evm_list_get(e, p, i));
-//         //     if (i < len - 1) strcat(o, s);
-//         //     if (evm_is_string(t)) {
-//         //         strcat(o, t)
-//         //     } else {
-//         //         strcat(o, evm_2_string(t))
-//         //     }
-//         // }
-//         return *o;
-//     }
-//     return EVM_VAL_UNDEFINED;
-// }
+            if (i < len - 1) {
+                evm_heap_string_set(s, ch, current_idx, c_len);
+                current_idx += c_len;
+            }
+        }
+        return *s;
+    }
+    return EVM_VAL_UNDEFINED;
+}
 
 evm_val_t ecma_array_filter(evm_t * e, evm_val_t * p, int argc, evm_val_t * v){
     if (evm_is_list(p) && argc > 0 && evm_is_script(v)) {
