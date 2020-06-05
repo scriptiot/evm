@@ -17,5 +17,19 @@ config ST7789V
 	default y
 	depends on DISPLAY
 
+config HAS_STM32CUBE
+	default y
+
+config USE_STM32_HAL_MMC
+	default y
+
+config USE_STM32_HAL_MMC_EX
+	default y
+
+config USE_STM32_HAL_SD
+	default y
+
+config USE_STM32_LL_SDMMC
+	default y
 
 endif

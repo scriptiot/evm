@@ -54,6 +54,14 @@ if [ ${OS} == 'Linux' ]; then
     west update
     west zephyr-export
 
+    isZEPHYR_BASEInBashrc=$(grep 'export ZEPHYR_BASE=${EVMDIR}/components/zephyr-rtos/zephyr' ~/.bashrc -n)
+    if [ -z "${isZEPHYR_BASEInBashrc}" ]; then 
+        echo -e "\n${isZEPHYR_BASEInBashrc}" >> ~/.bashrc
+        echo "==========【add ZEPHYR_BASE  in PATH successfully】==============="
+    else
+        echo "==========【ZEPHYR_BASE has been in PATH】==============="
+    fi
+
 elif [ ${OS} == 'MINGW' ]; then
 
     if [ $# != 1 ] ; then 

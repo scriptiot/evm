@@ -335,8 +335,9 @@ evm_err_t evm_buffer_set(evm_val_t * o, uint8_t * buffer, uint32_t index, uint32
 /**
  * @brief 创建堆字符串
  * @param e，虚拟机参数
- * @param len，字符串长度
- * @return 字符串对象，如果失败，返回UNDEFINED
+ * @param str, 初始化内容
+ * @param len，字符串长度，不能小于str的长度
+ * @return 字符串对象，如果失败，返回NULL
  */
 evm_val_t *evm_heap_string_create(evm_t *e, char *str, int len);
 /**
@@ -387,29 +388,11 @@ intptr_t evm_object_get_ext_data(evm_val_t * o);
  */
 void evm_object_set_ext_data(evm_val_t *o, intptr_t v);
 /**
- * @brief 对象获取init函数
+ * @brief 获取对象hash值
  * @param o
- * @return
+ * @return hash值
  */
-evm_init_fn evm_object_get_init(evm_val_t * o);
-/**
- * @brief 对象设置init函数
- * @param o
- * @param v
- */
-void evm_object_set_init(evm_val_t *o, evm_init_fn fn);
-/**
- * @brief 对象设置destroy函数，当对象被当做垃圾回收时，触发该函数
- * @param o
- * @return
- */
-evm_destroy_fn evm_object_get_destroy(evm_val_t * o);
-/**
- * @brief 对象获取destroy函数，当对象被当做垃圾回收时，触发该函数
- * @param o
- * @param v
- */
-void evm_object_set_set_destroy(evm_val_t *o, evm_destroy_fn fn);
+uint32_t evm_object_get_hash(evm_val_t *o);
 /**
  * @brief 设置对象继承的父类对象
  * @param e，虚拟机参数

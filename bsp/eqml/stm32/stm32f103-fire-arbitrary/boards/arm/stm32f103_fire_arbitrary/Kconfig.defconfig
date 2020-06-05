@@ -1,0 +1,11 @@
+# NUCLEO-64 F103RB board configuration
+
+# Copyright (c) 2016 Open-RnD Sp. z o.o.
+# SPDX-License-Identifier: Apache-2.0
+
+if STM32F103_FIRE_ARBITRARY
+
+config BOARD
+	default "stm32f103_fire_arbitrary"
+
+endif

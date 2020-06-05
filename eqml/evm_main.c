@@ -14,8 +14,13 @@
 
 #include "evm_main.h"
 #include "ecma.h"
-#include "uol_output.h"
-#include <drivers/gpio.h>
+
+const char * qml_text = "Rectangle {\n"
+"color: 'red';\n"
+"gradient: 'red';\n"
+"width:100;\n"
+"height:100;\n"
+"}";
 
 evm_t * nevm_runtime;
 
@@ -27,10 +32,7 @@ char evm_repl_tty_read(evm_t * e)
 }
 
 const char * vm_load(evm_t * e, char * path, int type){
-    if( !strcmp(path, "uol_output.ubc") ){
-        return uol_binary_buf;
-    }
-    return NULL;
+    return qml_text;
 }
 
 void * vm_malloc(int size)
@@ -43,22 +45,6 @@ void * vm_malloc(int size)
 void vm_free(void * mem)
 {
     if(mem) free(mem);
-}
-
-int nevm_runtime_setup(void){
-    nevm_runtime = (evm_t*)malloc(sizeof(evm_t));
-    memset(nevm_runtime, 0, sizeof(evm_t));
-    int err = evm_init(nevm_runtime, NEVM_HEAP_SIZE, NEVM_STACK_SIZE, NEVM_MODULE_SIZE, EVM_VAR_NAME_MAX_LEN, EVM_FILE_NAME_LEN);
-
-    err = evm_boot(nevm_runtime, "uol_output.ubc");
-    if (err != ec_ok )  {
-        printk("Unable to boot uol runtime");
-        return err;
-    }
-    err = nevm_start(nevm_runtime);
-    if(err) {return err;}
-    printk("heap usage = %d\r\n", nevm_runtime->heap->free);
-    return ec_ok;
 }
 
 const struct uart_config uart_cfg = {
@@ -83,11 +69,6 @@ int evm_main(void){
     evm_register_print((intptr_t)printk);
     evm_register_file_load((intptr_t)vm_load);
 
-    if( nevm_runtime_setup() != ec_ok ){
-        printk("Failed to setup uol runtime\r\n");
-        return ec_err;
-    }
-
     evm_t * env = (evm_t*)malloc(sizeof(evm_t));
     memset(env, 0, sizeof(evm_t));
     int err = evm_init(env, EVM_HEAP_SIZE, EVM_STACK_SIZE, EVM_MODULE_SIZE, EVM_VAR_NAME_MAX_LEN, EVM_FILE_NAME_LEN);
@@ -99,12 +80,25 @@ int evm_main(void){
     if( err ) {
         evm_print("Failed to add ecma module\r\n");
     }
+
     err = evm_module(env);
     if( err ) {
         evm_print("Failed to add evm module\r\n");
-        return err;
     }
 
-    err = evm_repl_run(env, 20, EVM_LANG_JS);
+
+    err = qml_lvgl_module(env);
+    if( err ) {
+        evm_print("Failed to add qml module\r\n");
+    }
+
+    evm_boot(env, "main.qml");
+    
+    evm_start(env);
+
+    while(1){
+        lv_task_handler();
+        k_msleep(10);
+    }
     return err;
 }

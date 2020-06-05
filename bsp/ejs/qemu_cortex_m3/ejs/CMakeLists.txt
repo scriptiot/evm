@@ -3,7 +3,7 @@
 cmake_minimum_required(VERSION 3.13.1)
 
 find_package(Zephyr HINTS $ENV{ZEPHYR_BASE})
-project(ejs)
+project(eqml)
 
 set(EVM_BASE ${ZEPHYR_BASE}/../../../)
 
@@ -12,9 +12,9 @@ if (EXISTS ${EVM_DEV})
     message(${EVM_DEV})
     set(CMAKE_MODULE_PATH ${EVM_DEV})
     find_package(ejs)
-    target_link_libraries(app PRIVATE ejs)
+    target_link_libraries(app PRIVATE eqml)
 else()
-    set(LIBEJS ${EVM_BASE}/lib/arm-none-eabi-gcc/cortex-m3/libejs.a)
+    set(LIBEJS ${EVM_BASE}/lib/arm-none-eabi-gcc/cortex-m3/libeqml.a)
     message(${LIBEJS})
     target_link_libraries(app PRIVATE ${LIBEJS})
 endif()
@@ -31,19 +31,19 @@ set(evm_ecma_sources
 )
 
 set(evm_driver_sources 
-    ${EVM_BASE}/drivers/zephyr/adc_driver.c 
-    ${EVM_BASE}/drivers/zephyr/can_driver.c 
-    ${EVM_BASE}/drivers/zephyr/dac_driver.c
-    ${EVM_BASE}/drivers/zephyr/flash_driver.c
-    ${EVM_BASE}/drivers/zephyr/gpio_driver.c
-    ${EVM_BASE}/drivers/zephyr/i2c_driver.c
-    ${EVM_BASE}/drivers/zephyr/rtc_driver.c
-    ${EVM_BASE}/drivers/zephyr/spi_driver.c
-    ${EVM_BASE}/drivers/zephyr/timer_driver.c
-    ${EVM_BASE}/drivers/zephyr/uart_driver.c
-    ${EVM_BASE}/drivers/zephyr/watchdog_driver.c
-    ${EVM_BASE}/drivers/zephyr/pwm_driver.c
-    ${EVM_BASE}/drivers/zephyr/sys_driver.c
+    ${EVM_BASE}/drivers/zephyr/uol/adc_driver.c 
+    ${EVM_BASE}/drivers/zephyr/uol/can_driver.c 
+    ${EVM_BASE}/drivers/zephyr/uol/dac_driver.c
+    ${EVM_BASE}/drivers/zephyr/uol/flash_driver.c
+    ${EVM_BASE}/drivers/zephyr/uol/gpio_driver.c
+    ${EVM_BASE}/drivers/zephyr/uol/i2c_driver.c
+    ${EVM_BASE}/drivers/zephyr/uol/rtc_driver.c
+    ${EVM_BASE}/drivers/zephyr/uol/spi_driver.c
+    ${EVM_BASE}/drivers/zephyr/uol/timer_driver.c
+    ${EVM_BASE}/drivers/zephyr/uol/uart_driver.c
+    ${EVM_BASE}/drivers/zephyr/uol/watchdog_driver.c
+    ${EVM_BASE}/drivers/zephyr/uol/pwm_driver.c
+    ${EVM_BASE}/drivers/zephyr/uol/sys_driver.c
 )
 
 set(evm_modules_sources 
