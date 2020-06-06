@@ -14,7 +14,7 @@ if (EXISTS ${EVM_DEV})
     find_package(ejs)
     target_link_libraries(app PRIVATE eqml)
 else()
-    set(LIBEJS ${EVM_BASE}/lib/arm-none-eabi-gcc/cortex-m3/libeqml.a)
+    set(LIBEJS ${EVM_BASE}/lib/arm-none-eabi-gcc/cortex-m3/libejs.a)
     message(${LIBEJS})
     target_link_libraries(app PRIVATE ${LIBEJS})
 endif()
@@ -76,14 +76,14 @@ add_definitions("-DQMAKE_VERSION=\"1.0\"")
 remove_definitions("-DWall")
 
 include_directories(app PRIVATE ${EVM_BASE}/include)
-include_directories(app PRIVATE ${EVM_BASE}/ejs)
+include_directories(app PRIVATE ${EVM_BASE}/bsp/common)
 include_directories(app PRIVATE ${EVM_BASE}/modules/ecma)
 include_directories(app PRIVATE src)
 
 target_sources(app PRIVATE ${libevm_module_sources})
 target_sources(app PRIVATE src/main.c)
-target_sources(app PRIVATE ${EVM_BASE}/ejs/evm_main.c)
-target_sources(app PRIVATE ${EVM_BASE}/ejs/uol_output.c)
+target_sources(app PRIVATE ${EVM_BASE}/bsp/common/evm_main.c)
+target_sources(app PRIVATE ${EVM_BASE}/bsp/common/uol_output.c)
 
 # ecma module config
 add_definitions("-DCONFIG_EVM_ECMA_OBJECT")
@@ -92,3 +92,6 @@ add_definitions("-DCONFIG_EVM_ECMA_REGEXP")
 add_definitions("-DCONFIG_EVM_ECMA_MATH")
 add_definitions("-DCONFIG_EVM_ECMA_NUMBER")
 add_definitions("-DCONFIG_EVM_ECMA_STRING")
+
+# language config
+add_definitions("-DCONFIG_EVM_LANG_JS")

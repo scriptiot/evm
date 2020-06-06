@@ -14,16 +14,9 @@ project(ejs)
 set(EVM_BASE ${ZEPHYR_BASE}/../../../)
 
 
-if (EXISTS ${EVM_DEV})
-    message(${EVM_DEV})
-    set(CMAKE_MODULE_PATH ${EVM_DEV})
-    find_package(ejs)
-    target_link_libraries(app PRIVATE ejs)
-else()
-    set(LIBEJS ${EVM_BASE}/lib/arm-none-eabi-gcc/cortex-m4/libejs.a)
-    message(${LIBEJS})
-    target_link_libraries(app PRIVATE ${LIBEJS})
-endif()
+set(LIBEJS ${EVM_BASE}/lib/arm-none-eabi-gcc/cortex-m4/libejs.a)
+message(${LIBEJS})
+target_link_libraries(app PRIVATE ${LIBEJS})
 
 set(evm_ecma_sources 
     ${EVM_BASE}/modules/ecma/ecma.c
@@ -82,16 +75,16 @@ add_definitions("-DQMAKE_VERSION=\"1.0\"")
 remove_definitions("-DWall")
 
 include_directories(app PRIVATE ${EVM_BASE}/include)
-include_directories(app PRIVATE ${EVM_BASE}/ejs)
+include_directories(app PRIVATE ${EVM_BASE}/bsp/common)
 include_directories(app PRIVATE ${EVM_BASE}/modules/ecma)
 include_directories(app PRIVATE ${EVM_BASE}/modules/evm)
 include_directories(app PRIVATE src)
 
 target_sources(app PRIVATE ${libevm_module_sources})
 target_sources(app PRIVATE src/main.c)
-target_sources(app PRIVATE ${EVM_BASE}/ejs/evm_main.c)
 target_sources(app PRIVATE src/evm_board.c)
-target_sources(app PRIVATE ${EVM_BASE}/ejs/uol_output.c)
+target_sources(app PRIVATE ${EVM_BASE}/bsp/common/evm_main.c)
+target_sources(app PRIVATE ${EVM_BASE}/bsp/common/uol_output.c)
 
 # evm module config
 add_definitions("-DCONFIG_EVM_GPIO")
@@ -109,3 +102,6 @@ add_definitions("-DCONFIG_EVM_WIFI")
 # ecma module config
 add_definitions("-DCONFIG_EVM_ECMA_OBJECT")
 add_definitions("-DCONFIG_EVM_ECMA_ARRAY")
+
+# language config
+add_definitions("-DCONFIG_EVM_LANG_JS")

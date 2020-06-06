@@ -10,7 +10,7 @@
 **  Website : https://github.com/scriptiot
 **  Licence: MIT Licence
 ****************************************************************************/
-#include "qml_lvgl_utils.h"
+#include "qml_lvgl_module.h"
 
 /********** Global Variables ***********/
 

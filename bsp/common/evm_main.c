@@ -13,9 +13,20 @@
 ****************************************************************************/
 
 #include "evm_main.h"
-#include "ecma.h"
 #include "uol_output.h"
-#include <drivers/gpio.h>
+
+#ifdef CONFIG_EVM_LANG_JS
+#include "ecma.h"
+#endif
+
+#ifdef CONFIG_EVM_LANG_QML
+#include "ecma.h"
+#include "qml_lvgl_module.h"
+#endif
+
+#ifdef CONFIG_EVM_LANG_PY
+#include "python_builtins.h"
+#endif
 
 evm_t * nevm_runtime;
 
@@ -95,16 +106,42 @@ int evm_main(void){
         evm_print("Failed to initialize evm\r\n");
         return err;
     }
-    err = ecma_module(env);
-    if( err ) {
-        evm_print("Failed to add ecma module\r\n");
-    }
     err = evm_module(env);
     if( err ) {
         evm_print("Failed to add evm module\r\n");
         return err;
     }
-
+#ifdef CONFIG_EVM_LANG_JS
+    err = ecma_module(env);
+    if( err ) {
+        evm_print("Failed to add ecma module\r\n");
+    }
     err = evm_repl_run(env, 20, EVM_LANG_JS);
     return err;
+#endif
+
+#ifdef CONFIG_EVM_LANG_QML
+    err = qml_lvgl_module(env);
+    if( err ) {
+        evm_print("Failed to add qml module\r\n");
+    }
+
+    evm_boot(env, "main.qml");
+    
+    evm_start(env);
+
+    while(1){
+        lv_task_handler();
+        k_msleep(10);
+    }
+#endif
+    
+#ifdef CONFIG_EVM_LANG_PY
+    python_builtins(env);
+    if( err ) {
+        evm_print("Failed to add python builtins module\r\n");
+    }
+    err = evm_repl_run(env, 20, EVM_LANG_PY);
+    return err;
+#endif
 }
