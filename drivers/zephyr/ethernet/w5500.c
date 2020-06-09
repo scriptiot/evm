@@ -502,14 +502,13 @@ done:
 	}
 }
 
-static enum ethernet_hw_caps enc424j600_get_capabilities(struct device *dev)
+static enum ethernet_hw_caps w5500_get_capabilities(struct device *dev)
 {
 	ARG_UNUSED(dev);
-
 	return ETHERNET_LINK_10BASE_T | ETHERNET_LINK_100BASE_T;
 }
 
-static void enc424j600_iface_init(struct net_if *iface)
+static void w5500_iface_init(struct net_if *iface)
 {
 	struct device *dev = net_if_get_device(iface);
 	struct enc424j600_runtime *context = dev->driver_data;
@@ -524,83 +523,11 @@ static void enc424j600_iface_init(struct net_if *iface)
 	context->iface_initialized = true;
 }
 
-static int enc424j600_start_device(struct device *dev)
-{
-	struct enc424j600_runtime *context = dev->driver_data;
-	u16_t tmp;
-
-	if (!context->suspended) {
-		LOG_INF("Not suspended");
-		return 0;
-	}
-
-	k_sem_take(&context->tx_rx_sem, K_FOREVER);
-
-	enc424j600_set_sfru(dev, ENC424J600_SFR3_ECON2L,
-			    ENC424J600_ECON2_ETHEN |
-			    ENC424J600_ECON2_STRCH);
-
-	enc424j600_read_phy(dev, ENC424J600_PSFR_PHCON1, &tmp);
-	tmp &= ~ENC424J600_PHCON1_PSLEEP;
-	enc424j600_write_phy(dev, ENC424J600_PSFR_PHCON1, tmp);
-
-	enc424j600_set_sfru(dev, ENC424J600_SFRX_ECON1L,
-			      ENC424J600_ECON1_RXEN);
-
-	context->suspended = false;
-	k_sem_give(&context->tx_rx_sem);
-	LOG_INF("started");
-
-	return 0;
-}
-
-static int enc424j600_stop_device(struct device *dev)
-{
-	struct enc424j600_runtime *context = dev->driver_data;
-	u16_t tmp;
-
-	if (context->suspended) {
-		LOG_WRN("Already suspended");
-		return 0;
-	}
-
-	k_sem_take(&context->tx_rx_sem, K_FOREVER);
-
-	enc424j600_clear_sfru(dev, ENC424J600_SFRX_ECON1L,
-			      ENC424J600_ECON1_RXEN);
-
-	do {
-		k_sleep(K_MSEC(10U));
-		enc424j600_read_sfru(dev, ENC424J600_SFRX_ESTATL, &tmp);
-	} while (tmp & ENC424J600_ESTAT_RXBUSY);
-
-	do {
-		k_sleep(K_MSEC(10U));
-		enc424j600_read_sfru(dev, ENC424J600_SFRX_ECON1L, &tmp);
-	} while (tmp & ENC424J600_ECON1_TXRTS);
-
-	enc424j600_read_phy(dev, ENC424J600_PSFR_PHCON1, &tmp);
-	tmp |= ENC424J600_PHCON1_PSLEEP;
-	enc424j600_write_phy(dev, ENC424J600_PSFR_PHCON1, tmp);
-
-	enc424j600_clear_sfru(dev, ENC424J600_SFR3_ECON2L,
-			      ENC424J600_ECON2_ETHEN |
-			      ENC424J600_ECON2_STRCH);
-
-	context->suspended = true;
-	k_sem_give(&context->tx_rx_sem);
-	LOG_INF("stopped");
-
-	return 0;
-}
-
 static const struct ethernet_api api_funcs = {
 	.iface_api.init		= enc424j600_iface_init,
 
 	.get_capabilities	= enc424j600_get_capabilities,
 	.send			= enc424j600_tx,
-	.start			= enc424j600_start_device,
-	.stop			= enc424j600_stop_device,
 };
 
 static int w5500_init(struct device *dev)
@@ -632,112 +559,6 @@ static int w5500_init(struct device *dev)
 	context->spi_cs.gpio_pin = config->spi_cs_pin;
 	context->spi_cfg.cs = &context->spi_cs;
 #endif
-
-	/* Initialize GPIO */
-	context->gpio = device_get_binding((char *)config->gpio_port);
-	if (!context->gpio) {
-		LOG_ERR("GPIO port %s not found", config->gpio_port);
-		return -EINVAL;
-	}
-
-	if (gpio_pin_configure(context->gpio, config->gpio_pin,
-			       GPIO_INPUT | config->gpio_flags)) {
-		LOG_ERR("Unable to configure GPIO pin %u", config->gpio_pin);
-		return -EINVAL;
-	}
-
-	gpio_init_callback(&(context->gpio_cb), enc424j600_gpio_callback,
-			   BIT(config->gpio_pin));
-
-	if (gpio_add_callback(context->gpio, &(context->gpio_cb))) {
-		return -EINVAL;
-	}
-
-	gpio_pin_interrupt_configure(context->gpio,
-				     config->gpio_pin,
-				     GPIO_INT_EDGE_TO_ACTIVE);
-
-	/* Check SPI connection */
-	do {
-		k_busy_wait(USEC_PER_MSEC * 1U);
-		enc424j600_write_sfru(dev, ENC424J600_SFRX_EUDASTL, 0x4AFE);
-		enc424j600_read_sfru(dev, ENC424J600_SFRX_EUDASTL, &tmp);
-		retries--;
-	} while (tmp != 0x4AFE && retries);
-
-	if (tmp != 0x4AFE) {
-		LOG_ERR("Timeout, failed to establish SPI connection");
-		return -EIO;
-	}
-
-	retries = ENC424J600_DEFAULT_NUMOF_RETRIES;
-	do {
-		k_busy_wait(USEC_PER_MSEC * 1U);
-		enc424j600_read_sfru(dev, ENC424J600_SFRX_ESTATL, &tmp);
-		retries--;
-	} while (!(tmp & ENC424J600_ESTAT_CLKRDY)  && retries);
-
-	if (!(tmp & ENC424J600_ESTAT_CLKRDY)) {
-		LOG_ERR("CLKRDY not set");
-		return -EIO;
-	}
-
-	enc424j600_write_sbc(dev, ENC424J600_1BC_SETETHRST);
-
-	k_busy_wait(ENC424J600_PHY_READY_DELAY);
-	enc424j600_read_sfru(dev, ENC424J600_SFRX_EUDASTL, &tmp);
-	if (tmp) {
-		LOG_ERR("Failed to initialize ENC424J600");
-		return -EIO;
-	}
-
-	/* Configure TX and RX buffer */
-	enc424j600_write_sfru(dev, ENC424J600_SFR0_ETXSTL,
-			      ENC424J600_TXSTART);
-	enc424j600_write_sfru(dev, ENC424J600_SFR0_ERXSTL,
-			      ENC424J600_RXSTART);
-	enc424j600_write_sfru(dev, ENC424J600_SFR0_ERXTAILL,
-			      (ENC424J600_RXEND - 1));
-	context->next_pkt_ptr = ENC424J600_RXSTART;
-
-	/* Disable user-defined buffer */
-	enc424j600_write_sfru(dev, ENC424J600_SFRX_EUDASTL,
-			      (ENC424J600_RXEND - 1));
-	enc424j600_write_sfru(dev, ENC424J600_SFRX_EUDANDL,
-			      (ENC424J600_RXEND - 1));
-
-	/* read MAC address byte 2 and 1 */
-	enc424j600_read_sfru(dev, ENC424J600_SFR3_MAADR1L, &tmp);
-	context->mac_address[0] = tmp;
-	context->mac_address[1] = tmp >> 8;
-	/* read MAC address byte 4 and 3 */
-	enc424j600_read_sfru(dev, ENC424J600_SFR3_MAADR2L, &tmp);
-	context->mac_address[2] = tmp;
-	context->mac_address[3] = tmp >> 8;
-	/* read MAC address byte 6 and 5 */
-	enc424j600_read_sfru(dev, ENC424J600_SFR3_MAADR3L, &tmp);
-	context->mac_address[4] = tmp;
-	context->mac_address[5] = tmp >> 8;
-
-	enc424j600_init_filters(dev);
-	enc424j600_init_phy(dev);
-
-	/* Setup interrupt logic */
-	enc424j600_set_sfru(dev, ENC424J600_SFR3_EIEL,
-			    ENC424J600_EIE_PKTIE | ENC424J600_EIE_LINKIE);
-
-	if (CONFIG_ETHERNET_LOG_LEVEL == LOG_LEVEL_DBG) {
-		enc424j600_read_sfru(dev, ENC424J600_SFR3_EIEL, &tmp);
-		LOG_DBG("EIE: 0x%04x", tmp);
-	}
-
-	/* Enable Reception */
-	enc424j600_set_sfru(dev, ENC424J600_SFRX_ECON1L, ENC424J600_ECON1_RXEN);
-	if (CONFIG_ETHERNET_LOG_LEVEL == LOG_LEVEL_DBG) {
-		enc424j600_read_sfru(dev, ENC424J600_SFRX_ECON1L, &tmp);
-		LOG_DBG("ECON1: 0x%04x", tmp);
-	}
-
 	/* Start interruption-poll thread */
 	k_thread_create(&context->thread, context->thread_stack,
 			CONFIG_ETH_ENC424J600_RX_THREAD_STACK_SIZE,
@@ -746,11 +567,8 @@ static int w5500_init(struct device *dev)
 			K_PRIO_COOP(CONFIG_ETH_ENC424J600_RX_THREAD_PRIO),
 			0, K_NO_WAIT);
 
-	enc424j600_set_sfru(dev, ENC424J600_SFR3_EIEL,
-				ENC424J600_EIE_INTIE);
-
 	context->suspended = false;
-	LOG_INF("ENC424J600 Initialized");
+	LOG_INF("W5500 Initialized");
 
 	return 0;
 }
