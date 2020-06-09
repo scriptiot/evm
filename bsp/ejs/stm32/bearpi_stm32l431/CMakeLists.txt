@@ -42,6 +42,12 @@ set(evm_driver_sources
     ${EVM_BASE}/drivers/zephyr/uol/watchdog_driver.c
     ${EVM_BASE}/drivers/zephyr/uol/pwm_driver.c
     ${EVM_BASE}/drivers/zephyr/uol/sys_driver.c
+
+    # ${EVM_BASE}/drivers/zephyr/ethernet/w5500/utility.c
+    ${EVM_BASE}/drivers/zephyr/ethernet/w5500/w5500.c
+
+
+
 )
 
 set(evm_modules_sources 
