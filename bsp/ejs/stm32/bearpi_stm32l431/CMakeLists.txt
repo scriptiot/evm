@@ -6,6 +6,9 @@ set(BOARD_ROOT ${CMAKE_CURRENT_LIST_DIR})
 
 set(SOC_ROOT ${CMAKE_CURRENT_LIST_DIR})
 
+
+set(DTS_ROOT ${CMAKE_CURRENT_LIST_DIR}/dts)
+
 set(BOARD bearpi_stm32l431)
 
 find_package(Zephyr HINTS $ENV{ZEPHYR_BASE})
@@ -17,6 +20,12 @@ set(EVM_BASE ${ZEPHYR_BASE}/../../../)
 set(LIBEJS ${EVM_BASE}/lib/arm-none-eabi-gcc/cortex-m4/libejs.a)
 message(${LIBEJS})
 target_link_libraries(app PRIVATE ${LIBEJS})
+
+set(evm_driver_w5500_src
+    ${EVM_BASE}/drivers/zephyr/ethernet/w5500/ioLibrary/Ethernet/wizchip_conf.c
+    ${EVM_BASE}/drivers/zephyr/ethernet/w5500/ioLibrary/Ethernet/W5500/w5500.c
+    ${EVM_BASE}/drivers/zephyr/ethernet/w5500/driver_w5500.c
+)
 
 set(evm_ecma_sources 
     ${EVM_BASE}/modules/ecma/ecma.c
@@ -42,12 +51,6 @@ set(evm_driver_sources
     ${EVM_BASE}/drivers/zephyr/uol/watchdog_driver.c
     ${EVM_BASE}/drivers/zephyr/uol/pwm_driver.c
     ${EVM_BASE}/drivers/zephyr/uol/sys_driver.c
-
-    # ${EVM_BASE}/drivers/zephyr/ethernet/w5500/utility.c
-    ${EVM_BASE}/drivers/zephyr/ethernet/w5500/w5500.c
-
-
-
 )
 
 set(evm_modules_sources 
@@ -74,6 +77,7 @@ set(libevm_module_sources
     ${evm_driver_sources}
     ${evm_modules_sources}
     ${evm_ecma_sources}
+    ${evm_driver_w5500_src}
 )
 
 add_definitions("-DQMAKE_TARGET=\"ejs\"")
@@ -84,6 +88,8 @@ include_directories(app PRIVATE ${EVM_BASE}/include)
 include_directories(app PRIVATE ${EVM_BASE}/bsp/common)
 include_directories(app PRIVATE ${EVM_BASE}/modules/ecma)
 include_directories(app PRIVATE ${EVM_BASE}/modules/evm)
+include_directories(app PRIVATE ${EVM_BASE}/drivers/zephyr/ethernet)
+include_directories(app PRIVATE ${EVM_BASE}/drivers/zephyr/ethernet/w5500/ioLibrary/Ethernet)
 include_directories(app PRIVATE src)
 
 target_sources(app PRIVATE ${libevm_module_sources})
@@ -111,3 +117,8 @@ add_definitions("-DCONFIG_EVM_ECMA_ARRAY")
 
 # language config
 add_definitions("-DCONFIG_EVM_LANG_JS")
+
+# w5500 driver config
+add_definitions("-DCONFIG_ETH_W5500_RX_THREAD_STACK_SIZE=800")
+add_definitions("-DCONFIG_ETH_W5500_RX_THREAD_PRIO=2")
+add_definitions("-DCONFIG_ETH_W5500_TIMEOUT=100")
