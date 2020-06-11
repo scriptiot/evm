@@ -118,7 +118,3 @@ add_definitions("-DCONFIG_EVM_ECMA_ARRAY")
 # language config
 add_definitions("-DCONFIG_EVM_LANG_JS")
 
-# w5500 driver config
-add_definitions("-DCONFIG_ETH_W5500_RX_THREAD_STACK_SIZE=800")
-add_definitions("-DCONFIG_ETH_W5500_RX_THREAD_PRIO=2")
-add_definitions("-DCONFIG_ETH_W5500_TIMEOUT=100")

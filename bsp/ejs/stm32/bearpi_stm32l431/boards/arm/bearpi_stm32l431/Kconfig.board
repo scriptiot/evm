@@ -7,3 +7,5 @@
 config BOARD_BEARPI_STM32L431
 	bool "bearpi stm32l431 Development Board"
 	depends on SOC_STM32L432XX
+
+

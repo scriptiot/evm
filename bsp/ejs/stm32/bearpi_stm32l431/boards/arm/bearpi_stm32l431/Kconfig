@@ -1,0 +1,11 @@
+config ETH_W5500_RX_THREAD_STACK_SIZE
+    int
+	default 800
+
+config ETH_W5500_RX_THREAD_PRIO
+    int
+	default 2
+
+config ETH_W5500_TIMEOUT
+    int
+	default 100
