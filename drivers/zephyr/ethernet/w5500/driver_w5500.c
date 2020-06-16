@@ -126,22 +126,31 @@ static void spi_read_burst(uint8_t *buf, uint16_t len)
 
 static void spi_cris_enter(void)
 {
-   
+	struct w5500_runtime *context = wiz_dev->driver_data;
+	const struct w5500_config  *config = wiz_dev->config_info;
+
+	z_impl_gpio_disable_callback(context->gpio,config->gpio_pin);
 }
 
 static void spi_cris_exit(void)
 {
-    
+	struct w5500_runtime *context = wiz_dev->driver_data;
+	const struct w5500_config  *config = wiz_dev->config_info;
+
+	z_impl_gpio_enable_callback(context->gpio,config->gpio_pin);
 }
 
 static void spi_cs_select(void)
 {
-    
+	struct w5500_runtime *context = wiz_dev->driver_data;
+    gpio_pin_set(context->spi_cs.gpio_dev,context->spi_cs.gpio_pin,0);
 }
 
 static void spi_cs_deselect(void)
 {
-    
+	struct w5500_runtime *context = wiz_dev->driver_data;
+
+    gpio_pin_set(context->spi_cs.gpio_dev,context->spi_cs.gpio_pin,0);
 }
 
 /* register TCP communication related callback function */
@@ -174,7 +183,7 @@ static void w5500_gpio_callback(struct device *dev,
 	struct w5500_runtime *context =
 		CONTAINER_OF(cb, struct w5500_runtime, gpio_cb);
 
-	k_sem_give(&context->int_sem);
+	k_sem_give(&context->int_sem); 
 }
 
 static int w5500_tx(struct device *dev, struct net_pkt *pkt)
@@ -277,6 +286,20 @@ static enum ethernet_hw_caps w5500_get_capabilities(struct device *dev)
 	return ETHERNET_LINK_10BASE_T | ETHERNET_LINK_100BASE_T;
 }
 
+static void w5500_init_phy(struct device *dev)
+{
+	const struct w5500_config *config = dev->config_info;
+
+	uint8_t tmp = 0;
+
+	if (config->full_duplex) {
+		tmp |= PHYCFGR_OPMDC_100F;
+	} else {
+		tmp |= PHYCFGR_OPMDC_100H;
+	}
+	setPHYCFGR(tmp);
+}
+
 static void w5500_iface_init(struct net_if *iface)
 {
 	struct device *dev = net_if_get_device(iface);
@@ -301,6 +324,8 @@ static const struct ethernet_api api_funcs = {
 
 static int w5500_init(struct device *dev)
 {
+	wiz_dev = dev;
+	
 	const struct w5500_config *config = dev->config_info;
 	struct w5500_runtime *context = dev->driver_data;
 
@@ -326,6 +351,36 @@ static int w5500_init(struct device *dev)
 	context->spi_cs.gpio_pin = config->spi_cs_pin;
 	context->spi_cfg.cs = &context->spi_cs;
 #endif
+
+/* Initialize GPIO */
+	context->gpio = device_get_binding((char *)config->gpio_port);
+	if (!context->gpio) {
+		LOG_ERR("GPIO port %s not found", config->gpio_port);
+		return -EINVAL;
+	}
+
+	if (gpio_pin_configure(context->gpio, config->gpio_pin,
+			       GPIO_INPUT | config->gpio_flags)) {
+		LOG_ERR("Unable to configure GPIO pin %u", config->gpio_pin);
+		return -EINVAL;
+	}
+
+	gpio_init_callback(&(context->gpio_cb), w5500_gpio_callback,
+			   BIT(config->gpio_pin));
+
+	if (gpio_add_callback(context->gpio, &(context->gpio_cb))) {
+		return -EINVAL;
+	}
+
+	gpio_pin_interrupt_configure(context->gpio,
+				     config->gpio_pin,
+				     GPIO_INT_EDGE_TO_ACTIVE);
+					 
+	wiz_callback_register();
+	/* read MAC address */
+	getPHAR(context->mac_address);
+	w5500_init_phy(dev);
+
 	/* Start interruption-poll thread */
 	k_thread_create(&context->thread, context->thread_stack,
 			CONFIG_ETH_W5500_RX_THREAD_STACK_SIZE,
@@ -347,6 +402,9 @@ static struct w5500_runtime w5500_0_runtime = {
 };
 
 static const struct w5500_config w5500_0_config = {
+	.gpio_port = DT_INST_GPIO_LABEL(0, int_gpios),
+	.gpio_pin = DT_INST_GPIO_PIN(0, int_gpios),
+	.gpio_flags = DT_INST_GPIO_FLAGS(0, int_gpios),
 	.spi_port = DT_INST_BUS_LABEL(0),
 	.spi_freq  = DT_INST_PROP(0, spi_max_frequency),
 	.spi_slave = DT_INST_REG_ADDR(0),
