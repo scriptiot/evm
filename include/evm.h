@@ -852,7 +852,7 @@ static inline void evm_assert_fail (const char *assertion, const char *file, con
 #define EVM_ASSERT(x) \
   do \
   { \
-    if (!x) \
+    if (!(x) ) \
     { \
       evm_assert_fail (#x, __FILE__, __func__, __LINE__); \
     } \

@@ -20,21 +20,24 @@
 evm_val_t wrap_heatshrink_compress(evm_t * e, evm_val_t * p, int argc, evm_val_t * v) {
   if( argc > 0 ){
     uint8_t *  in_it;
+    uint32_t in_len, out_len;
     if( evm_is_buffer(v) ) {
       in_it = evm_buffer_addr(v);
+      in_len = evm_buffer_len(v);
     } else if( evm_is_string(v) ) {
       in_it = evm_2_string(v);
+      in_len = strlen(in_it);
     }
 
-    uint32_t compressedSize = heatshrink_encode_cb(heatshrink_var_input_cb, (uint32_t*)in_it, NULL, NULL);
+    uint32_t compressedSize = heatshrink_encode_cb(heatshrink_var_input_cb, (uint32_t*)in_it, in_len, NULL, NULL, 0);
 
     evm_val_t *outVar = evm_buffer_create(e, compressedSize);
     if (!outVar) {
       return EVM_VAL_UNDEFINED;
     }
     uint8_t * out_it = evm_buffer_addr(outVar);
-
-    heatshrink_encode_cb(heatshrink_var_input_cb, (uint32_t*)in_it, heatshrink_var_output_cb, (uint32_t*)out_it);
+    out_len = evm_buffer_len(outVar);
+    heatshrink_encode_cb(heatshrink_var_input_cb, (uint32_t*)in_it, in_len, heatshrink_var_output_cb, (uint32_t*)out_it, out_len);
 
     return *outVar;
   } 
@@ -45,21 +48,24 @@ evm_val_t wrap_heatshrink_compress(evm_t * e, evm_val_t * p, int argc, evm_val_t
 evm_val_t wrap_heatshrink_decompress(evm_t * e, evm_val_t * p, int argc, evm_val_t * v) {
   if( argc > 0 ){
     uint8_t *  in_it;
+    uint32_t in_len, out_len;
     if( evm_is_buffer(v) ) {
       in_it = evm_buffer_addr(v);
+      in_len = evm_buffer_len(v);
     } else if( evm_is_string(v) ) {
       in_it = evm_2_string(v);
+      in_len = strlen(in_it);
     }
 
-    uint32_t decompressedSize = heatshrink_decode(heatshrink_var_input_cb, (uint32_t*)in_it, NULL);
+    uint32_t decompressedSize = heatshrink_decode(heatshrink_var_input_cb, (uint32_t*)in_it, in_len, NULL, 0);
 
     evm_val_t *outVar = evm_buffer_create(e, decompressedSize);
     if (!outVar) {
       return EVM_VAL_UNDEFINED;
     }
     uint8_t * out_it = evm_buffer_addr(outVar);
-
-    heatshrink_decode_cb(heatshrink_var_input_cb, (uint32_t*)in_it, heatshrink_var_output_cb, (uint32_t*)out_it);
+    out_len = evm_buffer_len(outVar);
+    heatshrink_decode_cb(heatshrink_var_input_cb, (uint32_t*)in_it, in_len, heatshrink_var_output_cb, (uint32_t*)out_it, out_len);
 
     return *outVar;
   } 
