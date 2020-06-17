@@ -1,3 +1,7 @@
+config ETH_W5500
+    bool "Enable wiznet w5500 ethernet controller"
+	default n
+
 config ETH_W5500_RX_THREAD_STACK_SIZE
     int
 	default 800

@@ -1,12 +1,15 @@
 # SPDX-License-Identifier: Apache-2.0
 
+set(EVM_BASE ${ZEPHYR_BASE}/../../../)
+
+list(APPEND ZEPHYR_EXTRA_MODULES
+    ${EVM_BASE}/modules/heatshrink
+)
+
 cmake_minimum_required(VERSION 3.13.1)
 
 find_package(Zephyr HINTS $ENV{ZEPHYR_BASE})
 project(eqml)
-
-set(EVM_BASE ${ZEPHYR_BASE}/../../../)
-
 
 if (EXISTS ${EVM_DEV})
     message(${EVM_DEV})

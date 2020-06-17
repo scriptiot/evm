@@ -28,6 +28,10 @@
 #include "python_builtins.h"
 #endif
 
+#if CONFIG_EVM_HEATSHRINK
+#include "wrap_heatshrink.h"
+#endif
+
 evm_t * nevm_runtime;
 
 char evm_repl_tty_read(evm_t * e)
@@ -111,6 +115,14 @@ int evm_main(void){
         evm_print("Failed to add evm module\r\n");
         return err;
     }
+#if CONFIG_EVM_HEATSHRINK
+    err = heatshrink_module(env);
+    if( err ) {
+        evm_print("Failed to add evm module\r\n");
+        return err;
+    }
+#endif
+
 #ifdef CONFIG_EVM_LANG_JS
     err = ecma_module(env);
     if( err ) {

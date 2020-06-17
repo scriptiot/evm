@@ -11,7 +11,6 @@
 **            https://gitee.com/scriptiot/evm
 **  Licence: Apache-2.0
 ****************************************************************************/
-#ifdef CONFIG_EVM_HEATSHRINK
 
 #include "evm.h"
 #include "compress_heatshrink.h"
@@ -52,7 +51,7 @@ evm_val_t wrap_heatshrink_decompress(evm_t * e, evm_val_t * p, int argc, evm_val
       in_it = evm_2_string(v);
     }
 
-    uint32_t decompressedSize = heatshrink_decode(heatshrink_var_input_cb, (uint32_t*)in_it, NULL, NULL);
+    uint32_t decompressedSize = heatshrink_decode(heatshrink_var_input_cb, (uint32_t*)in_it, NULL);
 
     evm_val_t *outVar = evm_buffer_create(e, decompressedSize);
     if (!outVar) {
@@ -73,7 +72,6 @@ int heatshrink_module(evm_t * e){
         {"decompress", evm_mk_native( (intptr_t)wrap_heatshrink_decompress )},
         {NULL, EVM_VAL_UNDEFINED}
     };
-    evm_module_create(e, "evm", module);
+    evm_module_create(e, "heatshrink", module);
     return e->err;
 }
-#endif
