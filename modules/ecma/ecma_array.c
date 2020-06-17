@@ -251,7 +251,7 @@ evm_val_t ecma_array_join(evm_t * e, evm_val_t * p, int argc, evm_val_t * v){
                 if( toString_val ) {
                     evm_val_t local_str_val = evm_run_callback(e, toString_val, t, NULL, 0);
                     if( evm_is_string(&local_str_val) ) {
-                        char * local_addr = evm_2_string(&local_str_val);
+                        char * local_addr = (char *)evm_2_string(&local_str_val);
                         int local_len = strlen(local_addr);
                         s_len += local_len;
                     }
@@ -262,12 +262,11 @@ evm_val_t ecma_array_join(evm_t * e, evm_val_t * p, int argc, evm_val_t * v){
         evm_val_t *s = evm_heap_string_create(e, "", s_len + (c_len * (len - 1)));
 
         int current_idx = 0;
-        evm_val_t *tmp = NULL;
         
         for (int i = 0; i < len; i++) {
             t =  evm_list_get(e, p, i);
             if( evm_is_string(t) ){
-                char * local_addr = evm_2_string(t);
+                char * local_addr = (char *)evm_2_string(t);
                 int local_len = strlen(local_addr);
                 evm_heap_string_set(s, local_addr, current_idx, local_len);
                 current_idx += local_len;
@@ -276,7 +275,7 @@ evm_val_t ecma_array_join(evm_t * e, evm_val_t * p, int argc, evm_val_t * v){
                 if( toString_val ) {
                     evm_val_t local_str_val = evm_run_callback(e, toString_val, t, NULL, 0);
                     if( evm_is_string(&local_str_val) ) {
-                        char * local_addr = evm_2_string(&local_str_val);
+                        char * local_addr = (char *)evm_2_string(&local_str_val);
                         int local_len = strlen(local_addr);
                         evm_heap_string_set(s, local_addr, current_idx, local_len);
                         current_idx += local_len;
