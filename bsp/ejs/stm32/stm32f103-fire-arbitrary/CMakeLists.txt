@@ -3,26 +3,22 @@
 cmake_minimum_required(VERSION 3.13.1)
 
 set(BOARD_ROOT ${CMAKE_CURRENT_LIST_DIR})
-set(SOC_ROOT ${CMAKE_CURRENT_LIST_DIR})
 set(DTS_ROOT ${CMAKE_CURRENT_LIST_DIR}/dts)
 
-set(BOARD bearpi_stm32l431)
+set(BOARD stm32f103_fire_arbitrary)
+
+set(EVM_BASE ${ZEPHYR_BASE}/../../../)
+
+list(APPEND ZEPHYR_EXTRA_MODULES
+    ${EVM_BASE}/modules/heatshrink
+)
 
 find_package(Zephyr HINTS $ENV{ZEPHYR_BASE})
 project(ejs)
 
-set(EVM_BASE ${ZEPHYR_BASE}/../../../)
-
-
-set(LIBEJS ${EVM_BASE}/lib/arm-none-eabi-gcc/cortex-m4/libejs.a)
+set(LIBEJS ${EVM_BASE}/lib/arm-none-eabi-gcc/cortex-m3/libejs.a)
 message(${LIBEJS})
 target_link_libraries(app PRIVATE ${LIBEJS})
-
-set(evm_driver_w5500_src
-    ${EVM_BASE}/drivers/zephyr/ethernet/w5500/ioLibrary/Ethernet/wizchip_conf.c
-    ${EVM_BASE}/drivers/zephyr/ethernet/w5500/ioLibrary/Ethernet/W5500/w5500.c
-    ${EVM_BASE}/drivers/zephyr/ethernet/w5500/driver_w5500.c
-)
 
 set(evm_ecma_sources 
     ${EVM_BASE}/modules/ecma/ecma.c
@@ -70,6 +66,16 @@ set(evm_modules_sources
     ${EVM_BASE}/modules/evm/evm_module_wifi.c
 )
 
+if(CONFIG_EVM_W5500)
+include_directories(app PRIVATE ${EVM_BASE}/drivers/zephyr/ethernet)
+include_directories(app PRIVATE ${EVM_BASE}/drivers/zephyr/ethernet/w5500/ioLibrary/Ethernet)
+set(evm_driver_w5500_src
+    ${EVM_BASE}/drivers/zephyr/ethernet/w5500/ioLibrary/Ethernet/wizchip_conf.c
+    ${EVM_BASE}/drivers/zephyr/ethernet/w5500/ioLibrary/Ethernet/W5500/w5500.c
+    ${EVM_BASE}/drivers/zephyr/ethernet/w5500/driver_w5500.c
+)
+endif()
+
 set(libevm_module_sources 
     ${evm_driver_sources}
     ${evm_modules_sources}
@@ -77,41 +83,29 @@ set(libevm_module_sources
     ${evm_driver_w5500_src}
 )
 
-add_definitions("-DQMAKE_TARGET=\"ejs\"")
-add_definitions("-DQMAKE_VERSION=\"1.0\"")
-remove_definitions("-DWall")
-
 include_directories(app PRIVATE ${EVM_BASE}/include)
 include_directories(app PRIVATE ${EVM_BASE}/bsp/common)
 include_directories(app PRIVATE ${EVM_BASE}/modules/ecma)
 include_directories(app PRIVATE ${EVM_BASE}/modules/evm)
-include_directories(app PRIVATE ${EVM_BASE}/drivers/zephyr/ethernet)
-include_directories(app PRIVATE ${EVM_BASE}/drivers/zephyr/ethernet/w5500/ioLibrary/Ethernet)
+
+
 include_directories(app PRIVATE src)
 
 target_sources(app PRIVATE ${libevm_module_sources})
 target_sources(app PRIVATE src/main.c)
-target_sources(app PRIVATE src/evm_board.c)
 target_sources(app PRIVATE ${EVM_BASE}/bsp/common/evm_main.c)
+target_sources(app PRIVATE src/evm_board.c)
 target_sources(app PRIVATE ${EVM_BASE}/bsp/common/uol_output.c)
 
 # evm module config
-add_definitions("-DCONFIG_EVM_GPIO")
-add_definitions("-DCONFIG_EVM_FLASH")
-add_definitions("-DCONFIG_EVM_LCD")
-add_definitions("-DCONFIG_EVM_WATCHDOG")
-add_definitions("-DCONFIG_EVM_ADC")
-add_definitions("-DCONFIG_EVM_DAC")
 add_definitions("-DCONFIG_EVM_TIMER")
-add_definitions("-DCONFIG_EVM_LED")
-add_definitions("-DCONFIG_EVM_SWITCH")
-add_definitions("-DCONFIG_EVM_UART")
-add_definitions("-DCONFIG_EVM_WIFI")
 
 # ecma module config
 add_definitions("-DCONFIG_EVM_ECMA_OBJECT")
 add_definitions("-DCONFIG_EVM_ECMA_ARRAY")
 
-# language config
+# language config 
 add_definitions("-DCONFIG_EVM_LANG_JS")
+
+
 
