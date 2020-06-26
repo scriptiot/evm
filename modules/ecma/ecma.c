@@ -14,6 +14,26 @@
 
 #include "ecma.h"
 
+#ifdef CONFIG_EVM_ECMA_OBJECT
+extern evm_val_t * ecma_object_init(evm_t * e);
+extern void ecma_object_attrs_apply(evm_t * e, evm_val_t * o, evm_val_t * prototype);
+#endif
+#ifdef CONFIG_EVM_ECMA_ARRAY
+extern evm_val_t * ecma_array_init(evm_t * e);
+#endif
+#ifdef CONFIG_EVM_ECMA_NUMBER
+extern evm_val_t * ecma_number_init(evm_t * e);
+#endif
+#ifdef CONFIG_EVM_ECMA_MATH
+extern evm_val_t * ecma_math_init(evm_t * e);
+#endif
+#ifdef CONFIG_EVM_ECMA_STRING
+extern evm_val_t * ecma_string_init(evm_t * e);
+#endif
+#ifdef CONFIG_EVM_ECMA_REGEXP
+extern evm_val_t * ecma_regex_init(evm_t * e);
+#endif
+
 evm_val_t * ecma_object_prototype;
 evm_val_t * ecma_function_prototype;
 
@@ -107,25 +127,6 @@ static evm_val_t ecma_isNaN(evm_t * e, evm_val_t * p, int argc, evm_val_t * v){
     if( argc > 0 ) if( evm_is_nan(v) ) return EVM_VAL_TRUE;
     return EVM_VAL_FALSE;
 }
-
-#ifdef CONFIG_EVM_ECMA_OBJECT
-extern evm_val_t * ecma_object_init(evm_t * e);
-#endif
-#ifdef CONFIG_EVM_ECMA_ARRAY
-extern evm_val_t * ecma_array_init(evm_t * e);
-#endif
-#ifdef CONFIG_EVM_ECMA_NUMBER
-extern evm_val_t * ecma_number_init(evm_t * e);
-#endif
-#ifdef CONFIG_EVM_ECMA_MATH
-extern evm_val_t * ecma_math_init(evm_t * e);
-#endif
-#ifdef CONFIG_EVM_ECMA_STRING
-extern evm_val_t * ecma_string_init(evm_t * e);
-#endif
-#ifdef CONFIG_EVM_ECMA_REGEXP
-extern evm_val_t * ecma_regex_init(evm_t * e);
-#endif
 
 int ecma_module(evm_t * e){
     ecma_function_prototype = evm_object_create(e, GC_DICT, 0, 0);

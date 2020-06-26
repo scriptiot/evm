@@ -48,7 +48,7 @@ evm_val_t evm_class_timer(evm_t * e){
 		{"setInterval", evm_mk_native( (intptr_t)evm_module_timer_setInterval )},
 		{"clearInterval", evm_mk_native( (intptr_t)evm_module_timer_clearInterval )},
 		{"id", evm_mk_number(-1)},
-		{NULL, NULL}
+		{NULL, EVM_VAL_UNDEFINED}
 	};
 	return *evm_class_create(e, (evm_native_fn)evm_module_timer, class_timer, NULL);
 }

@@ -20,8 +20,8 @@ const struct pin_group ledgroup[] = {
 };
 
 const struct pin_group keygroup[] = {
-    {"GPIOB", 2, GPIO_INPUT | GPIO_INT | GPIO_INT_EDGE | GPIO_INT_ACTIVE_LOW | GPIO_PUD_PULL_UP},
-    {"GPIOB", 3, GPIO_INPUT | GPIO_INT | GPIO_INT_EDGE | GPIO_INT_ACTIVE_LOW | GPIO_PUD_PULL_UP},
+    {"GPIOB", 2, GPIO_INPUT | GPIO_INT_ENABLE | GPIO_INT_EDGE | GPIO_INT_LOW_0 | GPIO_PULL_UP},
+    {"GPIOB", 3, GPIO_INPUT | GPIO_INT_ENABLE | GPIO_INT_EDGE | GPIO_INT_LOW_0 | GPIO_PULL_UP},
     {NULL, 0, 0},
 };
 
