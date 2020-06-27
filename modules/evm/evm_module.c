@@ -56,6 +56,9 @@
 #ifdef CONFIG_EVM_SOCKET
 	extern evm_val_t evm_class_socket(evm_t * e);
 #endif
+#ifdef CONFIG_EVM_NETWORK
+	extern evm_val_t evm_class_network(evm_t * e);
+#endif
 
 static evm_val_t * callback_list;
 static evm_val_t * args_list;
@@ -175,6 +178,9 @@ int evm_module(evm_t * e){
 #endif
 #ifdef CONFIG_EVM_SOCKET
         {"SOCKET", evm_class_socket(e)},
+#endif
+#ifdef CONFIG_EVM_NETWORK
+        {"SOCKET", evm_class_network(e)},
 #endif
         {NULL, EVM_VAL_UNDEFINED}
     };

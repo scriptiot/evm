@@ -64,6 +64,7 @@ set(evm_modules_sources
     ${EVM_BASE}/modules/evm/evm_module_watchdog.c
     ${EVM_BASE}/modules/evm/evm_module_led.c
     ${EVM_BASE}/modules/evm/evm_module_wifi.c
+    ${EVM_BASE}/modules/evm/evm_module_network.c
 )
 
 if(CONFIG_EVM_W5500)
@@ -99,6 +100,7 @@ target_sources(app PRIVATE ${EVM_BASE}/bsp/common/uol_output.c)
 
 # evm module config
 add_definitions("-DCONFIG_EVM_TIMER")
+add_definitions("-DCONFIG_EVM_NETWORK")
 
 # ecma module config
 add_definitions("-DCONFIG_EVM_ECMA_OBJECT")
