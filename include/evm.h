@@ -335,9 +335,8 @@ evm_err_t evm_buffer_set(evm_val_t * o, uint8_t * buffer, uint32_t index, uint32
 /**
  * @brief 创建堆字符串
  * @param e，虚拟机参数
- * @param str, 初始化内容
- * @param len，字符串长度，不能小于str的长度
- * @return 字符串对象，如果失败，返回NULL
+ * @param len，字符串长度
+ * @return 字符串对象，如果失败，返回UNDEFINED
  */
 evm_val_t *evm_heap_string_create(evm_t *e, char *str, int len);
 /**
@@ -387,6 +386,12 @@ intptr_t evm_object_get_ext_data(evm_val_t * o);
  * @param v
  */
 void evm_object_set_ext_data(evm_val_t *o, intptr_t v);
+/**
+ * @brief 对象设置注销函数
+ * @param o
+ * @param destroy，注销函数
+ */
+void evm_object_set_destroy(evm_val_t *o, evm_native_fn destroy);
 /**
  * @brief 获取对象hash值
  * @param o
@@ -852,7 +857,7 @@ static inline void evm_assert_fail (const char *assertion, const char *file, con
 #define EVM_ASSERT(x) \
   do \
   { \
-    if (!(x) ) \
+    if (!x) \
     { \
       evm_assert_fail (#x, __FILE__, __func__, __LINE__); \
     } \

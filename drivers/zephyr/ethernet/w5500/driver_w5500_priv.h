@@ -25,6 +25,9 @@ struct w5500_config {
 	const char *spi_port;
 	u8_t spi_cs_pin;
 	const char *spi_cs_port;
+	const char *reset_port;
+	u8_t reset_pin;
+	gpio_dt_flags_t reset_flags;
 	u32_t spi_freq;
 	u8_t spi_slave;
 	u8_t full_duplex;
@@ -40,12 +43,15 @@ struct w5500_runtime {
 	struct k_thread thread;
 	u8_t mac_address[6];
 	struct device *gpio;
+	struct device *reset_gpio;
 	struct device *spi;
 	struct spi_cs_control spi_cs;
 	struct spi_config spi_cfg;
 	struct gpio_callback gpio_cb;
 	struct k_sem tx_rx_sem;
 	struct k_sem int_sem;
+
+	uint8_t tx_buf[NET_ETH_MTU];
 	bool suspended : 1;
 	bool iface_initialized : 1;
 };
