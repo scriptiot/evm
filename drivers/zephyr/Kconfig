@@ -1,0 +1,39 @@
+menu "Extra Device Drivers"
+
+menu "Ethernet W5500"
+    menuconfig ETH_W5500
+        bool "W5500 Ethernet Controller"
+        depends on SPI
+        help
+        W5500 Stand-Alone Ethernet Controller
+        with SPI Interface
+
+    config ETH_W5500_RX_THREAD_STACK_SIZE
+        int "Receiving thread stack size"
+        default 800
+
+    config ETH_W5500_RX_THREAD_PRIO
+        int "Receiving thread priority"
+        default 2
+
+    config ETH_W5500_TIMEOUT
+        int "W5500 ethernet timeout"
+        default 100
+
+    config ETH_W5500_TX_BUF_SIZE
+        int "Transmitting buffer size"
+        default 2
+
+    config ETH_W5500_RX_BUF_SIZE
+        int "Receiving buffer size"
+        default 2
+endmenu
+
+menu "Display ili9341"
+    menuconfig STM32_DISPLAY_ILI9341
+        bool "Enable stm32 display driver ili9341 in fsmc mode"
+        default n
+endmenu
+
+endmenu
+

@@ -1,0 +1,25 @@
+menu "EVM ECMA module"
+config EVM_ECMA
+    bool "Enable EVM ecma module"
+	default n
+
+config EVM_ECMA_ARRAY
+    bool "Enable EVM ecma array"
+	default n
+
+config EVM_ECMA_MATH
+    bool "Enable EVM ecma array"
+	default n
+
+config EVM_ECMA_NUMBER
+    bool "Enable EVM ecma array"
+	default n
+
+config EVM_ECMA_OBJECT
+    bool "Enable EVM ecma array"
+	default n
+
+config EVM_ECMA_REGEXP
+    bool "Enable EVM ecma array"
+	default n
+endmenu
