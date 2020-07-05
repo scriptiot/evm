@@ -180,7 +180,7 @@ evm_val_t nevm_driver_lcd_config(evm_t * e, evm_val_t * p, int argc, evm_val_t *
 evm_val_t nevm_driver_lcd_init(evm_t * e, evm_val_t * p, int argc, evm_val_t * v){
     (void)p;
 #ifdef CONFIG_EVM_LCD
-    struct device * display_dev = device_get_binding(DISPLAY_DEV_NAME);
+    struct device * dev = device_get_binding(DISPLAY_DEV_NAME);
     if (display_dev == NULL) {
         evm_set_err(e, ec_type, "LCD Device not found");
         return NEVM_FALSE;

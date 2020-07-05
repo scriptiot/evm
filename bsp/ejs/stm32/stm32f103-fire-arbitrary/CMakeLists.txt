@@ -65,6 +65,8 @@ set(evm_modules_sources
     ${EVM_BASE}/modules/evm/evm_module_led.c
     ${EVM_BASE}/modules/evm/evm_module_wifi.c
     ${EVM_BASE}/modules/evm/evm_module_network.c
+    ${EVM_BASE}/modules/evm/evm_module_socket.c
+
 )
 
 if(CONFIG_EVM_W5500)
