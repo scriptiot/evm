@@ -175,13 +175,18 @@ static evm_val_t evm_module_socket_accept(evm_t *e, evm_val_t *p, int argc, evm_
 
     struct sockaddr sockaddr;
     socklen_t addrlen = sizeof(sockaddr);
+    int ctx = zsock_accept(socket->fd, &sockaddr, &addrlen);
 
-    // socket_obj_t *socket2 = socket_new();
-    // socket2->ctx = zsock_accept(socket->ctx, &sockaddr, &addrlen);
 
-    // evm_val_t *client = evm_list_create(e, GC_TUPLE, 2);
-    // zsock_accept(socket->fd, addr, addrlen);
-    return EVM_VAL_UNDEFINED;
+    evm_val_t *address = evm_list_create(e,GC_LIST,2);
+
+    evm_list_push(e,address,1,evm_heap_string_create(e,sockaddr.data,sizeof(sockaddr.data));
+
+    evm_val_t *res = evm_list_create(e,GC_LIST,2);
+    evm_list_push(e,res,1,evm_mk_number(ctx));
+    evm_list_push(e,res,1,address);
+    
+    return *res;
 
 }
 
