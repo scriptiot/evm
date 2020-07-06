@@ -15,59 +15,62 @@
 #include "evm_module.h"
 #include <zephyr.h>
 
-#if CONFIG_EVM_PIN
+#if CONFIG_EVM_MODULE_PIN
 	extern evm_val_t evm_class_pin(evm_t * e);
 #endif
-#if CONFIG_EVM_LCD
+#if CONFIG_EVM_MODULE_LCD
 	extern evm_val_t evm_class_lcd(evm_t * e);
 #endif
-#if CONFIG_EVM_LED
+#if CONFIG_EVM_MODULE_LED
 	extern evm_val_t evm_class_led(evm_t * e);
 #endif
-#if CONFIG_EVM_FLASH
+#if CONFIG_EVM_MODULE_FLASH
 	extern evm_val_t evm_class_flash(evm_t * e);
 #endif
-#if CONFIG_EVM_ADC
+#if CONFIG_EVM_MODULE_ADC
 	extern evm_val_t evm_class_adc(evm_t * e);
 #endif
-#if CONFIG_EVM_DAC
+#if CONFIG_EVM_MODULE_DAC
 	extern evm_val_t evm_class_dac(evm_t * e);
 #endif
-#if CONFIG_EVM_RTC
+#if CONFIG_EVM_MODULE_RTC
 	extern evm_val_t evm_class_rtc(evm_t * e);
 #endif
-#if CONFIG_EVM_SWITCH
+#if CONFIG_EVM_MODULE_SWITCH
 	extern evm_val_t evm_class_switch(evm_t * e);
 #endif
-#if CONFIG_EVM_TIMER
+#if CONFIG_EVM_MODULE_TIMER
 	extern evm_val_t evm_class_timer(evm_t * e);
 #endif
-#if CONFIG_EVM_LED
+#if CONFIG_EVM_MODULE_LED
 	extern evm_val_t evm_class_led(evm_t * e);
 #endif
-#if CONFIG_EVM_UART
+#if CONFIG_EVM_MODULE_UART
 	extern evm_val_t evm_class_uart(evm_t * e);
 #endif
-#if CONFIG_EVM_WATCHDOG
+#if CONFIG_EVM_MODULE_WATCHDOG
 	extern evm_val_t evm_class_watchdog(evm_t * e);
 #endif
-#if CONFIG_EVM_WIFI
+#if CONFIG_EVM_MODULE_WIFI
 	extern evm_val_t evm_class_wifi(evm_t * e);
 #endif
-#if CONFIG_EVM_SOCKET
+#if CONFIG_EVM_MODULE_SOCKET
 	extern evm_val_t evm_class_socket(evm_t * e);
 #endif
-#if CONFIG_EVM_NETWORK
+#if CONFIG_EVM_MODULE_NETWORK
 	extern evm_val_t evm_class_network(evm_t * e);
 #endif
+#if CONFIG_EVM_MODULE_MODBUS_RTU_MASTER
+	extern evm_val_t evm_class_modbus_rtu_master(evm_t * e);
+#endif
 
-#ifndef CONFIG_EVM_CALLBACK_SIZE
-	#define CONFIG_EVM_CALLBACK_SIZE	16
+#ifndef CONFIG_EVM_MODULE_CALLBACK_SIZE
+	#define CONFIG_EVM_MODULE_CALLBACK_SIZE	16
 #endif
 
 static struct k_sem evm_callback_sem;
-static intptr_t cb_map[CONFIG_EVM_CALLBACK_SIZE];
-static intptr_t cb_handles[CONFIG_EVM_CALLBACK_SIZE];
+static intptr_t cb_map[CONFIG_EVM_MODULE_CALLBACK_SIZE];
+static intptr_t cb_handles[CONFIG_EVM_MODULE_CALLBACK_SIZE];
 
 static evm_val_t * reference_list;
 static uint32_t number_of_references;
@@ -105,7 +108,7 @@ int evm_remove_reference(int id){
 }
 
 int evm_add_callback(evm_callback_func fn, void * handle){
-	for(int i = 0; i < CONFIG_EVM_CALLBACK_SIZE; i++){
+	for(int i = 0; i < CONFIG_EVM_MODULE_CALLBACK_SIZE; i++){
 		if( cb_map[i] == 0) {
 			cb_map[i] = (intptr_t)fn;
 			cb_handles[i] = (intptr_t)handle;
@@ -119,7 +122,7 @@ int evm_add_callback(evm_callback_func fn, void * handle){
 void evm_poll_callbacks(evm_t *e){
 	while(1){
 		k_sem_take(&evm_callback_sem, K_FOREVER);
-		for(int i = 0; i < CONFIG_EVM_CALLBACK_SIZE; i++) {
+		for(int i = 0; i < CONFIG_EVM_MODULE_CALLBACK_SIZE; i++) {
 			evm_callback_func fn = (evm_callback_func)cb_map[i];
 			if( fn == NULL) break;
 			void * handle = (void*)cb_handles[i];
@@ -153,7 +156,7 @@ static evm_val_t evm_module_delay_us(evm_t *e, evm_val_t *p, int argc, evm_val_t
 int evm_module(evm_t * e){
 	k_sem_init(&evm_callback_sem, 0, UINT_MAX);
 	evm_runtime = e;
-	number_of_references = CONFIG_EVM_CALLBACK_SIZE;
+	number_of_references = CONFIG_EVM_MODULE_CALLBACK_SIZE;
 	reference_list = evm_list_create(e, GC_LIST, number_of_references);
 	if( !reference_list ) return e->err;
 
@@ -161,7 +164,7 @@ int evm_module(evm_t * e){
 		evm_list_set(e, reference_list, i, EVM_VAL_UNDEFINED);
 	}
 
-	for(int i = 0; i < CONFIG_EVM_CALLBACK_SIZE; i++){
+	for(int i = 0; i < CONFIG_EVM_MODULE_CALLBACK_SIZE; i++){
 		cb_map[i] = NULL;
 		cb_handles[i] = NULL;
 	}
@@ -169,48 +172,52 @@ int evm_module(evm_t * e){
 	evm_builtin_t module[] = {
 		{"delay_ms", evm_mk_native((intptr_t)evm_module_delay_ms)},
 		{"delay_us", evm_mk_native((intptr_t)evm_module_delay_us)},
-#if CONFIG_EVM_PIN
+#if CONFIG_EVM_MODULE_MODBUS_RTU_MASTER
+        {"ModbusRTUMaster", evm_class_modbus_rtu_master(e)},
+#endif
+#if CONFIG_EVM_MODULE_PIN
 		{"Pin", evm_class_pin(e)},
 #endif
-#if CONFIG_EVM_LCD
+#if CONFIG_EVM_MODULE_LCD
 		{"LCD", evm_class_lcd(e)},
 #endif
-#if CONFIG_EVM_LED
+#if CONFIG_EVM_MODULE_LED
 		{"LED", evm_class_led(e)},
 #endif
-#if CONFIG_EVM_FLASH
+#if CONFIG_EVM_MODULE_FLASH
 		{"Flash", evm_class_flash(e)},
 #endif
-#if CONFIG_EVM_ADC
+#if CONFIG_EVM_MODULE_ADC
 		{"ADC", evm_class_adc(e)},
 #endif
-#if CONFIG_EVM_DAC
+#if CONFIG_EVM_MODULE_DAC
 		{"DAC", evm_class_dac(e)},
 #endif
-#if CONFIG_EVM_RTC
+#if CONFIG_EVM_MODULE_RTC
 		{"RTC", evm_class_rtc(e)},
 #endif
-#if CONFIG_EVM_SWITCH
+#if CONFIG_EVM_MODULE_SWITCH
 		{"Switch", evm_class_switch(e)},
 #endif
-#if CONFIG_EVM_WATCHDOG
+#if CONFIG_EVM_MODULE_WATCHDOG
 		{"Watchdog", evm_class_watchdog(e)},
 #endif
-#if CONFIG_EVM_TIMER
+#if CONFIG_EVM_MODULE_TIMER
 		{"Timer", evm_class_timer(e)},
 #endif
-#if CONFIG_EVM_UART
+#if CONFIG_EVM_MODULE_UART
 		{"UART", evm_class_uart(e)},
 #endif
-#if CONFIG_EVM_WIFI
+#if CONFIG_EVM_MODULE_WIFI
 		{"WIFI", evm_class_wifi(e)},
 #endif
-#if CONFIG_EVM_SOCKET
+#if CONFIG_EVM_MODULE_SOCKET
         {"Socket", evm_class_socket(e)},
 #endif
-#if CONFIG_EVM_NETWORK
+#if CONFIG_EVM_MODULE_NETWORK
         {"Network", evm_class_network(e)},
 #endif
+
         {NULL, EVM_VAL_UNDEFINED}
     };
     evm_module_create(e, "evm", module);
