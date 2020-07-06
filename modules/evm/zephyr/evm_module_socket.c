@@ -168,6 +168,7 @@ static evm_val_t evm_module_socket_listen(evm_t *e, evm_val_t *p, int argc, evm_
 }
 
 // accept()
+//return fd + address 
 static evm_val_t evm_module_socket_accept(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
 {
     struct socket_obj_t *socket = (struct socket_obj_t*)evm_object_get_ext_data(p);
@@ -177,15 +178,22 @@ static evm_val_t evm_module_socket_accept(evm_t *e, evm_val_t *p, int argc, evm_
     socklen_t addrlen = sizeof(sockaddr);
     int ctx = zsock_accept(socket->fd, &sockaddr, &addrlen);
 
+    struct sockaddr_in *sock = ( struct sockaddr_in*)&sockaddr;
+    int port = ntohs(sock->sin_port);
+
+	struct in_addr in  = sock->sin_addr;
+	char ip_str[INET_ADDRSTRLEN];   //INET_ADDRSTRLEN这个宏系统默认定义 16
+	//成功的话此时IP地址保存在str字符串中。
+	inet_ntop(AF_INET,&in, ip_str, sizeof(ip_str));
 
     evm_val_t *address = evm_list_create(e,GC_LIST,2);
-
-    evm_list_push(e,address,1,evm_heap_string_create(e,sockaddr.data,sizeof(sockaddr.data));
+    evm_list_push(e,address,1,evm_heap_string_create(e,ip_str,sizeof(ip_str)));
+    evm_list_push(e,address,1,evm_mk_number(port));
 
     evm_val_t *res = evm_list_create(e,GC_LIST,2);
     evm_list_push(e,res,1,evm_mk_number(ctx));
     evm_list_push(e,res,1,address);
-    
+
     return *res;
 
 }
