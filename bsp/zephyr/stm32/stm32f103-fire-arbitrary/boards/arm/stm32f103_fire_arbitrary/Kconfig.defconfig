@@ -8,4 +8,5 @@ if STM32F103_FIRE_ARBITRARY
 config BOARD
 	default "stm32f103_fire_arbitrary"
 
+
 endif
