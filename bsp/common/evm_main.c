@@ -15,16 +15,16 @@
 #include "evm_main.h"
 #include "uol_output.h"
 
-#ifdef CONFIG_EVM_LANG_JS
+#if CONFIG_EVM_ECMA
 #include "ecma.h"
 #endif
 
-#ifdef CONFIG_EVM_LANG_QML
+#if CONFIG_EVM_LANG_QML
 #include "ecma.h"
 #include "qml_lvgl_module.h"
 #endif
 
-#ifdef CONFIG_EVM_LANG_PY
+#if CONFIG_EVM_LANG_PYTHON
 #include "python_builtins.h"
 #endif
 
@@ -123,16 +123,7 @@ int evm_main(void){
     }
 #endif
 
-#ifdef CONFIG_EVM_LANG_JS
-    err = ecma_module(env);
-    if( err ) {
-        evm_print("Failed to add ecma module\r\n");
-    }
-    err = evm_repl_run(env, 20, EVM_LANG_JS);
-    return err;
-#endif
-
-#ifdef CONFIG_EVM_LANG_QML
+#if CONFIG_EVM_LANG_QML
     err = qml_lvgl_module(env);
     if( err ) {
         evm_print("Failed to add qml module\r\n");
@@ -148,7 +139,7 @@ int evm_main(void){
     }
 #endif
     
-#ifdef CONFIG_EVM_LANG_PY
+#if CONFIG_EVM_LANG_PYTHON
     python_builtins(env);
     if( err ) {
         evm_print("Failed to add python builtins module\r\n");
@@ -156,4 +147,13 @@ int evm_main(void){
     err = evm_repl_run(env, 20, EVM_LANG_PY);
     return err;
 #endif
+
+#if CONFIG_EVM_ECMA
+    err = ecma_module(env);
+    if( err ) {
+        evm_print("Failed to add ecma module\r\n");
+    }
+#endif
+    err = evm_repl_run(env, 20, EVM_LANG_JS);
+    return err;
 }

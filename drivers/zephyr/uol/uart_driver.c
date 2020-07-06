@@ -14,7 +14,7 @@
 
 #include "nevm.h"
 
-#ifdef CONFIG_EVM_UART
+#if CONFIG_EVM_UART
 #include "evm_module.h"
 #include <device.h>
 #include <drivers/uart.h>
@@ -50,7 +50,7 @@ static void uart_irq_handler(uart_handle_t * handle)
 //uart_config(int baudrate, char databits, char parity, char stopbits, char flow)
 evm_val_t nevm_driver_uart_config(evm_t * e, evm_val_t * p, int argc, evm_val_t * v){
     (void)p;
-#ifdef CONFIG_EVM_UART
+#if CONFIG_EVM_UART
     struct device * dev = (struct device *)nevm_object_get_ext_data(p);
 
     struct uart_config uart_cfg = {
@@ -73,7 +73,7 @@ evm_val_t nevm_driver_uart_config(evm_t * e, evm_val_t * p, int argc, evm_val_t 
 
 evm_val_t nevm_driver_uart_init(evm_t * e, evm_val_t * p, int argc, evm_val_t * v){
     (void)p;
-#ifdef CONFIG_EVM_UART
+#if CONFIG_EVM_UART
     struct device * dev = device_get_binding(evm_2_string(v));
     nevm_object_set_ext_data(p, (intptr_t)dev);
     return NEVM_TRUE;
@@ -89,7 +89,7 @@ evm_val_t nevm_driver_uart_deinit(evm_t * e, evm_val_t * p, int argc, evm_val_t 
 //uart_read_bytes(Int8Array buffer, int offset, int len)
 evm_val_t nevm_driver_uart_read_bytes(evm_t * e, evm_val_t * p, int argc, evm_val_t * v){
     (void)p;
-#ifdef CONFIG_EVM_UART
+#if CONFIG_EVM_UART
     struct device * dev = (struct device *)nevm_object_get_ext_data(p);
     char recv_data;
 	uint8_t *buf = evm_buffer_addr(v);
@@ -117,7 +117,7 @@ evm_val_t nevm_driver_uart_read_bytes(evm_t * e, evm_val_t * p, int argc, evm_va
 //uart_write_bytes(Int8Array buffer|String s, int offset, int len)
 evm_val_t nevm_driver_uart_write_bytes(evm_t * e, evm_val_t * p, int argc, evm_val_t * v){
     (void)p;
-#ifdef CONFIG_EVM_UART
+#if CONFIG_EVM_UART
     struct device * dev = (struct device *)nevm_object_get_ext_data(p);
     uint8_t *buf = NULL;
     if( evm_is_buffer(v) ){

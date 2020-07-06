@@ -15,7 +15,7 @@
 #include "nevm.h"
 #include "evm_module.h"
 
-#ifdef CONFIG_EVM_GPIO
+#if CONFIG_EVM_PIN
 #include <device.h>
 #include <drivers/gpio.h>
 
@@ -36,7 +36,7 @@ static void evm_driver_gpio_callback(struct device *gpio, struct gpio_callback *
 //gpio_config(char pin, char flags)
 evm_val_t nevm_driver_gpio_config(evm_t * e, evm_val_t * p, int argc, evm_val_t * v){
     (void)e;(void)p;
-#ifdef CONFIG_EVM_GPIO
+#if CONFIG_EVM_PIN
     if( argc > 1 ){
 		struct device * dev = (struct device *)nevm_object_get_ext_data(p);
         if( !dev ) return NEVM_FALSE;
@@ -50,7 +50,7 @@ evm_val_t nevm_driver_gpio_config(evm_t * e, evm_val_t * p, int argc, evm_val_t 
 //gpio_init(String name)
 evm_val_t nevm_driver_gpio_init(evm_t * e, evm_val_t * p, int argc, evm_val_t * v){
     (void)e;(void)p;
-#ifdef CONFIG_EVM_GPIO
+#if CONFIG_EVM_PIN
     if( argc > 0 && evm_is_string(v) ){
 		struct device * dev = device_get_binding(evm_2_string(v));
         if( !dev ) return NEVM_FALSE;
@@ -68,7 +68,7 @@ evm_val_t nevm_driver_gpio_deinit(evm_t * e, evm_val_t * p, int argc, evm_val_t 
 //gpio_write_pin(char pin, char value)
 evm_val_t nevm_driver_gpio_write_pin(evm_t * e, evm_val_t * p, int argc, evm_val_t * v){
     (void)e;(void)p;
-#ifdef CONFIG_EVM_GPIO
+#if CONFIG_EVM_PIN
     struct device * dev = (struct device *)nevm_object_get_ext_data(p);
     if( !dev ) return NEVM_FALSE;
     gpio_pin_set(dev, (gpio_pin_t)evm_2_integer(v), evm_2_integer(v + 1) );
@@ -78,7 +78,7 @@ evm_val_t nevm_driver_gpio_write_pin(evm_t * e, evm_val_t * p, int argc, evm_val
 //gpio_read_pin(char pin)
 evm_val_t nevm_driver_gpio_read_pin(evm_t * e, evm_val_t * p, int argc, evm_val_t * v){
     (void)e;(void)p;
-#ifdef CONFIG_EVM_GPIO
+#if CONFIG_EVM_PIN
     struct device * dev = (struct device *)nevm_object_get_ext_data(p);
     if( !dev ) return NEVM_FALSE;
     return evm_mk_number( gpio_pin_get(dev, (gpio_pin_t)evm_2_integer(v) ) );
@@ -88,7 +88,7 @@ evm_val_t nevm_driver_gpio_read_pin(evm_t * e, evm_val_t * p, int argc, evm_val_
 //gpio_callback(Object callback, char pin)
 evm_val_t nevm_driver_gpio_callback(evm_t * e, evm_val_t * p, int argc, evm_val_t * v){
     (void)e;(void)p;
-#ifdef CONFIG_EVM_GPIO
+#if CONFIG_EVM_PIN
     struct device * dev = (struct device *)nevm_object_get_ext_data(p);
     if( !dev ) return NEVM_FALSE;
     char pin = evm_2_integer(v + 1); 

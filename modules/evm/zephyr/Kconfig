@@ -1,0 +1,69 @@
+menu "EVM Modules"
+config EVM_MODULE
+    bool "Enable EVM module"
+	default n
+
+config EVM_MODULE_CAN
+    bool "Enable EVM can module"
+	default n
+
+config EVM_MODULE_DAC
+    bool "Enable EVM dac module"
+	default n
+
+config EVM_MODULE_FLASH
+    bool "Enable EVM flash module"
+	default n
+
+config EVM_MODULE_I2C
+    bool "Enable EVM i2c module"
+	default n
+
+config EVM_MODULE_LCD
+    bool "Enable EVM lcd module"
+	default n
+
+config EVM_MODULE_LED
+    bool "Enable EVM led module"
+	default n
+
+config EVM_MODULE_MODBUS_RTU_MASTER
+    bool "Enable EVM modbus rtu master module"
+	default n
+
+config EVM_MODULE_NETWORK
+    bool "Enable EVM network module"
+	default n
+
+config EVM_MODULE_PIN
+    bool "Enable EVM pin module"
+	default n
+
+config EVM_MODULE_RTC
+    bool "Enable EVM rtc module"
+	default n
+
+config EVM_MODULE_SOCKET
+    bool "Enable EVM socket module"
+	default n
+
+config EVM_MODULE_SWITCH
+    bool "Enable EVM switch button module"
+	default n
+
+config EVM_MODULE_TIMER
+    bool "Enable EVM timer module"
+	default n
+
+config EVM_MODULE_UART
+    bool "Enable EVM uart module"
+	default n
+
+config EVM_MODULE_WATCHDOG
+    bool "Enable EVM watchdog module"
+	default n
+
+config EVM_MODULE_WIFI
+    bool "Enable EVM wifi module"
+	default n
+endmenu

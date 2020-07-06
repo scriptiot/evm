@@ -20,14 +20,21 @@
 #include "evm_board.h"
 #include "uol_output.h"
 
+#define EVM_INVALID_REF -1
+
 #define EVM_ARG_LENGTH_ERR {evm_set_err(e, ec_type, "Bad argument length"); return EVM_VAL_UNDEFINED;}
 #define EVM_ARG_TYPE_ERR {evm_set_err(e, ec_type, "Bad argument type"); return EVM_VAL_UNDEFINED;}
 
+typedef void (*evm_callback_func)(void * handle);
+extern evm_t * evm_runtime;
+
+
 int evm_module(evm_t * e);
 void evm_module_construct(evm_t* e, evm_val_t * p, int argc, evm_val_t * v, uint16_t constructor_api, uint16_t open_api);
-int evm_module_add_callback(evm_val_t callback, evm_val_t args);
-int evm_module_remove_callback(int id);
-evm_val_t * evm_module_get_callback(int id);
-extern evm_t * evm_runtime;
+int evm_add_reference(evm_val_t ref);
+evm_val_t * evm_get_reference(int id);
+int evm_remove_reference(int id);
+int evm_add_callback(evm_callback_func fn, void * handle);
+void evm_poll_callbacks(evm_t *e);
 
 #endif
