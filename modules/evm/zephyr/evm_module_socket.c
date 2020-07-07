@@ -272,12 +272,39 @@ static evm_val_t evm_module_socket_sendto(evm_t *e, evm_val_t *p, int argc, evm_
 static evm_val_t evm_module_socket_recvfrom(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
 {
     if(argc!=1) EVM_ARG_LENGTH_ERR
-    int bufsize = evm_2_integer(v);
+    int max_len = evm_2_integer(v);
+    if(max_len<0) 
+        return EVM_VAL_UNDEFINED;
+
+    struct socket_obj_t *socket = (struct socket_obj_t*)evm_object_get_ext_data(p);
 
 
-    // return zsock_recvfrom(sock, buf, max_len, 0, src_addr, addrlen);
+    struct sockaddr sock_addr;
+    socklen_t addrlen = sizeof(sock_addr);
 
-    return EVM_VAL_UNDEFINED;
+    char *buf = (char *)malloc(max_len);
+    int rec_cnt = zsock_recvfrom(socket->fd, buf, max_len, 0, &sock_addr, addrlen);
+    if(rec_cnt==-1) 
+        return EVM_VAL_NULL;
+    evm_val_t *buffer = evm_buffer_create(e,rec_cnt);
+    evm_buffer_set(buffer,buf,0,rec_cnt);
+
+    struct sockaddr_in *sock = ( struct sockaddr_in*)&sock_addr;
+    int port = ntohs(sock->sin_port);
+	struct in_addr in  = sock->sin_addr;
+	char ip_str[INET_ADDRSTRLEN];   //INET_ADDRSTRLEN这个宏系统默认定义 16
+	//成功的话此时IP地址保存在str字符串中。
+	inet_ntop(AF_INET,&in, ip_str, sizeof(ip_str));
+    evm_val_t *address = evm_list_create(e,GC_LIST,2);
+    evm_list_push(e,address,1,evm_heap_string_create(e,ip_str,sizeof(ip_str)));
+    evm_list_push(e,address,1,evm_mk_number(port));
+
+    evm_val_t *res = evm_list_create(e,GC_LIST,2);
+    evm_list_push(e,res,1,buffer);
+    evm_list_push(e,res,1,address);
+
+
+    return *res;
 
 }
 
