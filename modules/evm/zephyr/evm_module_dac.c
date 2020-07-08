@@ -15,6 +15,8 @@
 
 #include "evm_module.h" 
 
+#include <device.h>
+#include <drivers/dac.h>
 /**
  * @brief DAC class constructor
  * 
@@ -22,11 +24,25 @@
  * 
  * @uasge new DAC('DAC_1') 
  */
+//DAC(name, channel)
 static evm_val_t evm_module_dac(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
 {
-	EVM_UNUSED(e);
+	if( argc > 0 && evm_is_string(v) && evm_is_number(v) ){
+        struct device * dev = device_get_binding(evm_2_string(v));
+        if( !dev ) {
+			evm_set_err(e, ec_type, "Can't find DAC device");
+			return EVM_VAL_UNDEFINED;
+		}
 
-	evm_module_construct(nevm_runtime, p, argc, v, EXPORT_main_dacCreate, EXPORT_DACDevice_open);
+        struct dac_channel_cfg cfg = {
+            .channel_id = evm_2_integer(v + 1),
+            .resolution = 12,
+        };
+
+		evm_prop_set_value(e, p, "channel", *(v + 1) );
+        dac_channel_setup(dev, &cfg);
+        evm_object_set_ext_data(p, (intptr_t)dev);
+    }
 	return EVM_VAL_UNDEFINED;
 }
 
@@ -39,11 +55,11 @@ static evm_val_t evm_module_dac(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
  */
 static evm_val_t evm_module_dac_write(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
 {
-	EVM_UNUSED(e);
+	struct device * dev = (struct device *)evm_object_get_ext_data(p);
 
-	if( argc > 0 ){
-		evm_val_t dev = evm_mk_object((void*)nevm_object_get_ext_data(p));
-		nevm_object_function_invoke(nevm_runtime, &dev, EXPORT_DACDevice_write, 1, v);
+	if( dev && argc > 0 ){
+		int channel = evm_2_integer( evm_prop_get(e, p, "channel", 0) );
+		dac_write_value(dev, channel, evm_2_integer(v));
 	}
 	return EVM_VAL_UNDEFINED;
 }
@@ -51,7 +67,8 @@ static evm_val_t evm_module_dac_write(evm_t *e, evm_val_t *p, int argc, evm_val_
 evm_val_t evm_class_dac(evm_t * e){
 	evm_builtin_t class_dac[] = {
 		{"write", evm_mk_native( (intptr_t)evm_module_dac_write )},
-		{NULL, NULL}
+		{"channel", evm_mk_number(0)},
+		{NULL, EVM_VAL_UNDEFINED}
 	};
 	return *evm_class_create(e, (evm_native_fn)evm_module_dac, class_dac, NULL);
 }

@@ -16,24 +16,37 @@
 
 #include "evm_module.h"
 
+#include <device.h>
+#include <drivers/gpio.h>
 //Pin(name, pin, flags)
 static evm_val_t evm_module_pin(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
 {
-	EVM_UNUSED(e);
+	if( argc > 0 && evm_is_string(v) && evm_is_number(v + 1) && evm_is_number(v + 2) ){
+		struct device * dev = device_get_binding(evm_2_string(v));
+        if( !dev ) {
+			evm_set_err(e, ec_type, "Can't find Pin device");
+			return EVM_VAL_UNDEFINED;
+		}
 
-	evm_module_construct(nevm_runtime, p, argc, v, EXPORT_main_pinCreate, EXPORT_PinDevice_open);
+		gpio_pin_configure(dev, (gpio_pin_t)evm_2_integer(v + 1), (gpio_flags_t)evm_2_integer(v + 2));
+		evm_prop_set_value(e, p, "pin", *(v + 1));
+		evm_prop_set_value(e, p, "flags", *(v + 2));
+        evm_object_set_ext_data(p, (intptr_t)dev);
+    }
 	return EVM_VAL_UNDEFINED;
 }
 //Pin.value(value)
 static evm_val_t evm_module_pin_value(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
 {
-	EVM_UNUSED(e);
-
-	evm_val_t dev = evm_mk_object((void*)nevm_object_get_ext_data(p));
-	if( argc == 0 ){
-		return nevm_object_function_invoke(nevm_runtime, &dev, EXPORT_PinDevice_read, 0, NULL);
-	} else if( argc == 1 ) {
-		nevm_object_function_invoke(nevm_runtime, &dev, EXPORT_PinDevice_write, 1, v);
+	struct device * dev = (struct device *)evm_object_get_ext_data(p);
+	if( dev ){
+		int flags = evm_2_integer( evm_prop_get(e, p, "flags", 0) );
+		int pin = evm_2_integer( evm_prop_get(e, p, "pin", 0) );
+		if( argc > 0){
+			gpio_pin_set(dev, (gpio_pin_t)pin, evm_2_integer(v) );
+		} else {
+			return evm_mk_number( gpio_pin_get(dev, (gpio_pin_t)pin ) );
+		}
 	}
 	return EVM_VAL_UNDEFINED;
 }
@@ -41,6 +54,8 @@ static evm_val_t evm_module_pin_value(evm_t *e, evm_val_t *p, int argc, evm_val_
 evm_val_t evm_class_pin(evm_t * e){
 	evm_builtin_t cls[] = {
 		{"value", evm_mk_native( (intptr_t)evm_module_pin_value )},	
+		{"pin", evm_mk_number(0)},	
+		{"flags", evm_mk_number(0)},
 		{"IN", evm_mk_number(CONFIG_EVM_GPIO_INPUT)},	
 		{"OUT", evm_mk_number(CONFIG_EVM_GPIO_OUTPUT)},
 		{"DISCONNECTED", evm_mk_number(CONFIG_EVM_GPIO_DISCONNECTED)},

@@ -69,6 +69,7 @@ typedef enum
 #define MB_ERR_MAX_RTU_MSG_LEN      4
 
 #define MB_TX_RX_DELAY_MS           10
+#define MB_DEFAULT_TIMEOUT_MS       500
 
 typedef enum
 {
@@ -79,6 +80,7 @@ typedef enum
 typedef struct mb_rtu_master_t {
     struct k_timer * timer;
     struct k_timer * timeout;
+    uint32_t timeout_period;
     struct device * dev;
     uint32_t time;
     uint8_t * rx_buf;
@@ -205,7 +207,6 @@ void _mb_rtu_m_discrete_cb(mb_rtu_master_t * rtu_m, uint16_t nRegs){
 
     evm_val_t vals[1];
     vals[0] = evm_mk_number(nRegs);
-
     evm_run_callback(evm_runtime, cb_fn, &evm_runtime->scope, vals, 1);
 }
 
@@ -216,6 +217,7 @@ static void _mb_rtu_m_timeout_cb(struct k_timer *handle){
 static void _mb_rtu_m_timer_cb(struct k_timer *handle)
 {
     mb_rtu_master_t * rtu_master = (mb_rtu_master_t*)handle->user_data;
+    k_timer_stop(rtu_master->timeout);
     //goto error callback
     if( rtu_master->rx_count == 0 )  {
         goto CB_END;
@@ -276,10 +278,14 @@ int _mb_rtu_read_holding_register(mb_rtu_master_t * rtu_master,
     int16_t crc = _mb_crc(rtu_master->tx_buf, 6);
     rtu_master->tx_buf[6] = crc;
     rtu_master->tx_buf[7] = crc >> 8;
-    gpio_pin_set(rtu_master->tr_gpio, (gpio_pin_t)rtu_master->tr_pin, 1);
+    if( rtu_master->tr_gpio ) gpio_pin_set(rtu_master->tr_gpio, (gpio_pin_t)rtu_master->tr_pin, 1);
     for (int i = 0; i < 8; i++) uart_poll_out(rtu_master->dev, rtu_master->tx_buf[i]);
-    k_sleep(K_MSEC(MB_TX_RX_DELAY_MS));
-    gpio_pin_set(rtu_master->tr_gpio, (gpio_pin_t)rtu_master->tr_pin, 0);
+    if( rtu_master->tr_gpio ) {
+        k_sleep(K_MSEC(MB_TX_RX_DELAY_MS));
+        gpio_pin_set(rtu_master->tr_gpio, (gpio_pin_t)rtu_master->tr_pin, 0);
+    }
+
+    k_timer_start(rtu_master->timeout, K_MSEC(rtu_master->timeout_period), K_NO_WAIT);
     return MB_OK;
 }
 
@@ -300,10 +306,14 @@ int _mb_rtu_write_holding_register(mb_rtu_master_t * rtu_master,
     int16_t crc = _mb_crc(rtu_master->tx_buf, 6);
     rtu_master->tx_buf[6] = crc;
     rtu_master->tx_buf[7] = crc >> 8;
-    gpio_pin_set(rtu_master->tr_gpio, (gpio_pin_t)rtu_master->tr_pin, 1);
+    if( rtu_master->tr_gpio )  gpio_pin_set(rtu_master->tr_gpio, (gpio_pin_t)rtu_master->tr_pin, 1);
     for (int i = 0; i < 8; i++) uart_poll_out(rtu_master->dev, rtu_master->tx_buf[i]);
-    k_sleep(K_MSEC(MB_TX_RX_DELAY_MS));
-    gpio_pin_set(rtu_master->tr_gpio, (gpio_pin_t)rtu_master->tr_pin, 0);
+    if( rtu_master->tr_gpio ) {
+        k_sleep(K_MSEC(MB_TX_RX_DELAY_MS));
+        gpio_pin_set(rtu_master->tr_gpio, (gpio_pin_t)rtu_master->tr_pin, 0);
+    }
+
+    k_timer_start(rtu_master->timeout, K_MSEC(rtu_master->timeout_period), K_NO_WAIT);
     return MB_OK;
 }
 
@@ -334,10 +344,14 @@ int _mb_rtu_write_multiple_holding_register(mb_rtu_master_t * rtu_master,
     rtu_master->tx_buf[8 + len * 2] = crc >> 8;
 
     int data_len = 9 + len * 2;
-    gpio_pin_set(rtu_master->tr_gpio, (gpio_pin_t)rtu_master->tr_pin, 1);
+    if( rtu_master->tr_gpio ) gpio_pin_set(rtu_master->tr_gpio, (gpio_pin_t)rtu_master->tr_pin, 1);
     for (int i = 0; i < data_len; i++) uart_poll_out(rtu_master->dev, rtu_master->tx_buf[i]);
-    k_sleep(K_MSEC(MB_TX_RX_DELAY_MS));
-    gpio_pin_set(rtu_master->tr_gpio, (gpio_pin_t)rtu_master->tr_pin, 0);
+    if( rtu_master->tr_gpio ) {
+        k_sleep(K_MSEC(MB_TX_RX_DELAY_MS));
+        gpio_pin_set(rtu_master->tr_gpio, (gpio_pin_t)rtu_master->tr_pin, 0);
+    }
+
+    k_timer_start(rtu_master->timeout, K_MSEC(rtu_master->timeout_period), K_NO_WAIT);
     return MB_OK;
 }
 
@@ -360,6 +374,34 @@ static void uart_irq_handler(mb_rtu_master_t * handle)
         k_timer_start(handle->timer, K_MSEC(handle->duration), K_NO_WAIT);
     }
 }
+/**
+ * destroy function will be triggered when object is collected by gc
+ */
+static evm_val_t evm_module_modbus_rtu_master_destroy(evm_t *e, evm_val_t *p, int argc, evm_val_t *v){
+    mb_rtu_master_t * rtu_master = (mb_rtu_master_t * )evm_object_get_ext_data(p);
+    if( !rtu_master ) return EVM_VAL_UNDEFINED;
+    if( !rtu_master->timer ) {
+        k_timer_stop(rtu_master->timer);
+        evm_free(rtu_master->timer);
+    }
+
+    if( !rtu_master->timeout ) {
+        k_timer_stop(rtu_master->timeout);
+        evm_free(rtu_master->timeout);
+    }
+
+    evm_remove_reference(rtu_master->obj);
+    evm_remove_reference(rtu_master->reg_callback);
+    evm_remove_reference(rtu_master->input_callback);
+    evm_remove_reference(rtu_master->discrete_callback);
+    evm_remove_reference(rtu_master->coils_callback);
+
+    evm_free(rtu_master->tx_buf);
+    evm_free(rtu_master->rx_buf);
+
+    return EVM_VAL_UNDEFINED;
+}
+
 //ModbusRTUMaster(devName, baudrate, tr_port, tr_pin)
 static evm_val_t evm_module_modbus_rtu_master(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
 {
@@ -402,24 +444,32 @@ static evm_val_t evm_module_modbus_rtu_master(evm_t *e, evm_val_t *p, int argc, 
 
         evm_object_set_ext_data(p, (intptr_t)rtu_master);
 
-        rtu_master->tr_gpio = device_get_binding(evm_2_string(v + 2));
-        if (!rtu_master->tr_gpio) {
-            evm_set_err(e, ec_type, "Can't find tx/rx pin");
-            return EVM_VAL_UNDEFINED;
+        if( argc == 4 && evm_is_string(v + 2) && evm_is_number(v + 3) ){
+            rtu_master->tr_gpio = device_get_binding(evm_2_string(v + 2));
+            if (!rtu_master->tr_gpio) {
+                evm_set_err(e, ec_type, "Can't find tx/rx pin");
+                return EVM_VAL_UNDEFINED;
+            }
+
+            rtu_master->tr_pin = evm_2_integer(v + 3);
+
+            if (gpio_pin_configure(rtu_master->tr_gpio, rtu_master->tr_pin, GPIO_OUTPUT )) {
+                evm_set_err(e, ec_type, "Unable to configure tx/rx pin");
+                return EVM_VAL_UNDEFINED;
+            }
+
+            gpio_pin_set(rtu_master->tr_gpio, (gpio_pin_t)rtu_master->tr_pin, 0);
+        } else {
+            rtu_master->tr_gpio = NULL;
         }
-
-        rtu_master->tr_pin = evm_2_integer(v + 3);
-
-        if (gpio_pin_configure(rtu_master->tr_gpio, rtu_master->tr_pin, GPIO_OUTPUT )) {
-            evm_set_err(e, ec_type, "Unable to configure tx/rx pin");
-            return EVM_VAL_UNDEFINED;
-        }
-
-        gpio_pin_set(rtu_master->tr_gpio, (gpio_pin_t)rtu_master->tr_pin, 0);
 
         rtu_master->tx_buf = evm_malloc(MB_MAX_RTU_MESSAGE_LENGTH);
         rtu_master->rx_buf = evm_malloc(MB_MAX_RTU_MESSAGE_LENGTH);
         rtu_master->rx_count = 0;
+
+        rtu_master->timeout_period = MB_DEFAULT_TIMEOUT_MS;
+
+        evm_object_set_destroy(p, (evm_native_fn)evm_module_modbus_rtu_master_destroy);
     }
 
 	return EVM_VAL_UNDEFINED;
@@ -558,12 +608,22 @@ static evm_val_t evm_module_modbus_rtu_master_get_values(evm_t *e, evm_val_t *p,
     return EVM_VAL_UNDEFINED;
 }
 
+//set_timeout(timeout_ms)
+static evm_val_t evm_module_modbus_rtu_master_set_timeout(evm_t *e, evm_val_t *p, int argc, evm_val_t *v){
+    if( argc >0 ){
+        mb_rtu_master_t * rtu_master = (mb_rtu_master_t * )evm_object_get_ext_data(p);
+        rtu_master->timeout_period = evm_2_integer(v);
+    }
+    return EVM_VAL_UNDEFINED;
+}
+
 evm_val_t evm_class_modbus_rtu_master(evm_t *e)
 {
 	evm_builtin_t clazz[] = {
 		{"read_registers", evm_mk_native((intptr_t)evm_module_modbus_rtu_master_read_registers)},
         {"write_registers", evm_mk_native((intptr_t)evm_module_modbus_rtu_master_write_registers)},
         {"get_values", evm_mk_native((intptr_t)evm_module_modbus_rtu_master_get_values)},
+        {"set_timeout", evm_mk_native((intptr_t)evm_module_modbus_rtu_master_set_timeout)},
 		{NULL, EVM_VAL_UNDEFINED}};
 	return *evm_class_create(e, (evm_native_fn)evm_module_modbus_rtu_master, clazz, NULL);
 }

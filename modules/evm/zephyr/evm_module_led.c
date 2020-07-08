@@ -25,39 +25,44 @@ static evm_val_t evm_module_led(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
 		evm_set_err(e, ec_index, "Out of led index");
 		return EVM_VAL_UNDEFINED;
 	}
-	evm_val_t params[3];
-	params[0] = evm_mk_foreign_string((intptr_t)ledgroup[id].port);
-	params[1] = evm_mk_number(ledgroup[id].pin);
-	params[2] = evm_mk_number(ledgroup[id].mode);
-	evm_module_construct(nevm_runtime, p, 3, params, EXPORT_main_pinCreate, EXPORT_PinDevice_open);
+
+	struct device * dev = device_get_binding(ledgroup[id].port);
+	if( !dev ) {
+		evm_set_err(e, ec_type, "Can't find Pin device");
+		return EVM_VAL_UNDEFINED;
+	}
+
+	gpio_pin_configure(dev, (gpio_pin_t)ledgroup[id].pin, (gpio_flags_t)ledgroup[id].mode);
+	evm_prop_set_value(e, p, "id", *v);
+	evm_object_set_ext_data(p, (intptr_t)dev);
 	return EVM_VAL_UNDEFINED;
 }
 //off()
 static evm_val_t evm_module_led_off(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
 {
-	EVM_UNUSED(e);
-	EVM_UNUSED(argc);
-	EVM_UNUSED(v);
-	evm_val_t dev = evm_mk_object((void*)nevm_object_get_ext_data(p));
-	evm_val_t val = evm_mk_number(0);
-	nevm_object_function_invoke(nevm_runtime, &dev, EXPORT_PinDevice_write, 1, &val);
+	struct device * dev = (struct device *)evm_object_get_ext_data(p);
+	if( dev ){
+		int id = evm_2_integer( evm_prop_get(e, p, "id", 0) );
+		if( id == -1 ) return EVM_VAL_UNDEFINED;
+		gpio_pin_set(dev, (gpio_pin_t)ledgroup[id].pin, 0 );
+	}
 	return EVM_VAL_UNDEFINED;
 }
 //on()
 static evm_val_t evm_module_led_on(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
 {
-	EVM_UNUSED(e);
-	EVM_UNUSED(argc);
-	EVM_UNUSED(v);
-
-	evm_val_t dev = evm_mk_object((void*)nevm_object_get_ext_data(p));
-	evm_val_t val = evm_mk_number(1);
-	nevm_object_function_invoke(nevm_runtime, &dev, EXPORT_PinDevice_write, 1, &val);
+	struct device * dev = (struct device *)evm_object_get_ext_data(p);
+	if( dev ){
+		int id = evm_2_integer( evm_prop_get(e, p, "id", 0) );
+		if( id == -1 ) return EVM_VAL_UNDEFINED;
+		gpio_pin_set(dev, (gpio_pin_t)ledgroup[id].pin, 1 );
+	}
 	return EVM_VAL_UNDEFINED;
 }
 
 evm_val_t evm_class_led(evm_t * e){
 	evm_builtin_t class_led[] = {
+		{"id", evm_mk_number( -1 )},
 		{"off", evm_mk_native( (intptr_t)evm_module_led_off )},
 		{"on", evm_mk_native( (intptr_t)evm_module_led_on )},
 		{NULL, NULL}

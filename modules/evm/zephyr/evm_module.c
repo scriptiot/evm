@@ -102,7 +102,7 @@ evm_val_t * evm_get_reference(int id){
 }
 
 int evm_remove_reference(int id){
-	if( id >= number_of_references ) return ec_index;
+	if( id >= number_of_references || id < 0) return ec_index;
 	evm_list_set(evm_runtime, reference_list, id, EVM_VAL_UNDEFINED);
 	return ec_ok;
 }

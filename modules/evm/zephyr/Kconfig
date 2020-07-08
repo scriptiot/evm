@@ -3,6 +3,10 @@ config EVM_MODULE
     bool "Enable EVM module"
 	default n
 
+config EVM_MODULE_ADC
+    bool "Enable EVM adc module"
+	default n
+
 config EVM_MODULE_CAN
     bool "Enable EVM can module"
 	default n

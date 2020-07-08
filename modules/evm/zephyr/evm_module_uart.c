@@ -16,7 +16,36 @@
 #include "evm_module.h"
 #include <drivers/uart.h>
 
-//UART(name, baudrate, databits, parity, stopbits, rxBufSize)
+#define UART_BUFFER_INITIAL_SIZE 16
+
+typedef struct uart_handle_t {
+	struct device * dev;
+	uint8_t * buf;
+	int size;
+	int obj;
+	int read_callback;
+} uart_handle_t;
+
+static void uart_irq_handler(uart_handle_t * handle)
+{
+    uart_irq_update(handle->dev);
+
+    if (!uart_irq_is_pending(handle->dev)) {
+        return;
+    }
+
+    if (uart_irq_tx_ready(handle->dev)) {
+
+    }
+
+    if (uart_irq_rx_ready(handle->dev)) {
+        u32_t len = uart_fifo_read(handle->dev, handle->buf, UART_BUFFER_INITIAL_SIZE);
+        handle->buf[len] = '\0';
+        handle->size = len;
+    }
+}
+
+//UART(name, baudrate, databits, parity, stopbits)
 /**
  * @brief UART constructor. if only device name is given, the rest parameters are set to default
  * 
@@ -25,26 +54,61 @@
  * @param databits	databits
  * @param parity	parity
  * @param stopbits	stopbits
- * @param rxBufSize	receiving buffer size
  * 
  * @usage new UART('UART_2') 
  */
 static evm_val_t evm_module_uart(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
 {
-	EVM_UNUSED(p);
-	EVM_UNUSED(argc);
-	EVM_UNUSED(v);
-	if( argc == 1 ){
-		evm_val_t params[6];
-		params[0] = *v;
-		params[1] = evm_mk_number(115200);
-		params[2] = evm_mk_number(CONFIG_EVM_UART_DATA_BITS_8);
-		params[3] = evm_mk_number(CONFIG_EVM_UART_PARITY_NONE);
-		params[4] = evm_mk_number(CONFIG_EVM_UART_STOP_BITS_1);
-		params[5] = evm_mk_number(256);
-		evm_module_construct(nevm_runtime, p, 6, params, EXPORT_main_serialCreate, EXPORT_SerialDevice_open);
-	} else {
-		evm_module_construct(nevm_runtime, p, argc, v, EXPORT_main_serialCreate, EXPORT_SerialDevice_open);
+	struct device * dev = NULL;
+	if( argc > 1 && evm_is_string(v) ) {
+		if( argc > 4 ) {
+			for(int i = 1; i < 4; i++){
+				if( !evm_is_number(v + i) ) return EVM_VAL_UNDEFINED;
+			}
+		}
+
+		dev = device_get_binding(evm_2_string(v));
+		if( !dev ) {
+			evm_set_err(e, ec_type, "Can't find uart device");
+			return EVM_VAL_UNDEFINED;
+		}
+
+		if( argc > 4){
+			struct uart_config uart_cfg = {
+				.baudrate = evm_2_integer(v + 1),
+				.data_bits = evm_2_integer(v + 2),
+				.parity = evm_2_integer(v + 3),
+				.stop_bits = evm_2_integer(v + 4),
+				.flow_ctrl = UART_CFG_FLOW_CTRL_NONE,
+			};
+			uart_configure(dev, &uart_cfg);
+		} else if(argc > 1){
+			struct uart_config uart_cfg = {
+				.baudrate = 115200,
+				.data_bits = UART_CFG_DATA_BITS_8,
+				.parity = UART_CFG_PARITY_NONE,
+				.stop_bits = UART_CFG_STOP_BITS_1,
+				.flow_ctrl = UART_CFG_FLOW_CTRL_NONE,
+			};
+			uart_configure(dev, &uart_cfg);
+		} 
+
+		uart_handle_t * uart_handle = evm_malloc(sizeof(uart_handle_t));
+		uart_handle->dev = dev;
+		uart_handle->buf = evm_malloc(UART_BUFFER_INITIAL_SIZE);
+		if( !uart_handle->buf ) {
+			evm_free(uart_handle);
+			evm_set_err(e, ec_type, "Failed to create buffer");
+			return EVM_VAL_UNDEFINED;
+		}
+
+		
+		uart_irq_callback_user_data_set(dev, (uart_irq_callback_user_data_t)uart_irq_handler, uart_handle);
+    	uart_irq_rx_enable(dev);
+		evm_object_set_ext_data(p, (intptr_t)uart_handle);
+
+		uart_handle->obj = -1;
+		uart_handle->read_callback = -1;
 	}
 	return EVM_VAL_UNDEFINED;
 }
@@ -57,11 +121,11 @@ static evm_val_t evm_module_uart(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
  */
 static evm_val_t evm_module_uart_any(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
 {
-	EVM_UNUSED(e);
-	EVM_UNUSED(argc);
-	EVM_UNUSED(v);
-	evm_val_t dev = evm_mk_object((void *)nevm_object_get_ext_data(p));
-	return nevm_object_function_invoke(nevm_runtime, &dev, EXPORT_SerialDevice_count, 0, NULL);
+	uart_handle_t * uart_handle = (uart_handle_t*)evm_object_get_ext_data(p);
+	if( uart_handle ){
+		return evm_mk_number(uart_handle->size);
+	}
+	return EVM_VAL_UNDEFINED;
 }
 
 //UART.read(buf, offset, size)
@@ -75,13 +139,32 @@ static evm_val_t evm_module_uart_any(evm_t *e, evm_val_t *p, int argc, evm_val_t
  */
 static evm_val_t evm_module_uart_read(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
 {
-	EVM_UNUSED(e);
+	uart_handle_t * uart_handle = (uart_handle_t*)evm_object_get_ext_data(p);
+	if(uart_handle && argc > 2){
+		struct device * dev = uart_handle->dev;
+		char recv_data;
+		uint8_t *buf = evm_buffer_addr(v);
+		int offset = evm_2_integer(v + 1);
+		int len = evm_2_integer(v + 2);
+		if( len >= evm_buffer_len(v) - offset ) len = evm_buffer_len(v) - offset;
 
-	if(argc>2){
-		evm_val_t dev = evm_mk_object((void *)nevm_object_get_ext_data(p));
-		return nevm_object_function_invoke(nevm_runtime, &dev, EXPORT_SerialDevice_read, 3, v);
+		int index = 0;
+		while (index < len) 
+		{
+			if(uart_poll_in(dev, &recv_data) >= 0)
+			{
+				buf[index + offset] = recv_data;
+				index++;
+				if(index == len)
+				{
+					break;
+				}
+			}
+		}
+
+		return evm_mk_number(index);
 	}
-	return EVM_VAL_UNDEFINED;
+	return evm_mk_number(0);
 }
 
 
@@ -98,15 +181,51 @@ static evm_val_t evm_module_uart_read(evm_t *e, evm_val_t *p, int argc, evm_val_
  */
 static evm_val_t evm_module_uart_write(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
 {
-	EVM_UNUSED(e);
+	uart_handle_t * uart_handle = (uart_handle_t*)evm_object_get_ext_data(p);
+	if(uart_handle && argc > 0){
+		struct device * dev = uart_handle->dev;
+		uint8_t *buf = NULL;
+		int size = 0;
+		if( evm_is_buffer(v) ){
+			buf = evm_buffer_addr(v);
+			size = evm_buffer_len(v);
+		} else if( evm_is_foreign_string(v) ){
+			buf = (char *)evm_2_intptr(v);
+			size = strlen(buf);
+		} else if( evm_is_heap_string(v) ){
+			buf = evm_heap_string_addr(v);
+			size = strlen(buf);
+		} else {
+			return EVM_VAL_UNDEFINED;
+		}
+		
+		if( argc > 2){
+			int offset = evm_2_integer(v + 1);
+			int len = evm_2_integer(v + 2);
 
-	evm_val_t dev = evm_mk_object((void*)nevm_object_get_ext_data(p));
-	if(argc>2){
-		if( evm_is_buffer(v) )
-			return nevm_object_function_invoke(nevm_runtime, &dev, EXPORT_SerialDevice_write, argc, v);
-	} else if( argc > 0 ){
-		if( evm_is_string(v) )
-			return nevm_object_function_invoke(nevm_runtime, &dev, EXPORT_SerialDevice_writeString, argc, v);
+			if( evm_is_buffer(v)  ){
+				if( len >= evm_buffer_len(v) - offset ) len = size - offset;
+			}
+
+			for (int i = 0; i <len; i++) 
+				uart_poll_out(dev, buf[i + offset]);
+		} else {
+			for (int i = 0; i < size; i++) 
+				uart_poll_out(dev, buf[i]);
+		}
+	}
+	return EVM_VAL_UNDEFINED;
+}
+
+//callback(function)
+static evm_val_t evm_module_uart_callback(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
+{
+	if( argc > 0 && evm_is_script(v) ){
+		uart_handle_t * uart_handle = (uart_handle_t*)evm_object_get_ext_data(p);
+		if( uart_handle ){
+			uart_handle->obj = evm_add_reference(*p);
+			uart_handle->read_callback = evm_add_reference(*v);
+		}
 	}
 	return EVM_VAL_UNDEFINED;
 }
@@ -117,6 +236,7 @@ evm_val_t evm_class_uart(evm_t * e){
 		{"any", evm_mk_native( (intptr_t)evm_module_uart_any )},
 		{"read", evm_mk_native( (intptr_t)evm_module_uart_read )},
 		{"write", evm_mk_native( (intptr_t)evm_module_uart_write )},
+		{"callback", evm_mk_native( (intptr_t)evm_module_uart_callback )},
 
 		{"NONE",evm_mk_number(CONFIG_EVM_UART_PARITY_NONE)},
 		{"ODD",evm_mk_number(CONFIG_EVM_UART_PARITY_ODD)},
@@ -133,7 +253,7 @@ evm_val_t evm_class_uart(evm_t * e){
 		{"DATA8",evm_mk_number(CONFIG_EVM_UART_DATA_BITS_8)},
 		{"DATA9",evm_mk_number(CONFIG_EVM_UART_DATA_BITS_9)},
 
-		{NULL, NULL}
+		{NULL, EVM_VAL_UNDEFINED}
 	};
 	return *evm_class_create(e, (evm_native_fn)evm_module_uart, class_uart, NULL);
 }
