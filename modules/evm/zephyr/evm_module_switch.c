@@ -23,18 +23,6 @@
  */
 static evm_val_t evm_module_switch(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
 {
-
-	EVM_UNUSED(argc);
-	int id = evm_2_integer(v);
-	if( id >= evm_board_get_pin_group_size(keygroup) ) {
-		evm_set_err(e, ec_index, "Out of key index");
-		return EVM_VAL_UNDEFINED;
-	}
-	evm_val_t params[3];
-	params[0] = evm_mk_foreign_string((intptr_t)keygroup[id].port);
-	params[1] = evm_mk_number(keygroup[id].pin);
-	params[2] = evm_mk_number(keygroup[id].mode);
-	evm_module_construct(nevm_runtime, p, 3, params, EXPORT_main_pinCreate, EXPORT_PinDevice_open);
 	return EVM_VAL_UNDEFINED;
 }
 /**
@@ -44,11 +32,7 @@ static evm_val_t evm_module_switch(evm_t *e, evm_val_t *p, int argc, evm_val_t *
  */
 static evm_val_t evm_module_switch_value(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
 {
-	EVM_UNUSED(e);
-	EVM_UNUSED(argc);
-	EVM_UNUSED(v);
-	evm_val_t dev = evm_mk_object((void*)nevm_object_get_ext_data(p));
-	return nevm_object_function_invoke(nevm_runtime, &dev, EXPORT_PinDevice_read, 0, NULL);
+	return EVM_VAL_UNDEFINED;
 }
 /**
  * @brief set a callback function which will be triggered if switch is pressed. 
@@ -58,10 +42,6 @@ static evm_val_t evm_module_switch_value(evm_t *e, evm_val_t *p, int argc, evm_v
  */
 static evm_val_t evm_module_switch_callback(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
 {
-	EVM_UNUSED(e);
-	EVM_UNUSED(argc);
-	evm_val_t dev = evm_mk_object((void*)nevm_object_get_ext_data(p));
-	nevm_object_function_invoke(nevm_runtime, &dev, EXPORT_PinDevice_setCallback, 1, v);
 	return EVM_VAL_UNDEFINED;
 }
 

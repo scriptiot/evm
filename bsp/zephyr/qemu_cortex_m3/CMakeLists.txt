@@ -50,4 +50,3 @@ include_directories(app PRIVATE ${EVM_BASE}/bsp/common)
 
 target_sources(app PRIVATE src/main.c)
 target_sources(app PRIVATE ${EVM_BASE}/bsp/common/evm_main.c)
-target_sources(app PRIVATE ${EVM_BASE}/bsp/common/uol_output.c)

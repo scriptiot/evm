@@ -5,25 +5,10 @@ include_directories(app PRIVATE ${EVM_BASE}/bsp/common)
 
 zephyr_include_directories(.)
 zephyr_library()
-zephyr_library_sources( 
-  ${EVM_BASE}/drivers/zephyr/uol/adc_driver.c 
-  ${EVM_BASE}/drivers/zephyr/uol/can_driver.c 
-  ${EVM_BASE}/drivers/zephyr/uol/dac_driver.c
-  ${EVM_BASE}/drivers/zephyr/uol/flash_driver.c
-  ${EVM_BASE}/drivers/zephyr/uol/gpio_driver.c
-  ${EVM_BASE}/drivers/zephyr/uol/i2c_driver.c
-  ${EVM_BASE}/drivers/zephyr/uol/rtc_driver.c
-  ${EVM_BASE}/drivers/zephyr/uol/spi_driver.c
-  ${EVM_BASE}/drivers/zephyr/uol/uart_driver.c
-  ${EVM_BASE}/drivers/zephyr/uol/watchdog_driver.c
-  ${EVM_BASE}/drivers/zephyr/uol/pwm_driver.c
-  ${EVM_BASE}/drivers/zephyr/uol/sys_driver.c
-)
 
 if(CONFIG_EVM_MODULE_TIMER)
   zephyr_library_sources(evm_module_timer.c)
 endif()
-
 
 if(CONFIG_EVM_MODULE_ADC)
   zephyr_library_sources(evm_module_adc.c)

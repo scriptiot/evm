@@ -16,9 +16,8 @@
 #define EVM_MODULE_H
 
 #include "evm.h"
-#include "nevm.h"
 #include "evm_board.h"
-#include "uol_output.h"
+
 
 #define EVM_INVALID_REF -1
 
@@ -28,9 +27,7 @@
 typedef void (*evm_callback_func)(void * handle);
 extern evm_t * evm_runtime;
 
-
 int evm_module(evm_t * e);
-void evm_module_construct(evm_t* e, evm_val_t * p, int argc, evm_val_t * v, uint16_t constructor_api, uint16_t open_api);
 int evm_add_reference(evm_val_t ref);
 evm_val_t * evm_get_reference(int id);
 int evm_remove_reference(int id);

@@ -71,7 +71,7 @@ static evm_val_t evm_module_adc_read(evm_t *e, evm_val_t *p, int argc, evm_val_t
 	};
 
     if (adc_read(dev, &seq) != 0) {
-        return NEVM_FALSE;
+        return EVM_VAL_FALSE;
     }
 
     return evm_mk_number( seq_buffer[0] | seq_buffer[1] << 8 );

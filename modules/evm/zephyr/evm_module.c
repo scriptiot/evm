@@ -76,16 +76,6 @@ static evm_val_t * reference_list;
 static uint32_t number_of_references;
 evm_t * evm_runtime;
 
-void evm_module_construct(evm_t* e, evm_val_t * p, int argc, evm_val_t * v, uint16_t constructor_api, uint16_t open_api){
-    evm_val_t dev = nevm_function_invoke(e, constructor_api, argc, v);
-	if( dev == EVM_VAL_NULL ){
-		evm_set_err(evm_runtime, ec_type, "Driver is not found");
-		return;
-	}
-    nevm_object_function_invoke(e, &dev, open_api, 0, NULL);
-    nevm_object_set_ext_data(p, evm_2_intptr(&dev) );
-}
-
 int evm_add_reference(evm_val_t ref){
 	for(uint32_t i = 0; i < number_of_references; i++){
 		evm_val_t * v = evm_list_get(evm_runtime, reference_list, i);
@@ -138,7 +128,7 @@ void evm_poll_callbacks(evm_t *e){
  */
 static evm_val_t evm_module_delay_ms(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
 {
-	nevm_function_invoke(nevm_runtime, EXPORT_main_sysDelayMs, argc, v);
+	k_sleep(K_MSEC(evm_2_integer(v)));
 	return EVM_VAL_UNDEFINED;
 }
 /**
@@ -149,7 +139,7 @@ static evm_val_t evm_module_delay_ms(evm_t *e, evm_val_t *p, int argc, evm_val_t
  */
 static evm_val_t evm_module_delay_us(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
 {
-	nevm_function_invoke(nevm_runtime, EXPORT_main_sysDelayUs, argc, v);
+	k_usleep(evm_2_integer(v));
 	return EVM_VAL_UNDEFINED;
 }
 
