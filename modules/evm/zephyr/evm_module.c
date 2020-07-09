@@ -117,6 +117,7 @@ void evm_poll_callbacks(evm_t *e){
 			if( fn == NULL) break;
 			void * handle = (void*)cb_handles[i];
 			fn(handle);
+			cb_map[i] = 0;
 		}
 	}
 }
@@ -207,7 +208,6 @@ int evm_module(evm_t * e){
 #if CONFIG_EVM_MODULE_NETWORK
         {"Network", evm_class_network(e)},
 #endif
-
         {NULL, EVM_VAL_UNDEFINED}
     };
     evm_module_create(e, "evm", module);

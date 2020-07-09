@@ -69,6 +69,7 @@ void console_setup(){
 }
 
 int evm_main(void){
+    int lang_type = EVM_LANG_JS;
     console_setup();
 
     evm_register_free((intptr_t)vm_free);
@@ -117,8 +118,7 @@ int evm_main(void){
     if( err ) {
         evm_print("Failed to add python builtins module\r\n");
     }
-    err = evm_repl_run(env, 20, EVM_LANG_PY);
-    return err;
+    lang_type = EVM_LANG_PY;
 #endif
 
 #if CONFIG_EVM_ECMA
@@ -127,6 +127,9 @@ int evm_main(void){
         evm_print("Failed to add ecma module\r\n");
     }
 #endif
-    err = evm_repl_run(env, 20, EVM_LANG_JS);
+    err = evm_repl_run(env, 20, lang_type);
+    while( err == ec_exit ){
+        evm_poll_callbacks(env);
+    }
     return err;
 }

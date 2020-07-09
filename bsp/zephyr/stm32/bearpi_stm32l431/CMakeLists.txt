@@ -6,6 +6,7 @@ set(BOARD bearpi_stm32l431)
 # board, dts, soc
 set(BOARD_ROOT ${CMAKE_CURRENT_LIST_DIR})
 set(DTS_ROOT ${CMAKE_CURRENT_LIST_DIR}/dts)
+set(SOC_ROOT ${CMAKE_CURRENT_LIST_DIR})
 
 # evm path
 set(EVM_BASE ${ZEPHYR_BASE}/../../../)

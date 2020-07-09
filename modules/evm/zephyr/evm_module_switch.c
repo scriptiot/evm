@@ -14,6 +14,30 @@
 
 #include "evm_module.h"
 
+#include <device.h>
+#include <drivers/gpio.h>
+
+typedef struct gpio_handle {
+	struct device * dev;
+	struct gpio_callback callback;
+    int obj;
+	int cb;
+    int id;  
+} gpio_handle_t;
+
+void evm_switch_c_callback(gpio_handle_t * handle){
+	if( handle->cb != -1 ){
+		evm_val_t * fn = evm_get_reference(handle->cb);
+    	evm_run_callback(evm_runtime, fn, NULL, NULL, 0);
+	}
+}
+
+static void evm_driver_gpio_callback(struct device *gpio, struct gpio_callback *cb, u32_t pins)
+{
+	gpio_handle_t *handle = CONTAINER_OF(cb, gpio_handle_t, callback);
+    evm_add_callback(evm_switch_c_callback, handle);
+}
+
 //Switch(id)
 /**
  * @brief Switch class constructor
@@ -23,6 +47,39 @@
  */
 static evm_val_t evm_module_switch(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
 {
+	if( argc > 0 ){
+		int id = evm_2_integer(v);
+		if( id >= evm_board_get_pin_group_size(keygroup) ) {
+			evm_set_err(e, ec_index, "Out of led index");
+			return EVM_VAL_UNDEFINED;
+		}
+
+		struct device * dev = device_get_binding(keygroup[id].port);
+		if( !dev ) {
+			evm_set_err(e, ec_type, "Can't find switch device");
+			return EVM_VAL_UNDEFINED;
+		}
+
+		gpio_handle_t * handle = evm_malloc(sizeof(gpio_handle_t));
+		if( !handle ) {
+			evm_set_err(e, ec_type, "Out of memory");
+			return EVM_VAL_UNDEFINED;
+		}
+
+		handle->cb = -1;
+		handle->id = id;
+		handle->dev = dev;
+		handle->obj = evm_add_reference(*p);
+
+		gpio_pin_configure(dev, (gpio_pin_t)keygroup[id].pin, (gpio_flags_t)keygroup[id].mode);
+		evm_object_set_ext_data(p, (intptr_t)handle);
+
+		gpio_init_callback(&handle->callback, evm_driver_gpio_callback, BIT(keygroup[id].pin));
+
+		gpio_add_callback(dev, &handle->callback);
+		gpio_pin_enable_callback(dev, keygroup[id].pin);
+	}
+	
 	return EVM_VAL_UNDEFINED;
 }
 /**
@@ -32,6 +89,11 @@ static evm_val_t evm_module_switch(evm_t *e, evm_val_t *p, int argc, evm_val_t *
  */
 static evm_val_t evm_module_switch_value(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
 {
+	gpio_handle_t * handle = (gpio_handle_t *)evm_object_get_ext_data(p);
+	if( handle ) {
+		int id = handle->id;
+		return evm_mk_number( gpio_pin_get(handle->dev, (gpio_pin_t)keygroup[id].pin ) );
+	}
 	return EVM_VAL_UNDEFINED;
 }
 /**
@@ -42,6 +104,11 @@ static evm_val_t evm_module_switch_value(evm_t *e, evm_val_t *p, int argc, evm_v
  */
 static evm_val_t evm_module_switch_callback(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
 {
+	gpio_handle_t * handle = (gpio_handle_t *)evm_object_get_ext_data(p);
+	if( handle && argc > 0 && evm_is_script(v) ) {
+		evm_remove_reference(handle->cb);
+		handle->cb = evm_add_reference(*v);
+	}
 	return EVM_VAL_UNDEFINED;
 }
 

@@ -125,6 +125,7 @@ enum Errcode
     ec_arithmetic,
     ec_indent,
     ec_gc,
+    ec_exit,
 };
 
 typedef union {
