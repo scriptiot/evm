@@ -26,6 +26,20 @@ typedef struct uart_handle_t {
 	int read_callback;
 } uart_handle_t;
 
+void evm_uart_c_callback(uart_handle_t * handle){
+	if( handle->read_callback != EVM_INVALID_REF ){
+		evm_val_t * obj = evm_get_reference(handle->obj);
+		evm_val_t * cb = evm_get_reference(handle->read_callback);
+		evm_val_t * buffer = evm_prop_get(evm_runtime, obj, ".buffer", 0);
+		uint8_t * buf = evm_buffer_addr(buffer);
+		memcpy(buf, handle->buf, handle->size);
+		evm_val_t args[2];
+		args[0] = *buffer;
+		args[1] = evm_mk_number(handle->size);
+		evm_run_callback(evm_runtime, cb, obj, args, 2);
+	}
+}
+
 static void uart_irq_handler(uart_handle_t * handle)
 {
     uart_irq_update(handle->dev);
@@ -102,13 +116,13 @@ static evm_val_t evm_module_uart(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
 			return EVM_VAL_UNDEFINED;
 		}
 
-		
-		uart_irq_callback_user_data_set(dev, (uart_irq_callback_user_data_t)uart_irq_handler, uart_handle);
-    	uart_irq_rx_enable(dev);
-		evm_object_set_ext_data(p, (intptr_t)uart_handle);
+		evm_val_t * buffer = evm_buffer_create(e, UART_BUFFER_INITIAL_SIZE);
+		evm_prop_set_value(e, p, ".buffer", *buffer);
 
 		uart_handle->obj = -1;
 		uart_handle->read_callback = -1;
+
+		evm_object_set_ext_data(p, (intptr_t)uart_handle);
 	}
 	return EVM_VAL_UNDEFINED;
 }
@@ -225,6 +239,10 @@ static evm_val_t evm_module_uart_callback(evm_t *e, evm_val_t *p, int argc, evm_
 		if( uart_handle ){
 			uart_handle->obj = evm_add_reference(*p);
 			uart_handle->read_callback = evm_add_reference(*v);
+
+			uart_irq_callback_user_data_set(uart_handle->dev, (uart_irq_callback_user_data_t)uart_irq_handler, uart_handle);
+    		uart_irq_rx_enable(uart_handle->dev);
+			
 		}
 	}
 	return EVM_VAL_UNDEFINED;
@@ -237,6 +255,7 @@ evm_val_t evm_class_uart(evm_t * e){
 		{"read", evm_mk_native( (intptr_t)evm_module_uart_read )},
 		{"write", evm_mk_native( (intptr_t)evm_module_uart_write )},
 		{"callback", evm_mk_native( (intptr_t)evm_module_uart_callback )},
+		{".buffer", EVM_VAL_UNDEFINED},
 
 		{"NONE",evm_mk_number(CONFIG_EVM_UART_PARITY_NONE)},
 		{"ODD",evm_mk_number(CONFIG_EVM_UART_PARITY_ODD)},

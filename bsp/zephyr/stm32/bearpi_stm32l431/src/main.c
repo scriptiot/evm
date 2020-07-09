@@ -15,10 +15,23 @@
 #include "evm_main.h"
 
 #include <device.h>
-#include <drivers/uart.h>
+#include <drivers/gpio.h>
 #include <zephyr.h>
+
+
+
+
+
+
 
 void main(void)
 {
+#if CONFIG_EVM_MODULE_LCD
+    struct device * dev = device_get_binding("GPIOB");
+    if( dev ) {
+        gpio_pin_configure(dev, 15, GPIO_OUTPUT);
+        gpio_pin_set(dev, 15, 1);
+    }
+#endif
     evm_main();
 }
