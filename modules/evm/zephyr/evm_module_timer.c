@@ -21,12 +21,19 @@ typedef struct evm_timer_t {
 	int cb;
 } evm_timer_t;
 
+void evm_timer_c_callback(evm_timer_t * handle){
+	if( handle->cb != -1 ){
+		evm_val_t * obj = evm_get_reference(handle->obj);
+		evm_val_t * cb = evm_get_reference(handle->cb);
+		evm_run_callback(evm_runtime, cb, NULL, NULL, 0);
+	}
+}
+
 static void timer_callback(struct k_timer *handle)
 {
     evm_timer_t * timer = (evm_timer_t*)handle->user_data;
-	evm_val_t * obj = evm_get_reference(timer->obj);
-	evm_val_t * cb = evm_get_reference(timer->cb);
-    evm_run_callback(evm_runtime, cb, NULL, NULL, 0);
+	
+	evm_add_callback(evm_timer_c_callback, timer);
 }
 
 //Timer(String name)
