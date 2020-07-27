@@ -284,8 +284,10 @@ static evm_val_t evm_module_socket_recvfrom(evm_t *e, evm_val_t *p, int argc, ev
 
     char *buf = (char *)malloc(max_len);
     int rec_cnt = zsock_recvfrom(socket->fd, buf, max_len, 0, &sock_addr, addrlen);
-    if(rec_cnt==-1) 
+    if(rec_cnt==-1) {
+        free(buf);
         return EVM_VAL_NULL;
+    }
     evm_val_t *buffer = evm_buffer_create(e,rec_cnt);
     evm_buffer_set(buffer,buf,0,rec_cnt);
 
@@ -303,7 +305,7 @@ static evm_val_t evm_module_socket_recvfrom(evm_t *e, evm_val_t *p, int argc, ev
     evm_list_push(e,res,1,buffer);
     evm_list_push(e,res,1,address);
 
-
+    free(buf);
     return *res;
 
 }
