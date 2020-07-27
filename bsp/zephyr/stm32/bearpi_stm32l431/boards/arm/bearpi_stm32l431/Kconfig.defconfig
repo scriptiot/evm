@@ -9,10 +9,6 @@ if BOARD_BEARPI_STM32L431
 config BOARD
 	default "bearpi_stm32l431"
 
-config SPI_STM32_INTERRUPT
-	default y
-	depends on SPI
-
 config ST7789V
 	default y
 	depends on DISPLAY

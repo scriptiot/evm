@@ -203,10 +203,10 @@ int evm_module(evm_t * e){
 		{"WIFI", evm_class_wifi(e)},
 #endif
 #if CONFIG_EVM_MODULE_SOCKET
-        {"Socket", evm_class_socket(e)},
+        {"socket", evm_class_socket(e)},
 #endif
 #if CONFIG_EVM_MODULE_NETWORK
-        {"Network", evm_class_network(e)},
+        {"network", evm_class_network(e)},
 #endif
         {NULL, EVM_VAL_UNDEFINED}
     };

@@ -297,7 +297,7 @@ static int w5500_rx(struct device *dev)
 			} else {
 				spi_frame_len = frm_len;
 			}
-			printk("recv data_ptr %p (len %u)\n", data_ptr, spi_frame_len);
+
 			wiz_recv_data(W5500_SN, data_ptr, spi_frame_len);
 			setSn_CR(W5500_SN, Sn_CR_RECV);
 
@@ -461,6 +461,13 @@ static int w5500_init(struct device *dev)
     setSn_CR(W5500_SN,Sn_CR_OPEN);
 	setSn_CR(W5500_SN,Sn_CR_CONNECT);
 	getSHAR(context->mac_address);
+	context->mac_address[0] = 1;
+	context->mac_address[1] = 2;
+	context->mac_address[2] = 3;
+	context->mac_address[3] = 4;
+	context->mac_address[4] = 5;
+	context->mac_address[5] = 6;
+
 
 
 	gpio_pin_interrupt_configure(context->gpio,
