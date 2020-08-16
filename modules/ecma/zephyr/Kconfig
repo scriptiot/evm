@@ -8,18 +8,21 @@ config EVM_ECMA_ARRAY
 	default n
 
 config EVM_ECMA_MATH
-    bool "Enable EVM ecma array"
+    bool "Enable EVM ecma math"
 	default n
 
 config EVM_ECMA_NUMBER
-    bool "Enable EVM ecma array"
+    bool "Enable EVM ecma number"
 	default n
 
 config EVM_ECMA_OBJECT
-    bool "Enable EVM ecma array"
+    bool "Enable EVM ecma object"
 	default n
 
 config EVM_ECMA_REGEXP
-    bool "Enable EVM ecma array"
+    bool "Enable EVM ecma regular expression"
+	default n
+config EVM_ECMA_STRING
+    bool "Enable EVM ecma string"
 	default n
 endmenu

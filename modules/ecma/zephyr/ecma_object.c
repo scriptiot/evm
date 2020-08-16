@@ -100,12 +100,12 @@ evm_val_t object_prototype_valueOf(evm_t * e, evm_val_t * p, int argc, evm_val_t
 }
 
 void ecma_object_attrs_set(evm_t * e, evm_val_t * o, evm_val_t * object, evm_val_t * prototype){
-    evm_attr_set(e, o, 0, "__proto__", *prototype);
-    evm_attr_set(e, o, 1, "constructor", *object);
-    evm_attr_set(e, o, 2, "hasOwnProperty", evm_mk_native((intptr_t)object_prototype_hasOwnProperty));
-    evm_attr_set(e, o, 3, "isPrototypeOf", evm_mk_native((intptr_t)object_prototype_isPrototypeOf));
-    evm_attr_set(e, o, 4, "toString", evm_mk_native((intptr_t)object_prototype_toString));
-    evm_attr_set(e, o, 5, "valueOf", evm_mk_native((intptr_t)object_prototype_valueOf));
+    evm_attr_set_key_value(e, o, 0, ecma_hash___proto__, *prototype);
+    evm_attr_set_key_value(e, o, 1, ecma_hash_constructor, *object);
+    evm_attr_set_key_value(e, o, 2, ecma_hash_hasOwnProperty, evm_mk_native((intptr_t)object_prototype_hasOwnProperty));
+    evm_attr_set_key_value(e, o, 3, ecma_hash_isPrototypeOf, evm_mk_native((intptr_t)object_prototype_isPrototypeOf));
+    evm_attr_set_key_value(e, o, 4, ecma_hash_toString, evm_mk_native((intptr_t)object_prototype_toString));
+    evm_attr_set_key_value(e, o, 5, ecma_hash_valueOf, evm_mk_native((intptr_t)object_prototype_valueOf));
 }
 
 void ecma_object_attrs_apply(evm_t * e, evm_val_t * o, evm_val_t * prototype){
@@ -122,8 +122,6 @@ evm_val_t *index_2_string(evm_t * e, int index){
     evm_val_t * so = evm_heap_string_create(e, buf, slen + 1);
     return so;
 }
-
-evm_val_t ecma_object_create(evm_t * e, evm_val_t * p, int argc, evm_val_t * v);
 
 evm_val_t ecma_object_new(evm_t * e, evm_val_t * p, int argc, evm_val_t * v){
     EVM_UNUSED(p);
@@ -144,7 +142,7 @@ evm_val_t ecma_object_create(evm_t * e, evm_val_t * p, int argc, evm_val_t * v){
     if( argc == 1 && evm_is_null(v)){
         o = evm_object_create(e, GC_DICT, 0, 0);
         ecma_object_attrs_apply(e, o, v);
-        evm_attr_set(e, o,  0, "__proto__", evm_mk_null());
+        evm_attr_set_key_value(e, o,  0, ecma_hash___proto__, evm_mk_null());
         return *o;
     } else if(argc == 1 && evm_is_object(v) ){
         o = evm_object_create(e, GC_DICT, 0, 0);
@@ -349,15 +347,15 @@ evm_val_t ecma_object_getOwnPropertyNames(evm_t * e, evm_val_t * p, int argc, ev
 
 
 evm_val_t * ecma_object_init(evm_t * e){
-    evm_val_t * o = evm_native_function_create(e, (evm_native_fn)ecma_object_new, ECMA_OBJECT_PROP_SIZE);
-    evm_attr_set(e, o, ECMA_OBJECT_PROP_SIZE, "prototype", *ecma_object_prototype);
-    evm_attr_set(e, o, ECMA_OBJECT_PROP_SIZE + 1, "create", evm_mk_native((intptr_t)ecma_object_create));
-    evm_attr_set(e, o, ECMA_OBJECT_PROP_SIZE + 2, "keys", evm_mk_native((intptr_t)ecma_object_keys));
-    evm_attr_set(e, o, ECMA_OBJECT_PROP_SIZE + 3, "values", evm_mk_native((intptr_t)ecma_object_values));
-    evm_attr_set(e, o, ECMA_OBJECT_PROP_SIZE + 4, "entries", evm_mk_native((intptr_t)ecma_object_entries));
-    evm_attr_set(e, o, ECMA_OBJECT_PROP_SIZE + 5, "getPrototypeOf", evm_mk_native((intptr_t)ecma_object_getPrototypeOf));
-    evm_attr_set(e, o, ECMA_OBJECT_PROP_SIZE + 6, "getOwnPropertyNames", evm_mk_native((intptr_t)ecma_object_getOwnPropertyNames));
-    evm_attr_set(e, o, ECMA_OBJECT_PROP_SIZE + 7, "__proto__", *ecma_function_prototype);
+    evm_val_t * o = evm_native_function_create(e, (evm_native_fn)ecma_object_new, ECMA_OBJECT_ATTR_SIZE);
+    evm_attr_set(e, o, 0, "prototype", *ecma_object_prototype);
+    evm_attr_set(e, o, 1, "create", evm_mk_native((intptr_t)ecma_object_create));
+    evm_attr_set(e, o, 2, "keys", evm_mk_native((intptr_t)ecma_object_keys));
+    evm_attr_set(e, o, 3, "values", evm_mk_native((intptr_t)ecma_object_values));
+    evm_attr_set(e, o, 4, "entries", evm_mk_native((intptr_t)ecma_object_entries));
+    evm_attr_set(e, o, 5, "getPrototypeOf", evm_mk_native((intptr_t)ecma_object_getPrototypeOf));
+    evm_attr_set(e, o, 6, "getOwnPropertyNames", evm_mk_native((intptr_t)ecma_object_getOwnPropertyNames));
+    evm_attr_set(e, o, 7, "__proto__", *ecma_function_prototype);
     evm_set_parent(o, ecma_function_prototype);
     return o;
 }

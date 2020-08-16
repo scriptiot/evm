@@ -60,20 +60,20 @@ void ecma_array_attrs_apply(evm_t * e, evm_val_t * o){
     #else
     if( evm_attr_create(e, o, ECMA_ARRAY_ATTR_SIZE) == ec_ok ){
     #endif
-        evm_attr_set(e, o, index++, "length", evm_mk_number( evm_list_len(o) ));
-        evm_attr_set(e, o, index++, "push", evm_mk_native((intptr_t)ecma_array_push));
-        evm_attr_set(e, o, index++, "pop", evm_mk_native((intptr_t)ecma_array_pop));
-        evm_attr_set(e, o, index++, "concat", evm_mk_native((intptr_t)ecma_array_concat));
-        evm_attr_set(e, o, index++, "fill", evm_mk_native((intptr_t)ecma_array_fill));
-        evm_attr_set(e, o, index++, "indexOf", evm_mk_native((intptr_t)ecma_array_indexOf));
-        evm_attr_set(e, o, index++, "shift", evm_mk_native((intptr_t)ecma_array_shift));
-        evm_attr_set(e, o, index++, "slice", evm_mk_native((intptr_t)ecma_array_slice));
-        evm_attr_set(e, o, index++, "copyWithin", evm_mk_native((intptr_t)ecma_array_copyWithin));
-        evm_attr_set(e, o, index++, "unshift", evm_mk_native((intptr_t)ecma_array_unshift));
-        evm_attr_set(e, o, index++, "filter", evm_mk_native((intptr_t)ecma_array_filter));
-        evm_attr_set(e, o, index++, "map", evm_mk_native((intptr_t)ecma_array_map));
-        evm_attr_set(e, o, index++, "find", evm_mk_native((intptr_t)ecma_array_find));
-        evm_attr_set(e, o, index++, "join", evm_mk_native((intptr_t)ecma_array_join));
+        evm_attr_set_key_value(e, o, index++, ecma_hash_length, evm_mk_number( evm_list_len(o) ));
+        evm_attr_set_key_value(e, o, index++, ecma_hash_push, evm_mk_native((intptr_t)ecma_array_push));
+        evm_attr_set_key_value(e, o, index++, ecma_hash_pop, evm_mk_native((intptr_t)ecma_array_pop));
+        evm_attr_set_key_value(e, o, index++, ecma_hash_concat, evm_mk_native((intptr_t)ecma_array_concat));
+        evm_attr_set_key_value(e, o, index++, ecma_hash_fill, evm_mk_native((intptr_t)ecma_array_fill));
+        evm_attr_set_key_value(e, o, index++, ecma_hash_indexOf, evm_mk_native((intptr_t)ecma_array_indexOf));
+        evm_attr_set_key_value(e, o, index++, ecma_hash_shift, evm_mk_native((intptr_t)ecma_array_shift));
+        evm_attr_set_key_value(e, o, index++, ecma_hash_slice, evm_mk_native((intptr_t)ecma_array_slice));
+        evm_attr_set_key_value(e, o, index++, ecma_hash_copyWithin, evm_mk_native((intptr_t)ecma_array_copyWithin));
+        evm_attr_set_key_value(e, o, index++, ecma_hash_unshift, evm_mk_native((intptr_t)ecma_array_unshift));
+        evm_attr_set_key_value(e, o, index++, ecma_hash_filter, evm_mk_native((intptr_t)ecma_array_filter));
+        evm_attr_set_key_value(e, o, index++, ecma_hash_map, evm_mk_native((intptr_t)ecma_array_map));
+        evm_attr_set_key_value(e, o, index++, ecma_hash_find, evm_mk_native((intptr_t)ecma_array_find));
+        evm_attr_set_key_value(e, o, index++, ecma_hash_join, evm_mk_native((intptr_t)ecma_array_join));
         evm_set_parent(o, ecma_object_prototype);
     }
 }

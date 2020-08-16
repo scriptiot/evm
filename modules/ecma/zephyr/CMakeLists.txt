@@ -23,6 +23,7 @@ endif()
 
 if(CONFIG_EVM_ECMA_REGEXP)
   zephyr_library_sources(ecma_regexp.c)
+  zephyr_library_sources(re.c)
 endif()
 
 if(CONFIG_EVM_ECMA_STRING)
