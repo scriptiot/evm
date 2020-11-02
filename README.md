@@ -82,35 +82,35 @@
 
 ## 1. 启动页面
 
-![](./do'c/evue-litewearable-1.png)
+![](./doc/evue-litewearable-1.png)
 
 ## 2. 首页
 
-![](./do'c/evue-litewearable-2.png)
+![](./doc/evue-litewearable-2.png)
 
 ## 3. 电话
 
-![](./do'c/evue-litewearable-3.png)
+![](./doc/evue-litewearable-3.png)
 
 ## 4. 运动曲线
 
-![](./do'c/evue-litewearable-4.png)
+![](./doc/evue-litewearable-4.png)
 
 ## 5. 音乐应用
 
-![](./do'c/evue-litewearable-5.png)
+![](./doc/evue-litewearable-5.png)
 
 ## 6. 天气应用
 
-![](./do'c/evue-litewearable-6.png)
+![](./doc/evue-litewearable-6.png)
 
 ## 7. 运动记录
 
-![](./do'c/evue-litewearable-7.png)
+![](./doc/evue-litewearable-7.png)
 
 ## 8. 更新
 
-![](./do'c/evue-litewearable-8.png)
+![](./doc/evue-litewearable-8.png)
 
 
 六、贡献代码
@@ -136,14 +136,14 @@
 + 享受EVM团队零距离接触，欢迎加入EVM团队共创未来
 + 享受EVM企业版无偿技术支持，多种技术解决方案自由分享
 
-![evm-weixin](./do'c/evm-weixin.jpg)
+![evm-weixin](./doc/evm-weixin.jpg)
 
 
 > 如果群二维码失效，请加微信号dragondjf，备注：`张三--虚拟机爱好者--武汉`， 第一时间会拉你入群，谢谢！
 
-![evm-djf](./do'c/evm-djf.jpg)
+![evm-djf](./doc/evm-djf.jpg)
 
-## 2. EVM人才需求
+## 2. EVM英雄帖
 
 EVM处于创业高速成长期，欢迎有志之士加入，共同开辟物联网新生态！
 
@@ -154,20 +154,20 @@ EVM处于创业高速成长期，欢迎有志之士加入，共同开辟物联�
 
 坐标地点：武汉，英雄辈出的城市！
 
-感兴趣的朋友可以发送简历到邮箱：scriptiot@aliyun.com， 欢迎你的加入！
+感兴趣的朋友可以发送简历到邮箱：scriptiot@aliyun.com， 欢迎你的加入, 待遇期权股份随你选！
 
 ## 3. EVM官方QQ交流群
 
 
 > 群号：`399011436`
 
-![evm](./do'c/QQ.jpg)
+![evm](./doc/QQ.jpg)
 
 ## 4. 关注EVM公众号
 
 > 公众号名称： `EVM字节码`
 
-![evm-gzh](./do'c/evm-gzh.jpg)
+![evm-gzh](./doc/evm-gzh.jpg)
 
 
 ## 5. 联系我们
