@@ -1,3 +1,6 @@
 [submodule "components/zephyr-rtos/zephyr"]
 	path = components/zephyr-rtos/zephyr
 	url = https://gitee.com/evm-zephyr-rtos/zephyr
+[submodule "evue"]
+	path = evue
+	url = https://github.com/scriptiot/evue.git

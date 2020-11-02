@@ -3,6 +3,8 @@
 
 + GIthub 地址： https://github.com/scriptiot/evm
 + Gitee  地址： https://gitee.com/scriptiot/evm
++ GIthub 地址： https://github.com/scriptiot/evue
++ Gitee  地址： https://gitee.com/scriptiot/evue
 
 ###  1.  EVM 是什么
 
@@ -75,12 +77,40 @@
   + qemu_cortex_m3  基于qemu模拟cortex_m3
 
 
-五、 EVM问卷调查
+二、基于EVUE的智能穿戴应用展示
 ========================================
 
-> **欢迎大家投票，选出你最喜欢的物联网开发语言， EVM团队会优先支持!**
+## 1. 启动页面
 
-[EVM支持多语言开发物联网，你最希望支持的语言是哪一种语言?](https://www.wenjuan.com/s/Qre6Vf/)
+![](./do'c/evue-litewearable-1.png)
+
+## 2. 首页
+
+![](./do'c/evue-litewearable-2.png)
+
+## 3. 电话
+
+![](./do'c/evue-litewearable-3.png)
+
+## 4. 运动曲线
+
+![](./do'c/evue-litewearable-4.png)
+
+## 5. 音乐应用
+
+![](./do'c/evue-litewearable-5.png)
+
+## 6. 天气应用
+
+![](./do'c/evue-litewearable-6.png)
+
+## 7. 运动记录
+
+![](./do'c/evue-litewearable-7.png)
+
+## 8. 更新
+
+![](./do'c/evue-litewearable-8.png)
 
 
 六、贡献代码
@@ -91,16 +121,58 @@
 + 创建 pull request，向 **`EVM`** 官方开发分支提交合入请求；
 + **`EVM`** 研发团队会定期review代码，通过测试后合入。
 
-七、加入EVM官方QQ技术交流群
+七、加入EVM
 ========================================
 
-> 群号：**`399011436`**
+技术创造未来，**EVM**团队需要你的参与，**EVM**团队现面向社区招募有激情有梦想的社区开发者，共同开创物联网新生态；
+无论你的技术背景如何，你都可以为EVM的成长贡献一份微薄之力，**EVM**团队欢迎你！
 
-![evm](./doc/QQ.jpg)
+## 1. EVM生态开发者联盟
 
-八、联系我们
-========================================
-+ 论坛： [EVM官方技术交流论坛](http://47.105.117.50/discuzx/upload/)
+`EVM生态开发者联盟`是EVM团队面向社区成立的深度开发者爱好群，在这里你可以：
+
++ 随时掌握EVM的最新技术动态，学习物联网最高效的开发方式
++ 参与EVM未来战略的制定和未来的发展路线规划
++ 享受EVM团队零距离接触，欢迎加入EVM团队共创未来
++ 享受EVM企业版无偿技术支持，多种技术解决方案自由分享
+
+![evm-weixin](./do'c/evm-weixin.jpg)
+
+
+> 如果群二维码失效，请加微信号dragondjf，备注：`张三--虚拟机爱好者--武汉`， 第一时间会拉你入群，谢谢！
+
+![evm-djf](./do'c/evm-djf.jpg)
+
+## 2. EVM人才需求
+
+EVM处于创业高速成长期，欢迎有志之士加入，共同开辟物联网新生态！
+
++ 如果你对虚拟机技术或是如何实现一门语言感兴趣，我们欢迎你；
++ 如果你对js、python和c语言都拥有深度的理解和应用，我们欢迎你；
++ 如果你对RTOS都拥有深度的理解和应用, 深度研究过一个或多个RTOS核心源码的高级C语言开发者，我们欢迎你；
++ 如果你精通各种物联网协议和驱动移植，我们欢迎你；
+
+坐标地点：武汉，英雄辈出的城市！
+
+感兴趣的朋友可以发送简历到邮箱：scriptiot@aliyun.com， 欢迎你的加入！
+
+## 3. EVM官方QQ交流群
+
+
+> 群号：`399011436`
+
+![evm](./do'c/QQ.jpg)
+
+## 4. 关注EVM公众号
+
+> 公众号名称： `EVM字节码`
+
+![evm-gzh](./do'c/evm-gzh.jpg)
+
+
+## 5. 联系我们
+
++ 论坛： [EVM官方技术交流论坛](http://forum.evmiot.com/)
 + 邮箱： scriptiot@aliyun.com
 
 欢迎大家通过 `GitHub issues`、`邮件` `论坛` 或 `QQ群`反馈问题和联系我们。
