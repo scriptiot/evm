@@ -37,7 +37,7 @@
 ======================================== 
 
 
-## 2. 目录结构介绍
+## 1. 目录结构介绍
 
 | 文件      |    说明|
 | :-------- | --------:|
@@ -67,6 +67,8 @@
 
 + [evm在线帮助手册Github](https://scriptiot.github.io/evm_doc/#/zh-cn/evm_what)
 + [evm在线帮助手册Gitee](https://scriptiot.gitee.io/evm_doc/#/zh-cn/evm_what)
++ [evue在线帮助手册Github](https://scriptiot.github.io/evue_doc/#/zh-cn/evue_what)
++ [evue在线帮助手册Gitee](https://scriptiot.gitee.io/evue_doc/#/zh-cn/evue_what)
 
 四、EVM 适配开发板
 ========================================
