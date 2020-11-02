@@ -55,7 +55,8 @@
 | **lib/arm-none-eabi-gcc/cortext_m4**|   cortext_m4系列libjese静态库  |
 | **modules**|  模块目录  |
 | **modules/ecma**|  je标准库ecma模块  | 
-| **modules/evm**|  硬件外设驱动evm模块  | 
+| **modules/evm**|  硬件外设驱动evm模块  |
+| **evue**|  evue对应的git submodule 仓库|
 | **tools**|  工具目录|
 | **tools/evm.sh**|  一键安装evm.sh脚本|
 | **README.md**|   项目说明文档|
