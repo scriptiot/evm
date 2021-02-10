@@ -1,0 +1,3 @@
+[submodule "os/rt-thread"]
+	path = os/rt-thread
+	url = git@gitee.com:rtthread/rt-thread.git
