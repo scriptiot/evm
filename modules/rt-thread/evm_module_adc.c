@@ -1,3 +1,4 @@
+#ifdef CONFIG_EVM_MODULE_ADC
 #include "evm_module.h"
 #include <rtthread.h>
 #include <rtdevice.h>
@@ -158,3 +159,5 @@ evm_err_t evm_module_adc(evm_t *e) {
 	evm_module_create(e, "adc", builtin);
 	return e->err;
 }
+
+#endif

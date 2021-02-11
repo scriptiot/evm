@@ -1,3 +1,4 @@
+#ifdef CONFIG_EVM_MODULE_GPIO
 #include "evm_module.h"
 
 evm_val_t *evm_module_gpio_class_instantiate(evm_t *e, evm_val_t *p, int argc, evm_val_t *v);
@@ -80,3 +81,4 @@ evm_err_t evm_module_gpio(evm_t *e) {
 	evm_module_create(e, "gpio", builtin);
 	return e->err;
 }
+#endif

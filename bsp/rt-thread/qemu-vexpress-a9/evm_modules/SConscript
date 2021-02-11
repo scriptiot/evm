@@ -1,0 +1,7 @@
+import os
+Import('RTT_ROOT')
+
+cwd = str(Dir('#'))
+objs = SConscript(os.path.join(cwd, '../../../modules/rt-thread/SConscript'))
+
+Return('objs')

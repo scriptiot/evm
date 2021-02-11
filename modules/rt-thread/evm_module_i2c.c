@@ -1,3 +1,4 @@
+#ifdef CONFIG_EVM_MODULE_I2C
 #include "evm_module.h"
 
 evm_val_t *evm_module_i2c_class_instantiate(evm_t *e, evm_val_t *p, int argc, evm_val_t *v);
@@ -73,3 +74,4 @@ evm_err_t evm_module_i2c(evm_t *e) {
 	evm_module_create(e, "i2c", builtin);
 	return e->err;
 }
+#endif

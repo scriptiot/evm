@@ -1,3 +1,4 @@
+#ifdef CONFIG_EVM_MODULE_SPI
 #include "evm_module.h"
 
 evm_val_t *evm_module_spi_class_instantiate(evm_t *e, evm_val_t *p, int argc, evm_val_t *v);
@@ -59,3 +60,4 @@ evm_err_t evm_module_spi(evm_t *e) {
 	evm_module_create(e, "spi", builtin);
 	return e->err;
 }
+#endif

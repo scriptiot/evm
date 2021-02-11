@@ -1,3 +1,4 @@
+#ifdef CONFIG_EVM_MODULE_UART
 #include "evm_module.h"
 
 evm_val_t *evm_module_uart_class_instantiate(evm_t *e, evm_val_t *p, int argc, evm_val_t *v);
@@ -59,3 +60,4 @@ evm_err_t evm_module_uart(evm_t *e) {
 	evm_module_create(e, "uart", builtin);
 	return e->err;
 }
+#endif

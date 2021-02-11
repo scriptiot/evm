@@ -1,3 +1,4 @@
+#ifdef CONFIG_EVM_MODULE_TIMERS
 #include "evm_module.h"
 
 //setTimeout(callback, delay[, args..])
@@ -34,3 +35,4 @@ evm_err_t evm_module_timers(evm_t *e) {
 	};
 	return evm_native_add(e, builtin);
 }
+#endif
