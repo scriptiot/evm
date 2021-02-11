@@ -99,6 +99,7 @@ static evm_val_t _uart_open_device(evm_t *e, evm_val_t *p, int argc, evm_val_t *
 	}
 
 	evm_object_set_ext_data(ret_obj, (intptr_t)dev);
+    return *ret_obj;
 }
 
 //uart.open(configuration, callback)

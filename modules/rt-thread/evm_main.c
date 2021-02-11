@@ -99,8 +99,8 @@ char * evm_open(evm_t * e, char *filename){
 /*****************evm文件加载接口*******************/
 static int modules_paths_count = 2;
 static char *modules_paths[] = {
-    ".",
-    "./evm_modules"
+    "/",
+    "/evm_modules"
 };
 
 const char * vm_load(evm_t * e, char * path, int type)
