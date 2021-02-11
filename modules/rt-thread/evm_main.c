@@ -1,4 +1,5 @@
 #include "evm_module.h"
+#include "ecma.h"
 #include <rtthread.h>
 
 #define SAMPLE_UART_NAME       "uart0"    /* 串口设备名称 */
@@ -160,6 +161,11 @@ int evm_main (void) {
 
     evm_t * env = (evm_t*)evm_malloc(sizeof(evm_t));
     evm_err_t err = evm_init(env, EVM_HEAP_SIZE, EVM_STACK_SIZE, EVM_VAR_NAME_MAX_LEN, EVM_FILE_NAME_LEN);
+
+    err = ecma_module(env);
+    if( err != ec_ok ) {
+        return err;
+    }
 
 #ifdef CONFIG_EVM_MODULE_ADC
     err = evm_module_adc(env);

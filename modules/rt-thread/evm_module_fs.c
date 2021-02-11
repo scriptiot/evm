@@ -1,3 +1,3 @@
-#ifdef CONFIG_EVM_MODULE_F
+#ifdef CONFIG_EVM_MODULE_FS
 
 #endif
