@@ -188,6 +188,13 @@ int evm_main (void) {
     }
 #endif
 
+#ifdef CONFIG_EVM_MODULE_FS
+    err = evm_module_fs(env);
+    if( err != ec_ok ) {
+        return err;
+    }
+#endif
+
 #ifdef EVM_LANG_ENABLE_REPL
       evm_repl_run(env, 1000, EVM_LANG_JS);
 #endif
