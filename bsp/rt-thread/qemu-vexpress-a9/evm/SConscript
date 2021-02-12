@@ -13,7 +13,7 @@ src = Split('''
 if rtconfig.CROSS_TOOL == 'gcc':
     LIBS = ['ecma', 'ejs']  
     CPPPATH = [evm_dir + '/include']
-    CCFLAGS = ' -DEVM_LANG_ENABLE_REPL -DCONFIG_EVM_MODULE_UART'        
+    CCFLAGS = ' -DEVM_LANG_ENABLE_REPL -DCONFIG_EVM_MODULE_UART -DCONFIG_EVM_MODULE_GPIO'        
 
 group = DefineGroup('EVM', src, depend = [''], LIBS = LIBS, CCFLAGS = CCFLAGS, CPPPATH = CPPPATH, LIBPATH=LIBPATH)
 

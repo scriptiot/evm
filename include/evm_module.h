@@ -3,6 +3,19 @@
 
 #include "evm.h"
 
+#define EVM_GPIO_DIRECTION_IN   0
+#define EVM_GPIO_DIRECTION_OUT  1
+#define EVM_GPIO_MODE_NONE      0
+#define EVM_GPIO_MODE_PULLUP    1
+#define EVM_GPIO_MODE_PULLDOWN  2
+#define EVM_GPIO_MODE_FLOAT     3
+#define EVM_GPIO_MODE_PUSHPULL  4
+#define EVM_GPIO_MODE_OPENDRAIN 5
+#define EVM_GPIO_EDGE_NONE      0
+#define EVM_GPIO_EDGE_RISING    1
+#define EVM_GPIO_EDGE_FALLING   2
+#define EVM_GPIO_EDGE_BOTH      3
+
 #define EVM_HEAP_SIZE    (100 * 1024)
 #define EVM_STACK_SIZE   (10 * 1024)
 
