@@ -152,6 +152,57 @@ void vm_free(void * mem)
     if(mem) free(mem);
 }
 
+evm_err_t evm_module_init(evm_t *env) {
+#ifdef CONFIG_EVM_MODULE_ADC
+    err = evm_module_adc(env);
+    if( err != ec_ok ) {
+        evm_print("Failed to create adc module\r\n");
+        return err;
+    }
+#endif
+
+#ifdef CONFIG_EVM_MODULE_UART
+    err = evm_module_uart(env);
+    if( err != ec_ok ) {
+        evm_print("Failed to create uart module\r\n");
+        return err;
+    }
+#endif
+
+#ifdef CONFIG_EVM_MODULE_GPIO
+    err = evm_module_gpio(env);
+    if( err != ec_ok ) {
+        evm_print("Failed to create gpio module\r\n");
+        return err;
+    }
+#endif
+
+#ifdef CONFIG_EVM_MODULE_FS
+    err = evm_module_fs(env);
+    if( err != ec_ok ) {
+        evm_print("Failed to create fs module\r\n");
+        return err;
+    }
+#endif
+
+#ifdef CONFIG_EVM_MODULE_NET
+    err = evm_module_net(env);
+    if( err != ec_ok ) {
+        evm_print("Failed to create net module\r\n");
+        return err;
+    }
+#endif
+
+#ifdef CONFIG_EVM_MODULE_HTTP
+    err = evm_module_http(env);
+    if( err != ec_ok ) {
+        evm_print("Failed to create http module\r\n");
+        return err;
+    }
+#endif
+    return ec_ok;
+}
+
 int evm_main (void) {
     serial = rt_device_find(SAMPLE_UART_NAME);
     evm_register_free((intptr_t)vm_free);
@@ -164,36 +215,14 @@ int evm_main (void) {
 
     err = ecma_module(env);
     if( err != ec_ok ) {
+        evm_print("Failed to create ecma module\r\n");
         return err;
     }
 
-#ifdef CONFIG_EVM_MODULE_ADC
-    err = evm_module_adc(env);
+    err = evm_module_init(env);
     if( err != ec_ok ) {
         return err;
     }
-#endif
-
-#ifdef CONFIG_EVM_MODULE_UART
-    err = evm_module_uart(env);
-    if( err != ec_ok ) {
-        return err;
-    }
-#endif
-
-#ifdef CONFIG_EVM_MODULE_GPIO
-    err = evm_module_gpio(env);
-    if( err != ec_ok ) {
-        return err;
-    }
-#endif
-
-#ifdef CONFIG_EVM_MODULE_FS
-    err = evm_module_fs(env);
-    if( err != ec_ok ) {
-        return err;
-    }
-#endif
 
 #ifdef EVM_LANG_ENABLE_REPL
       evm_repl_run(env, 1000, EVM_LANG_JS);
@@ -202,7 +231,7 @@ int evm_main (void) {
     err = evm_boot(env, "main.js");
 
     if (err == ec_no_file){
-        evm_print("can't open file\n");
+        evm_print("can't open file\r\n");
         return err;
     }
 
