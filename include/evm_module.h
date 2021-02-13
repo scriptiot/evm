@@ -59,6 +59,10 @@ extern evm_err_t evm_module_http(evm_t *e);
 extern evm_err_t evm_module_udp(evm_t *e);
 #endif
 
+#ifdef CONFIG_EVM_MODULE_NET
+extern evm_err_t evm_module_net(evm_t *e);
+#endif
+
 extern int evm_main(void);
 
 #endif

@@ -1,20 +1,58 @@
 #include "evm_module.h"
 #include "ecma.h"
-#include <rtthread.h>
 
-#define SAMPLE_UART_NAME       "uart0"    /* 串口设备名称 */
-static rt_device_t serial;                /* 串口设备句柄 */    
 
-/*****************evm交互式终端接口*******************/
+/*****************REPL*******************/
+// 定义REPL接口函数evm_repl_tty_read，从tty终端获取字符
+#ifdef EVM_LANG_ENABLE_REPL
+#ifdef __linux__
+#include <termios.h>
+#include <unistd.h>
+#endif
+
+#ifdef __WIN64__
+#include <conio.h>
+#endif
+
+#ifdef __linux__
+/**
+ * @brief linux平台终端repl读取单个字符接口
+ * @return 单个字符
+ */
+char mygetch(void)  // 不回显获取字符
+{
+    struct termios oldt, newt;
+    int ch;
+    tcgetattr(STDIN_FILENO, &oldt);
+    newt = oldt;
+    newt.c_lflag &= ~(ICANON | ECHO);
+    tcsetattr(STDIN_FILENO, TCSANOW, &newt);
+    ch = getchar();
+    newt.c_cc[VEOL] = 1;
+    newt.c_cc[VEOF] = 2;
+    tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
+    return ch;
+}
+#endif
+
 char evm_repl_tty_read(evm_t * e)
 {
     EVM_UNUSED(e);
-    char ch;
-    while (rt_device_read(serial, -1, &ch, 1) != 1){
-
-    }
-    return ch;
+    return mygetch();
 }
+
+#ifdef __WIN64__
+/**
+ * @brief windows平台终端repl读取单个字符接口
+ * @return 单个字符
+ */
+char mygetch(void)  // 不回显获取字符
+{
+    return getch();
+}
+
+#endif
+#endif
 /******************文件操作API******************/
 enum FS_MODE{
     FS_READ = 1,
@@ -99,8 +137,8 @@ char * evm_open(evm_t * e, char *filename){
 /*****************evm文件加载接口*******************/
 static int modules_paths_count = 2;
 static char *modules_paths[] = {
-    "/",
-    "/evm_modules"
+    "./",
+    "../"
 };
 
 const char * vm_load(evm_t * e, char * path, int type)
@@ -205,7 +243,6 @@ evm_err_t evm_module_init(evm_t *env) {
 }
 
 int evm_main (void) {
-    serial = rt_device_find(SAMPLE_UART_NAME);
     evm_register_free((intptr_t)vm_free);
     evm_register_malloc((intptr_t)vm_malloc);
     evm_register_print((intptr_t)printf);

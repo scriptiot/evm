@@ -1,7 +1,8 @@
-//#ifdef CONFIG_EVM_MODULE_NET
+#ifdef CONFIG_EVM_MODULE_NET
 #include "evm_module.h"
-#include <rtthread.h>
+#include <pthread.h>
 #include <sys/socket.h>
+#include<unistd.h>
 #include "netdb.h"
 
 #define _NET_LISTENER_DEFAULT_SIZE  8
@@ -21,7 +22,7 @@ static void _net_server_thread(_net_sock_t *server_sock) {
             client_sock->sockfd = accept(server_sock->sockfd, (struct sockaddr *)&client_sock->addr, sizeof(struct sockaddr_in));
             if (client_sock->sockfd < 0)
             {
-                evm_print("accept connection failed! errno = %d\r\n", errno);
+                evm_print("accept connection failed!\r\n");
                 evm_free(client_sock);
                 continue;
             }
@@ -59,7 +60,7 @@ static evm_val_t evm_module_net_server_close(evm_t *e, evm_val_t *p, int argc, e
     _net_sock_t *server_sock = evm_object_get_ext_data(p);
     if( !server_sock )
         return EVM_VAL_UNDEFINED;
-    closesocket(server_sock->sockfd);
+    close(server_sock->sockfd);
 	return EVM_VAL_UNDEFINED;
 }
 
@@ -82,21 +83,19 @@ static evm_val_t evm_module_net_server_listen(evm_t *e, evm_val_t *p, int argc, 
     if( bind(server_sock->sockfd, (struct sockaddr*)&server_sock->addr, sizeof(struct sockaddr_in)) < 0 )
     {
         evm_print("Failed to bind server socket\r\n");
-        closesocket(server_sock->sockfd);
+        close(server_sock->sockfd);
         return EVM_VAL_UNDEFINED;
     }
 
     if( listen(server_sock->sockfd, 1) < 0 ) {
         printf("Failed to listen\r\n");
-        closesocket(server_sock->sockfd);
+        close(server_sock->sockfd);
     }
 
     server_sock->listener_id = _net_listener_add(e);
 
-    rt_thread_t tid = rt_thread_create("_net_server_thread", _net_server_thread, server_sock, 1536, 26, 2);
-    if (tid) {
-        rt_thread_startup(tid);
-    }
+    pthread_t ntid;
+    pthread_create(&ntid, NULL, _net_server_thread, server_sock);
 	return EVM_VAL_UNDEFINED;
 }
 
@@ -134,7 +133,7 @@ static evm_val_t evm_module_net_socket_connect(evm_t *e, evm_val_t *p, int argc,
         sock->addr.sin_family = AF_INET;
         sock->addr.sin_port = htons(evm_2_integer(v));
         sock->addr.sin_addr.s_addr = inet_addr(evm_2_string(v + 1));
-        rt_memset(&(sock->addr.sin_zero), 0, sizeof(sock->addr.sin_zero));
+        memset(&(sock->addr.sin_zero), 0, sizeof(sock->addr.sin_zero));
     } else {
         return EVM_VAL_UNDEFINED;
     }
@@ -148,7 +147,7 @@ static evm_val_t evm_module_net_socket_connect(evm_t *e, evm_val_t *p, int argc,
 
     if ( connect(sock->sockfd, (struct sockaddr *)&(sock->addr), sizeof(struct sockaddr)) == -1 ) {
         evm_print("socket connect failed!");
-        closesocket(sock->sockfd);
+        close(sock->sockfd);
         return EVM_VAL_UNDEFINED;
     }
 
@@ -167,7 +166,7 @@ static evm_val_t evm_module_net_socket_destroy(evm_t *e, evm_val_t *p, int argc,
 	_net_sock_t *sock = evm_object_get_ext_data(p);
     if( !sock )
         return EVM_VAL_UNDEFINED;
-    closesocket(sock->sockfd);
+    close(sock->sockfd);
     return EVM_VAL_UNDEFINED;
 }
 
@@ -189,7 +188,7 @@ static evm_val_t evm_module_net_socket_end(evm_t *e, evm_val_t *p, int argc, evm
         evm_run_callback(e, v + 2, NULL, NULL, 0);
     }
 
-    closesocket(sock->sockfd);
+    close(sock->sockfd);
 	return EVM_VAL_UNDEFINED;
 }
 
@@ -288,7 +287,7 @@ static evm_val_t evm_module_net_createServer(evm_t *e, evm_val_t *p, int argc, e
     
     server_obj = evm_object_create(e, GC_OBJECT, 3, 0);
     if( !server_obj ) {
-        closesocket(sockfd);
+        close(sockfd);
         return EVM_VAL_UNDEFINED;
     }
     evm_prop_append(e, server_obj, "close", evm_mk_native((intptr_t)evm_module_net_server_close));
@@ -351,4 +350,4 @@ evm_err_t evm_module_net(evm_t *e) {
     _net_listener_registry = evm_list_create(e, GC_LIST, _NET_LISTENER_DEFAULT_SIZE);
 	return e->err;
 }
-//#endif
+#endif
