@@ -63,6 +63,13 @@ extern evm_err_t evm_module_udp(evm_t *e);
 extern evm_err_t evm_module_net(evm_t *e);
 #endif
 
+#ifdef CONFIG_EVM_MODULE_PROCESS
+extern evm_val_t evm_module_process_nextTick(evm_t *e, evm_val_t *p, int argc, evm_val_t *v);
+extern void evm_module_process_poll(evm_t *e);
+extern evm_err_t evm_module_process(evm_t *e);
+#endif
+
+extern void evm_module_next_tick(evm_t *e, int argc, evm_val_t *v);
 extern int evm_main(void);
 
 #endif

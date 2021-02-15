@@ -2,7 +2,8 @@
 #include "evm_module.h"
 #include <pthread.h>
 #include <sys/socket.h>
-#include<unistd.h>
+#include <unistd.h>
+#include <fcntl.h>
 #include "netdb.h"
 
 #define _NET_LISTENER_DEFAULT_SIZE  8
@@ -12,6 +13,7 @@ typedef struct _net_sock_t {
     struct sockaddr_in addr;
     int sockfd;
     int listener_id;
+    pthread_t pid;
 } _net_sock_t;
 
 static void _net_server_thread(_net_sock_t *server_sock) {
@@ -27,6 +29,12 @@ static void _net_server_thread(_net_sock_t *server_sock) {
                 continue;
             }
         }
+    }
+}
+
+static void _net_client_thread(_net_sock_t *client_sock) {
+    while(1) {
+        usleep(1000);
     }
 }
 
@@ -94,8 +102,7 @@ static evm_val_t evm_module_net_server_listen(evm_t *e, evm_val_t *p, int argc, 
 
     server_sock->listener_id = _net_listener_add(e);
 
-    pthread_t ntid;
-    pthread_create(&ntid, NULL, _net_server_thread, server_sock);
+    pthread_create(&server_sock->pid, NULL, _net_server_thread, server_sock);
 	return EVM_VAL_UNDEFINED;
 }
 
@@ -138,12 +145,10 @@ static evm_val_t evm_module_net_socket_connect(evm_t *e, evm_val_t *p, int argc,
         return EVM_VAL_UNDEFINED;
     }
 
-
     if ((sock->sockfd = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
         evm_print("Socket create failed.");
         return EVM_VAL_UNDEFINED;
     }
-
 
     if ( connect(sock->sockfd, (struct sockaddr *)&(sock->addr), sizeof(struct sockaddr)) == -1 ) {
         evm_print("socket connect failed!");
@@ -151,11 +156,16 @@ static evm_val_t evm_module_net_socket_connect(evm_t *e, evm_val_t *p, int argc,
         return EVM_VAL_UNDEFINED;
     }
 
-    if( argc > 2 && evm_is_script(v + 2) ) {
-        evm_run_callback(e, v + 2, &e->scope, NULL, 0);
-    }
-
     sock->listener_id = _net_listener_add(e);
+    if( sock->listener_id != -1 && argc > 2 && evm_is_script(v + 2) ){
+        evm_val_t *listener = _net_listener_get(e, sock->listener_id);
+        evm_prop_append(e, listener, "connect", *(v + 2));
+
+        evm_val_t args[0];
+        args[0] = *(v + 2);
+        evm_module_next_tick(e, 1, args);
+    }
+    pthread_create(&sock->pid, NULL, _net_client_thread, sock);
 
 	return EVM_VAL_UNDEFINED;
 }
@@ -263,14 +273,36 @@ static evm_val_t evm_module_net_socket_on(evm_t *e, evm_val_t *p, int argc, evm_
 //net.connect(port[, host][, connectListener])
 static evm_val_t evm_module_net_connect(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
 {
-	return EVM_VAL_UNDEFINED;
+    return EVM_VAL_UNDEFINED;
 }
 
 //net.createConnection(options[, connectListener])
 //net.createConnection(port[, host][, connectListener])
 static evm_val_t evm_module_net_createConnection(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
 {
-	return EVM_VAL_UNDEFINED;
+    _net_sock_t *sock;
+    evm_val_t *obj = evm_object_create(e, GC_DICT, 9, 0);
+    if( !obj )
+        return EVM_VAL_UNDEFINED;
+    evm_prop_append(e, obj, "connect", evm_mk_native((intptr_t)evm_module_net_socket_connect));
+    evm_prop_append(e, obj, "destroy", evm_mk_native((intptr_t)evm_module_net_socket_destroy));
+    evm_prop_append(e, obj, "end", evm_mk_native((intptr_t)evm_module_net_socket_end));
+    evm_prop_append(e, obj, "pause", evm_mk_native((intptr_t)evm_module_net_socket_pause));
+    evm_prop_append(e, obj, "resume", evm_mk_native((intptr_t)evm_module_net_socket_resume));
+    evm_prop_append(e, obj, "setKeepAlive", evm_mk_native((intptr_t)evm_module_net_socket_setKeepAlive));
+    evm_prop_append(e, obj, "setTimeout", evm_mk_native((intptr_t)evm_module_net_socket_setTimeout));
+    evm_prop_append(e, obj, "write", evm_mk_native((intptr_t)evm_module_net_socket_write));
+    evm_prop_append(e, obj, "on", evm_mk_native((intptr_t)evm_module_net_socket_on));
+
+    sock = evm_malloc(sizeof(_net_sock_t));
+    if( !sock ) {
+        evm_set_err(e, ec_memory, "Insufficient external memory");
+        return EVM_VAL_UNDEFINED;
+    }
+
+    evm_object_set_ext_data(obj, (intptr_t)sock);    
+    evm_module_net_socket_connect(e, obj, argc, v);
+    return *obj;
 }
 
 //net.createServer([options][, connectionListener])

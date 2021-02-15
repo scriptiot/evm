@@ -38,7 +38,8 @@ char mygetch(void)  // 不回显获取字符
 char evm_repl_tty_read(evm_t * e)
 {
     EVM_UNUSED(e);
-    return mygetch();
+    char ch = mygetch();
+    return ch;
 }
 
 #ifdef __WIN64__
@@ -239,7 +240,24 @@ evm_err_t evm_module_init(evm_t *env) {
         return err;
     }
 #endif
+
+#ifdef CONFIG_EVM_MODULE_PROCESS
+    err = evm_module_process(env);
+    if( err != ec_ok ) {
+        evm_print("Failed to create process module\r\n");
+        return err;
+    }
+#endif
     return ec_ok;
+}
+
+void evm_event_thread(evm_t *e) {
+    while(1){
+#ifdef CONFIG_EVM_MODULE_PROCESS
+    evm_module_process_poll(e);
+#endif
+    usleep(1000);
+    }
 }
 
 int evm_main (void) {
@@ -261,6 +279,9 @@ int evm_main (void) {
     if( err != ec_ok ) {
         return err;
     }
+
+    pthread_t pid;
+    pthread_create(&pid, NULL, evm_event_thread, env);
 
 #ifdef EVM_LANG_ENABLE_REPL
       evm_repl_run(env, 1000, EVM_LANG_JS);
