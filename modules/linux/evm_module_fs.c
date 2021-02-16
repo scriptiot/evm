@@ -1,18 +1,32 @@
 #ifdef CONFIG_EVM_MODULE_FS
 #include "evm_module.h"
-#include <rtthread.h>
-#include <dfs_fs.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <unistd.h>
 
 //stats.isDirectory()
 static evm_val_t evm_module_fs_stats_isDirectory(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
 {
-    return EVM_VAL_UNDEFINED;
+    struct stat *st = (struct stat *)evm_object_get_ext_data(p);
+    if( !st )
+        return EVM_VAL_UNDEFINED;
+
+    if( S_ISDIR(st->st_mode) )
+        return EVM_VAL_TRUE;
+    return EVM_VAL_FALSE;
 }
 
 //stats.isFile()
 static evm_val_t evm_module_fs_stats_isFile(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
 {
-    return EVM_VAL_UNDEFINED;
+    struct stat *st = (struct stat *)evm_object_get_ext_data(p);
+    if( !st )
+        return EVM_VAL_UNDEFINED;
+
+    if( S_ISREG(st->st_mode) )
+        return EVM_VAL_TRUE;
+    return EVM_VAL_FALSE;
 }
 
 //fs.close(fd)
@@ -180,10 +194,32 @@ static evm_val_t evm_module_fs_rmdirSync(evm_t *e, evm_val_t *p, int argc, evm_v
     return EVM_VAL_UNDEFINED;
 }
 
-//fs.stat
+//fs.stat(path, callback)
 static evm_val_t evm_module_fs_stat(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
 {
-    return EVM_VAL_UNDEFINED;
+    if( argc == 0 || !evm_is_string(v) ) {
+        return EVM_VAL_UNDEFINED;
+    }
+
+    evm_val_t *obj = evm_object_create(e, GC_OBJECT, 2, 0);
+    if( !obj )
+        return EVM_VAL_UNDEFINED;
+
+    evm_prop_append(e, obj, "isDirectory", evm_mk_native((intptr_t)evm_module_fs_stats_isDirectory));
+    evm_prop_append(e, obj, "isFile", evm_mk_native((intptr_t)evm_module_fs_stats_isFile));
+
+    struct stat *st = evm_malloc(sizeof(struct stat));
+    if( !st )
+        return EVM_VAL_UNDEFINED;
+    stat(evm_2_string(v), st);
+    evm_object_set_ext_data(obj, (intptr_t)st);
+    if( argc > 1 && evm_is_script(v + 1) ) {
+        evm_val_t args[2];
+        args[0] = evm_mk_null();
+        args[1] = *obj;
+        evm_run_callback(e, v + 1, &e->scope, args, 2);
+    }
+    return *obj;
 }
 
 //fs.statSync
@@ -260,7 +296,7 @@ evm_err_t evm_module_fs(evm_t *e) {
 		{"writeSync", evm_mk_native((intptr_t)evm_module_fs_writeSync)},
         {"writeFile", evm_mk_native((intptr_t)evm_module_fs_writeFile)},
 		{"writeFileSync", evm_mk_native((intptr_t)evm_module_fs_writeFileSync)},
-		{NULL, NULL}
+        {NULL, EVM_VAL_UNDEFINED}
 	};
 	evm_module_create(e, "fs", builtin);
 	return e->err;
