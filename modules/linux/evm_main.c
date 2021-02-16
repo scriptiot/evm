@@ -280,6 +280,8 @@ int evm_main (void) {
         return err;
     }
 
+    evm_module_registry_init(env, EVM_MODULE_REGISTRY_SIZE);
+
     pthread_t pid;
     pthread_create(&pid, NULL, evm_event_thread, env);
 

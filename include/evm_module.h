@@ -18,6 +18,7 @@
 
 #define EVM_HEAP_SIZE    (100 * 1024)
 #define EVM_STACK_SIZE   (10 * 1024)
+#define EVM_MODULE_REGISTRY_SIZE       100
 
 #ifdef CONFIG_EVM_MODULE_ADC
 extern evm_err_t evm_module_adc(evm_t *e);
@@ -69,7 +70,14 @@ extern void evm_module_process_poll(evm_t *e);
 extern evm_err_t evm_module_process(evm_t *e);
 #endif
 
+extern void evm_module_registry_init(evm_t *e, int size);
+extern int evm_module_registry_add(evm_t *e, evm_val_t *v);
+extern evm_val_t *evm_module_registry_get(evm_t *e, int id);
+extern void evm_module_registry_remove(evm_t *e, int id);
 extern void evm_module_next_tick(evm_t *e, int argc, evm_val_t *v);
+extern evm_err_t evm_module_event_add_listener(evm_t *e, evm_val_t *pthis, const char *type, evm_val_t *listener);
+extern void evm_module_event_remove_listener(evm_t *e, evm_val_t *pthis, const char *type);
+extern void evm_module_event_emit (evm_t *e, evm_val_t *pthis, const char *type, int argc, evm_val_t *v);
 extern int evm_main(void);
 
 #endif

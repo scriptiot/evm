@@ -42,7 +42,6 @@ void evm_module_process_poll(evm_t *e) {
 evm_err_t evm_module_process(evm_t *e) {
     _name_arguments = evm_str_insert(e, "arguments", 0);
     evm_process_queue = evm_list_create(e, GC_LIST, 0);
-    evm_push_value(e, EVM_VAL_UNDEFINED);
     evm_builtin_t builtin[] = {
         {"nextTick", evm_mk_native((intptr_t)evm_module_process_nextTick)},
         {NULL, EVM_VAL_UNDEFINED}
