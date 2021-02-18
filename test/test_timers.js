@@ -1,5 +1,6 @@
-a = setInterval(function () {
+setInterval(function () {
     print('hello,world')
-}, 1000);
+}, 500);
 
-// clearInterval();
+// setTimeout(null, 3000);
+

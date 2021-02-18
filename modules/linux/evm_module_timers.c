@@ -12,11 +12,13 @@ static evm_t *timer_e;
 static void callback_handler(union sigval v)
 {
     evm_val_t *callback = evm_module_registry_get(timer_e, v.sival_int);
+    if (callback == NULL)
+        return;
     evm_val_t args = *callback;
     evm_module_next_tick(timer_e, 1, &args);
 }
 
-static int timer(int id, int delay, int once)
+static timer_t timer(int id, int delay, int once)
 {
     timer_t timerid;
     int ret;
@@ -25,7 +27,7 @@ static int timer(int id, int delay, int once)
 
     // handle in thread when timeout
     memset(&sev, 0, sizeof(struct sigevent));
-    sev.sigev_value.sival_ptr = &timer;
+    sev.sigev_value.sival_ptr = &timerid;
     sev.sigev_notify = SIGEV_THREAD;
     sev.sigev_notify_function = callback_handler;
     sev.sigev_value.sival_int = id;
@@ -35,8 +37,7 @@ static int timer(int id, int delay, int once)
     ret = timer_create(CLOCKID, &sev, &timerid);
     if (ret == -1)
     {
-        evm_print("Failed to create timer: %s\n", strerror(errno));
-        return -1;
+        return NULL;
     }
 
     // set timeout, only once
@@ -49,6 +50,7 @@ static int timer(int id, int delay, int once)
     }
     else
     {
+        its.it_value.tv_sec = 0;
         its.it_value.tv_nsec = delay * 1000000;
     }
     if( !once ) {
@@ -59,8 +61,7 @@ static int timer(int id, int delay, int once)
     ret = timer_settime(timerid, TIMER_ABSTIME, &its, NULL);
     if (ret == -1)
     {
-        evm_print("Failed to set timeout: %s\n", strerror(errno));
-        return -1;
+        return NULL;
     }
 
     return timerid;
@@ -69,8 +70,17 @@ static int timer(int id, int delay, int once)
 //setTimeout(callback, delay[, args..])
 static evm_val_t evm_module_timers_setTimeout(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
 {
+    if (argc < 2 || !evm_is_script(v) || !evm_is_integer(v + 1))
+    {
+        return EVM_VAL_UNDEFINED;
+    }
+
     int id = evm_module_registry_add(e, v);
+    if (id < 0)
+        return EVM_VAL_UNDEFINED;
     timer_t timerid = timer(id, evm_2_integer(v + 1), 1);
+    if (timerid == NULL)
+        return EVM_VAL_UNDEFINED;
     evm_object_set_ext_data(v, (intptr_t)timerid);
     return EVM_VAL_UNDEFINED;
 }
@@ -78,18 +88,34 @@ static evm_val_t evm_module_timers_setTimeout(evm_t *e, evm_val_t *p, int argc, 
 //clearTimeout(timeout)
 static evm_val_t evm_module_timers_clearTimeout(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
 {
+    if (argc < 1 || !evm_is_integer(v))
+    {
+        return EVM_VAL_UNDEFINED;
+    }
     evm_val_t *callback = evm_module_registry_get(e, evm_2_integer(v));
+    if (callback == NULL)
+        return EVM_VAL_UNDEFINED;
     timer_t timerid = evm_object_get_ext_data(callback);
+    if (timerid == NULL)
+        return EVM_VAL_UNDEFINED;
     timer_delete(timerid);
     evm_module_registry_remove(e, evm_2_integer(v));
-	return EVM_VAL_UNDEFINED;
+    return EVM_VAL_UNDEFINED;
 }
 
 //setInterval(callback, delay[, args..])
 static evm_val_t evm_module_timers_setInterval(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
 {
+    if (argc < 2 || !evm_is_script(v) || !evm_is_integer(v + 1))
+    {
+        return EVM_VAL_UNDEFINED;
+    }
     int id = evm_module_registry_add(e, v);
+    if (id < 0)
+        return EVM_VAL_UNDEFINED;
     timer_t timerid = timer(id, evm_2_integer(v + 1), 0);
+    if (timerid == NULL)
+        return EVM_VAL_UNDEFINED;
     evm_object_set_ext_data(v, (intptr_t)timerid);
     return evm_mk_number(id);
 }
@@ -97,6 +123,10 @@ static evm_val_t evm_module_timers_setInterval(evm_t *e, evm_val_t *p, int argc,
 //clearInterval(timeout)
 static evm_val_t evm_module_timers_clearInterval(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
 {
+    if (argc < 1 || !evm_is_integer(v))
+    {
+        return EVM_VAL_UNDEFINED;
+    }
     evm_module_timers_clearTimeout(e, p, argc, v);
     return EVM_VAL_UNDEFINED;
 }
