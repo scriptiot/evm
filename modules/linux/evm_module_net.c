@@ -19,8 +19,7 @@ static void _net_server_thread(_net_sock_t *server_sock) {
         client_sock = evm_malloc(sizeof(_net_sock_t));
         if( client_sock ) {
             client_sock->sockfd = accept(server_sock->sockfd, (struct sockaddr *)&client_sock->addr, sizeof(struct sockaddr_in));
-            if (client_sock->sockfd < 0)
-            {
+            if (client_sock->sockfd < 0) {
                 evm_print("accept connection failed!\r\n");
                 evm_free(client_sock);
                 continue;
@@ -34,6 +33,8 @@ static void _net_client_thread(_net_sock_t *client_sock) {
         usleep(1000);
     }
 }
+
+
 
 //server.close([closeListener])
 static evm_val_t evm_module_net_server_close(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
@@ -161,7 +162,7 @@ static evm_val_t evm_module_net_socket_end(evm_t *e, evm_val_t *p, int argc, evm
         evm_run_callback(e, v + 2, NULL, NULL, 0);
     }
 
-    close(sock->sockfd);
+    shutdown(sock->sockfd, SHUT_WR);
 	return EVM_VAL_UNDEFINED;
 }
 
@@ -220,15 +221,11 @@ static evm_val_t evm_module_net_socket_write(evm_t *e, evm_val_t *p, int argc, e
 //socket.on(event, callback)
 static evm_val_t evm_module_net_socket_on(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
 {
-    _net_sock_t *sock = evm_object_get_ext_data(p);
+    _net_sock_t *sock = (_net_sock_t *)evm_object_get_ext_data(p);
     if( !sock )
         return EVM_VAL_UNDEFINED;
 
-    evm_val_t *listener = evm_module_registry_get(e, sock->obj_id);
-    if( !listener )
-        return EVM_VAL_UNDEFINED;
-    
-    evm_prop_append(e, listener, evm_2_string(v), *(v + 1));
+    evm_module_event_add_listener(e, p, evm_2_string(v), v + 1);
 	return EVM_VAL_UNDEFINED;
 }
 
@@ -327,6 +324,32 @@ static evm_val_t evm_module_net_socket_new(evm_t *e, evm_val_t *p, int argc, evm
         return *obj;
     }
 	return EVM_VAL_UNDEFINED;
+}
+
+evm_val_t *_net_socket_create(evm_t *e) {
+    _net_sock_t *sock;
+    evm_val_t *obj = evm_object_create(e, GC_DICT, 9, 0);
+    if( !obj )
+        return NULL;
+    evm_prop_append(e, obj, "connect", evm_mk_native((intptr_t)evm_module_net_socket_connect));
+    evm_prop_append(e, obj, "destroy", evm_mk_native((intptr_t)evm_module_net_socket_destroy));
+    evm_prop_append(e, obj, "end", evm_mk_native((intptr_t)evm_module_net_socket_end));
+    evm_prop_append(e, obj, "pause", evm_mk_native((intptr_t)evm_module_net_socket_pause));
+    evm_prop_append(e, obj, "resume", evm_mk_native((intptr_t)evm_module_net_socket_resume));
+    evm_prop_append(e, obj, "setKeepAlive", evm_mk_native((intptr_t)evm_module_net_socket_setKeepAlive));
+    evm_prop_append(e, obj, "setTimeout", evm_mk_native((intptr_t)evm_module_net_socket_setTimeout));
+    evm_prop_append(e, obj, "write", evm_mk_native((intptr_t)evm_module_net_socket_write));
+    evm_prop_append(e, obj, "on", evm_mk_native((intptr_t)evm_module_net_socket_on));
+
+    sock = evm_malloc(sizeof(_net_sock_t));
+    if( !sock ) {
+        evm_set_err(e, ec_memory, "Insufficient external memory");
+        return EVM_VAL_UNDEFINED;
+    }
+
+    evm_object_set_ext_data(obj, (intptr_t)sock);
+
+    sock->obj_id = evm_module_registry_add(e, obj);
 }
 
 static evm_object_native_t _net_socket_native = {
