@@ -138,8 +138,8 @@ char * evm_open(evm_t * e, char *filename){
 /*****************evm文件加载接口*******************/
 static int modules_paths_count = 2;
 static char *modules_paths[] = {
-    "./",
-    "../"
+    "../",
+    "../../../test"
 };
 
 const char * vm_load(evm_t * e, char * path, int type)
@@ -245,6 +245,14 @@ evm_err_t evm_module_init(evm_t *env) {
     err = evm_module_process(env);
     if( err != ec_ok ) {
         evm_print("Failed to create process module\r\n");
+        return err;
+    }
+#endif
+
+#ifdef CONFIG_EVM_MODULE_EVENTS
+    err = evm_module_events(env);
+    if( err != ec_ok ) {
+        evm_print("Failed to create events module\r\n");
         return err;
     }
 #endif

@@ -70,6 +70,10 @@ extern void evm_module_process_poll(evm_t *e);
 extern evm_err_t evm_module_process(evm_t *e);
 #endif
 
+#ifdef CONFIG_EVM_MODULE_EVENTS
+extern evm_err_t evm_module_events(evm_t *e);
+#endif
+
 extern void evm_module_registry_init(evm_t *e, int size);
 extern int evm_module_registry_add(evm_t *e, evm_val_t *v);
 extern evm_val_t *evm_module_registry_get(evm_t *e, int id);

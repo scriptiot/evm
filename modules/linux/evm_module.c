@@ -81,7 +81,7 @@ void evm_module_event_emit (evm_t *e, evm_val_t *pthis, const char *type, int ar
     }
 
     evm_val_t *listener = evm_prop_get(e, prop, type, 0);
-    if( listener ) {
+    if( listener && evm_is_script(listener)) {
         evm_val_t args[argc + 1];
         args[0] = *listener;
         for(int i = 1; i < argc; i++) {
