@@ -9,9 +9,11 @@ DEFINES += CONFIG_EVM_MODULE_NET
 DEFINES += CONFIG_EVM_MODULE_PROCESS
 DEFINES += CONFIG_EVM_MODULE_EVENTS
 DEFINES += CONFIG_EVM_MODULE_DNS
+DEFINES += CONFIG_EVM_MODULE_TIMERS
 
 LIBS += -L$$PWD/../../../lib/x86/linux -lecma -lejs
 LIBS += -lpthread
+LIBS += -lrt
 INCLUDEPATH += $$PWD/../../../include
 
 SOURCES += \
@@ -22,4 +24,5 @@ SOURCES += \
     ../../../modules/linux/evm_module.c \
     ../../../modules/linux/evm_module_fs.c \
     ../../../modules/linux/evm_module_events.c \
-    ../../../modules/linux/evm_module_dns.c
+    ../../../modules/linux/evm_module_dns.c \
+    ../../../modules/linux/evm_module_timers.c

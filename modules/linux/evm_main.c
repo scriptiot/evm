@@ -264,6 +264,15 @@ evm_err_t evm_module_init(evm_t *env) {
         return err;
     }
 #endif
+
+
+#ifdef CONFIG_EVM_MODULE_TIMERS
+    err = evm_module_timers(env);
+    if( err != ec_ok ) {
+        evm_print("Failed to create timers module\r\n");
+        return err;
+    }
+#endif
     return ec_ok;
 }
 
@@ -285,14 +294,14 @@ int evm_main (void) {
     evm_t * env = (evm_t*)evm_malloc(sizeof(evm_t));
     evm_err_t err = evm_init(env, EVM_HEAP_SIZE, EVM_STACK_SIZE, EVM_VAR_NAME_MAX_LEN, EVM_FILE_NAME_LEN);
 
-    err = ecma_module(env);
+    err = evm_module_init(env);
     if( err != ec_ok ) {
-        evm_print("Failed to create ecma module\r\n");
         return err;
     }
 
-    err = evm_module_init(env);
+    err = ecma_module(env);
     if( err != ec_ok ) {
+        evm_print("Failed to create ecma module\r\n");
         return err;
     }
 
