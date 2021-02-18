@@ -16,7 +16,7 @@ static void callback_handler(union sigval v)
     evm_module_next_tick(timer_e, 1, &args);
 }
 
-static int timer(int id, int delay)
+static int timer(int id, int delay, int once)
 {
     timer_t timerid;
     int ret;
@@ -51,8 +51,10 @@ static int timer(int id, int delay)
     {
         its.it_value.tv_nsec = delay * 1000000;
     }
-    its.it_interval.tv_sec = its.it_value.tv_sec;
-    its.it_interval.tv_nsec = its.it_value.tv_nsec;
+    if( !once ) {
+        its.it_interval.tv_sec = its.it_value.tv_sec;
+        its.it_interval.tv_nsec = its.it_value.tv_nsec;
+    }
 
     ret = timer_settime(timerid, TIMER_ABSTIME, &its, NULL);
     if (ret == -1)
@@ -67,12 +69,19 @@ static int timer(int id, int delay)
 //setTimeout(callback, delay[, args..])
 static evm_val_t evm_module_timers_setTimeout(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
 {
+    int id = evm_module_registry_add(e, v);
+    timer_t timerid = timer(id, evm_2_integer(v + 1), 1);
+    evm_object_set_ext_data(v, (intptr_t)timerid);
     return EVM_VAL_UNDEFINED;
 }
 
 //clearTimeout(timeout)
 static evm_val_t evm_module_timers_clearTimeout(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
 {
+    evm_val_t *callback = evm_module_registry_get(e, evm_2_integer(v));
+    timer_t timerid = evm_object_get_ext_data(callback);
+    timer_delete(timerid);
+    evm_module_registry_remove(e, evm_2_integer(v));
 	return EVM_VAL_UNDEFINED;
 }
 
@@ -80,7 +89,7 @@ static evm_val_t evm_module_timers_clearTimeout(evm_t *e, evm_val_t *p, int argc
 static evm_val_t evm_module_timers_setInterval(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
 {
     int id = evm_module_registry_add(e, v);
-    timer_t timerid = timer(id, evm_2_integer(v + 1));
+    timer_t timerid = timer(id, evm_2_integer(v + 1), 0);
     evm_object_set_ext_data(v, (intptr_t)timerid);
     return evm_mk_number(id);
 }
@@ -88,10 +97,7 @@ static evm_val_t evm_module_timers_setInterval(evm_t *e, evm_val_t *p, int argc,
 //clearInterval(timeout)
 static evm_val_t evm_module_timers_clearInterval(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
 {
-    evm_val_t *callback = evm_module_registry_get(e, evm_2_integer(v));
-    timer_t timerid = evm_object_get_ext_data(callback);
-    timer_delete(timerid);
-    evm_module_registry_remove(e, evm_2_integer(v));
+    evm_module_timers_clearTimeout(e, p, argc, v);
     return EVM_VAL_UNDEFINED;
 }
 
