@@ -12,31 +12,22 @@ static evm_t *timer_e;
 static void callback_handler(union sigval v)
 {
     evm_val_t *callback = evm_module_registry_get(timer_e, v.sival_int);
-    evm_run_callback(timer_e, callback, &timer_e->scope, NULL, 0);
+    evm_val_t args = *callback;
+    evm_module_next_tick(timer_e, 1, &args);
 }
 
 static int timer(int id, int delay)
 {
     timer_t timerid;
-    struct sigaction sa;
-
-    sa.sa_flags = SA_SIGINFO;
-    sa.sa_sigaction = callback_handler; // 回调handler
-    sigemptyset(&sa.sa_mask);
-    int ret = sigaction(SIG, &sa, NULL);
-
-    if (ret == -1)
-    {
-        evm_print("Failed to setup signal: %s\n", strerror(errno));
-        return -1;
-    }
+    int ret;
 
     struct sigevent sev;
 
     // handle in thread when timeout
     memset(&sev, 0, sizeof(struct sigevent));
-    sev.sigev_notify = SIGEV_SIGNAL;
-    sev.sigev_signo = SIG;
+    sev.sigev_value.sival_ptr = &timer;
+    sev.sigev_notify = SIGEV_THREAD;
+    sev.sigev_notify_function = callback_handler;
     sev.sigev_value.sival_int = id;
 
     struct itimerspec its; // duration settings
@@ -63,7 +54,7 @@ static int timer(int id, int delay)
     its.it_interval.tv_sec = its.it_value.tv_sec;
     its.it_interval.tv_nsec = its.it_value.tv_nsec;
 
-    ret = timer_settime(timerid, 0, &its, NULL);
+    ret = timer_settime(timerid, TIMER_ABSTIME, &its, NULL);
     if (ret == -1)
     {
         evm_print("Failed to set timeout: %s\n", strerror(errno));
