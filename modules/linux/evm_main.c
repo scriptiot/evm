@@ -256,6 +256,14 @@ evm_err_t evm_module_init(evm_t *env) {
         return err;
     }
 #endif
+
+#ifdef CONFIG_EVM_MODULE_DNS
+    err = evm_module_dns(env);
+    if( err != ec_ok ) {
+        evm_print("Failed to create dns module\r\n");
+        return err;
+    }
+#endif
     return ec_ok;
 }
 

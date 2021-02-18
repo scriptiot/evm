@@ -10,7 +10,7 @@ evm_val_t evm_module_process_nextTick(evm_t *e, evm_val_t *p, int argc, evm_val_
             evm_val_t *arguments = evm_list_create(e, GC_LIST, argc - 1);
             if( arguments ) {
                 for(uint32_t i = 0; i < argc - 1; i++){
-                    evm_list_set(e, arguments, i, *(v + 1));
+                    evm_list_set(e, arguments, i, *(v + 1 + i));
                 }
                 evm_attr_append_with_key(e, v, _name_arguments, *arguments);
             }
