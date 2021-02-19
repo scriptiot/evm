@@ -1,5 +1,7 @@
 #include "evm_module.h"
 
+evm_val_t *evm_runtime;
+
 static evm_hash_t _hashname_events;
 
 struct _module_registry_t {
@@ -8,6 +10,7 @@ struct _module_registry_t {
 } _module_registry;
 
 void evm_module_registry_init(evm_t *e, int size) {
+    evm_runtime = e;
     e->sp++;
     _module_registry.start = e->sp;
     e->sp += size;
@@ -84,7 +87,7 @@ void evm_module_event_emit (evm_t *e, evm_val_t *pthis, const char *type, int ar
     if( listener && evm_is_script(listener)) {
         evm_val_t args[argc + 1];
         args[0] = *listener;
-        for(int i = 1; i < argc; i++) {
+        for(int i = 1; i < argc + 1; i++) {
             args[i] = *(v + i - 1);
         }
         evm_module_next_tick(e, argc + 1, args);

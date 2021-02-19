@@ -6,16 +6,20 @@
 #include <fcntl.h>
 #include "netdb.h"
 
+#define _SOCKET_READ_BUF_SIZE   4096
+
 typedef struct _net_sock_t {
     struct sockaddr_in addr;
     int sockfd;
     int obj_id;
     pthread_t pid;
+    int alive;
+    uint8_t rx_buf[_SOCKET_READ_BUF_SIZE];
 } _net_sock_t;
 
 static void _net_server_thread(_net_sock_t *server_sock) {
     _net_sock_t *client_sock;
-    while(1) {
+    while(client_sock->alive) {
         client_sock = evm_malloc(sizeof(_net_sock_t));
         if( client_sock ) {
             client_sock->sockfd = accept(server_sock->sockfd, (struct sockaddr *)&client_sock->addr, sizeof(struct sockaddr_in));
@@ -26,12 +30,30 @@ static void _net_server_thread(_net_sock_t *server_sock) {
             }
         }
     }
+    evm_free(server_sock);
 }
 
 static void _net_client_thread(_net_sock_t *client_sock) {
-    while(1) {
+    size_t bytes_read;
+    while(client_sock->alive) {
+        bytes_read = read(client_sock->sockfd, client_sock->rx_buf, _SOCKET_READ_BUF_SIZE);
+        if( bytes_read > 0 && bytes_read < _SOCKET_READ_BUF_SIZE ) {
+            evm_val_t *obj = evm_module_registry_get(evm_runtime, client_sock->obj_id);
+            if( obj ) {
+                evm_val_t *args = evm_buffer_create(evm_runtime, bytes_read);
+                if( args ){
+                    memcpy( evm_buffer_addr(args), client_sock->rx_buf, bytes_read);
+                    evm_module_event_emit(evm_runtime, obj, "data", 1, args);
+                    evm_pop(evm_runtime);
+                }
+            }
+        } else if( bytes_read < 0 ){
+            close(client_sock->sockfd);
+            break;
+        }
         usleep(1000);
     }
+    evm_free(client_sock);
 }
 
 
@@ -141,6 +163,8 @@ static evm_val_t evm_module_net_socket_destroy(evm_t *e, evm_val_t *p, int argc,
     if( !sock )
         return EVM_VAL_UNDEFINED;
     close(sock->sockfd);
+    sock->alive = 0;
+    evm_module_registry_remove(e, sock->obj_id);
     return EVM_VAL_UNDEFINED;
 }
 
@@ -229,13 +253,6 @@ static evm_val_t evm_module_net_socket_on(evm_t *e, evm_val_t *p, int argc, evm_
 	return EVM_VAL_UNDEFINED;
 }
 
-//net.connect(options[, connectListener])
-//net.connect(port[, host][, connectListener])
-static evm_val_t evm_module_net_connect(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
-{
-    return EVM_VAL_UNDEFINED;
-}
-
 //net.createConnection(options[, connectListener])
 //net.createConnection(port[, host][, connectListener])
 static evm_val_t evm_module_net_createConnection(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
@@ -262,10 +279,18 @@ static evm_val_t evm_module_net_createConnection(evm_t *e, evm_val_t *p, int arg
 
     evm_object_set_ext_data(obj, (intptr_t)sock);
 
+    sock->alive = 1;
     sock->obj_id = evm_module_registry_add(e, obj);
 
     evm_module_net_socket_connect(e, obj, argc, v);
     return *obj;
+}
+
+//net.connect(options[, connectListener])
+//net.connect(port[, host][, connectListener])
+static evm_val_t evm_module_net_connect(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
+{
+    return evm_module_net_createConnection(e, p, argc, v);
 }
 
 //net.createServer([options][, connectionListener])
@@ -295,7 +320,7 @@ static evm_val_t evm_module_net_createServer(evm_t *e, evm_val_t *p, int argc, e
         return EVM_VAL_UNDEFINED;
     }
     server_sock->sockfd = sockfd;
-
+    server_sock->alive = 1;
     evm_object_set_ext_data(server_obj, (intptr_t)server_sock);
 
     server_sock->obj_id = evm_module_registry_add(e, server_obj);
@@ -319,6 +344,7 @@ static evm_val_t evm_module_net_socket_new(evm_t *e, evm_val_t *p, int argc, evm
 
         _net_sock_t *sock = evm_malloc(sizeof(_net_sock_t));
         if( sock ) {
+            sock->alive = 1;
             evm_object_set_ext_data(obj, (intptr_t)sock);
         }
         return *obj;
@@ -348,7 +374,7 @@ evm_val_t *_net_socket_create(evm_t *e) {
     }
 
     evm_object_set_ext_data(obj, (intptr_t)sock);
-
+    sock->alive = 1;
     sock->obj_id = evm_module_registry_add(e, obj);
 }
 
@@ -369,6 +395,7 @@ evm_err_t evm_module_net(evm_t *e) {
         {NULL, EVM_VAL_UNDEFINED}
 	};
     evm_module_create(e, "net", builtin);
+    evm_pop(e);
 	return e->err;
 }
 #endif
