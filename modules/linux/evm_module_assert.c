@@ -18,20 +18,20 @@ static evm_val_t evm_module_assert_assert(evm_t *e, evm_val_t *p, int argc, evm_
 
     char *message = NULL;
 
-    if (argc > 2 && evm_is_string(v + 1))
+    if (argc > 1 && evm_is_string(v + 1))
         message = evm_2_string(v + 1);
 
     if (evm_is_boolean(v))
     {
-        evm_val_t *b = evm_2_boolean(v);
-        if (*b == EVM_VAL_TRUE) return EVM_VAL_TRUE;
+        if (evm_2_boolean(v))
+            return EVM_VAL_TRUE;
         evm_set_err(e, ec_type, message);
         return NULL;
     }
     else if (evm_is_number(v))
     {
-        evm_val_t *n = evm_2_integer(v);
-        if (*n != 0) return EVM_VAL_TRUE;
+        if (evm_2_integer(v))
+            return EVM_VAL_TRUE;
         evm_set_err(e, ec_type, message);
         return NULL;
     }
@@ -44,7 +44,7 @@ static evm_val_t evm_module_assert_doesNotThrow(evm_t *e, evm_val_t *p, int argc
         return EVM_VAL_UNDEFINED;
 
     char *message = NULL;
-    if (argc > 2 && evm_is_string(v + 1))
+    if (argc > 1 && evm_is_string(v + 1))
         message = evm_2_string(v + 1);
 
     if (evm_run_callback(e, v, NULL, NULL, 0) == EVM_VAL_TRUE) {
@@ -105,11 +105,11 @@ static evm_val_t compare(evm_val_t *l, evm_val_t *r) {
 //equal(actual, expected[, message])
 static evm_val_t evm_module_assert_equal(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
 {
-    if (argc < 2)
+    if (argc <= 1)
         return EVM_VAL_UNDEFINED;
 
     char *message = NULL;
-    if (argc > 2 && evm_is_string(v + 1))
+    if (argc > 1 && evm_is_string(v + 1))
         message = evm_2_string(v + 1);
 
     evm_val_t result = compare(v, v + 1);
@@ -179,12 +179,10 @@ static evm_val_t compare_by_value(evm_val_t *l, evm_val_t *r, int operator) {
 //operator: != | == | > | >= | < | <=
 static evm_val_t evm_module_assert_fail(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
 {
-    if (argc < 4 || !evm_is_string(v + 3))
+    if (argc <= 3 || !evm_is_string(v + 3))
         return EVM_VAL_UNDEFINED;
 
-    char *message = NULL;
-    if (argc > 2 && evm_is_string(v + 2))
-        message = evm_2_string(v + 2);
+    char *message = evm_2_string(v + 2);
 
     evm_val_t result = evm_module_assert_equal(e, p, argc, v);
     if (result != EVM_VAL_TRUE) {
@@ -218,7 +216,7 @@ static evm_val_t evm_module_assert_notEqual(evm_t *e, evm_val_t *p, int argc, ev
         return EVM_VAL_UNDEFINED;
 
     char *message = NULL;
-    if (argc > 2 && evm_is_string(v + 2))
+    if (argc > 1 && evm_is_string(v + 2))
         message = evm_2_string(v + 2);
 
     evm_val_t result = compare(v, v + 1);
@@ -248,7 +246,7 @@ static evm_val_t evm_module_assert_throws(evm_t *e, evm_val_t *p, int argc, evm_
         return EVM_VAL_UNDEFINED;
 
     char *message = NULL;
-    if (argc > 2 && evm_is_string(v + 1))
+    if (argc > 1 && evm_is_string(v + 1))
         message = evm_2_string(v + 1);
 
     if (evm_run_callback(e, v, NULL, NULL, 0) == EVM_VAL_TRUE) {

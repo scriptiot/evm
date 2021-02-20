@@ -327,7 +327,7 @@ int evm_main (void) {
     pthread_create(&pid, NULL, evm_event_thread, env);
 
 #ifdef EVM_LANG_ENABLE_REPL
-      evm_repl_run(env, 1000, EVM_LANG_JS);
+    evm_repl_run(env, 1000, EVM_LANG_JS);
 #endif
 
     err = evm_boot(env, "main.js");
