@@ -40,7 +40,7 @@ static evm_val_t _adc_open_device(evm_t *e, evm_val_t *p, int argc, evm_val_t *v
 		evm_free(adc_dev);
 		return EVM_VAL_UNDEFINED;
 	}
-		
+
 	adc_dev->dev = (rt_adc_device_t)rt_device_find(evm_2_string(val));
     if ( adc_dev->dev == RT_NULL ) {
         args = evm_mk_foreign_string("Can't find adc device");
