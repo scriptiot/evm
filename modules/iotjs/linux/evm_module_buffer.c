@@ -9,17 +9,18 @@ evm_val_t *evm_module_buffer_class_instantiate(evm_t *e, uint32_t size);
 //new Buffer(str[, encoding])
 static evm_val_t evm_module_buffer_class_new(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
 {
+    EVM_UNUSED(p);
     evm_val_t *buf_obj = NULL;
     uint32_t length = 0;
 
     if (evm_is_integer(v)) {
         length = (uint32_t)evm_2_integer(v);
         buf_obj = evm_module_buffer_class_instantiate(e, length);
-        EVM_ASSERT(&buf_obj);
+        EVM_ASSERT(buf_obj);
     } else if (evm_is_list(v)) {
         length = evm_list_len(v);
         buf_obj = evm_module_buffer_class_instantiate(e, length);
-        EVM_ASSERT(&buf_obj);
+        EVM_ASSERT(buf_obj);
         evm_val_t *prop;
         uint8_t *buffer = evm_buffer_addr(buf_obj);
         EVM_ASSERT(buffer);
@@ -27,24 +28,24 @@ static evm_val_t evm_module_buffer_class_new(evm_t *e, evm_val_t *p, int argc, e
         for (uint32_t i = 0; i < length; i++) {
             prop = evm_list_get(e, v, i);
             if (evm_is_number(prop)) {
-                b = evm_2_integer(prop);
+                b = (uint8_t)evm_2_integer(prop);
                 buffer[i] = b;
             }
         }
     } else if (evm_is_buffer(v)) {
         length = evm_buffer_len(v);
         buf_obj = evm_module_buffer_class_instantiate(e, length);
-        EVM_ASSERT(&buf_obj);
+        EVM_ASSERT(buf_obj);
         evm_buffer_set(e, buf_obj, evm_buffer_addr(v), 0, length);
     } else if (evm_is_string(v)) {
         length = evm_string_len(v);
         buf_obj = evm_module_buffer_class_instantiate(e, length);
-        EVM_ASSERT(&buf_obj);
+        EVM_ASSERT(buf_obj);
         memcpy(evm_buffer_addr(buf_obj), evm_2_string(v), length);
         if (argc > 1 && evm_is_string(v + 1) && strcmp(evm_2_string(v + 1), "hex") == 0) {
             uint8_t *p = evm_2_string(v);
             uint8_t *buffer = evm_buffer_addr(buf_obj);
-            EVM_ASSERT(&buf_obj);
+            EVM_ASSERT(buf_obj);
 
             char t[3] = {0};
             uint8_t n;
@@ -66,12 +67,17 @@ static evm_val_t evm_module_buffer_class_new(evm_t *e, evm_val_t *p, int argc, e
 //encoding: hex | bytes(default)
 static evm_val_t evm_module_buffer_byteLength(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
 {
+    EVM_UNUSED(e);
+    EVM_UNUSED(p);
+    EVM_UNUSED(argc);
+    EVM_UNUSED(v);
     return evm_mk_number(evm_string_len(v));
 }
 
 //Buffer.concat(list)
 static evm_val_t evm_module_buffer_concat(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
 {
+    EVM_UNUSED(p);
     if (argc < 1 || !evm_is_list(v))
         return EVM_VAL_UNDEFINED;
 
@@ -106,6 +112,7 @@ static evm_val_t evm_module_buffer_concat(evm_t *e, evm_val_t *p, int argc, evm_
 //Buffer.from(arrayBuffer[, byteOffset[, length]])
 static evm_val_t evm_module_buffer_from(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
 {
+    EVM_UNUSED(p);
     if (argc < 1)
         return EVM_VAL_UNDEFINED;
 
@@ -128,7 +135,7 @@ static evm_val_t evm_module_buffer_from(evm_t *e, evm_val_t *p, int argc, evm_va
         }
     } else if (evm_is_buffer(v)) {
         length = evm_buffer_len(v);
-        buf = (e, length);
+        buf = evm_buffer_create(e, length);
         if (!buf)
             return EVM_VAL_UNDEFINED;
         evm_buffer_set(e, buf, evm_buffer_addr(v), 0, length);
@@ -147,6 +154,8 @@ static evm_val_t evm_module_buffer_from(evm_t *e, evm_val_t *p, int argc, evm_va
 //Buffer.isBuffer(buffer)
 static evm_val_t evm_module_buffer_isBuffer(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
 {
+    EVM_UNUSED(e);
+    EVM_UNUSED(p);
     if (argc < 1)
         return EVM_VAL_UNDEFINED;
 
@@ -159,12 +168,14 @@ static evm_val_t evm_module_buffer_isBuffer(evm_t *e, evm_val_t *p, int argc, ev
 //buf.length
 static evm_val_t evm_module_buffer_class_get_length(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
 {
+    EVM_UNUSED(e);EVM_UNUSED(p);EVM_UNUSED(argc);
     return evm_mk_number(evm_buffer_len(v));
 }
 
 //buf.compare(otherBuffer)
 static evm_val_t evm_module_buffer_class_compare(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
 {
+    EVM_UNUSED(e);
     if (argc < 1 || !evm_is_buffer(v))
         return EVM_VAL_UNDEFINED;
 
@@ -193,6 +204,7 @@ static evm_val_t evm_module_buffer_class_compare(evm_t *e, evm_val_t *p, int arg
 //buf.copy(targetBuffer[, targetStart[, sourceStart[, sourceEnd]]])
 static evm_val_t evm_module_buffer_class_copy(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
 {
+    EVM_UNUSED(e);
     if (argc < 1 || !evm_is_buffer(v))
         return EVM_VAL_UNDEFINED;
 
@@ -233,6 +245,7 @@ static evm_val_t evm_module_buffer_class_equals(evm_t *e, evm_val_t *p, int argc
 //buf.fill(value)
 static evm_val_t evm_module_buffer_class_fill(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
 {
+    EVM_UNUSED(e);
     if (argc < 1 || !evm_is_integer(v))
         return EVM_VAL_UNDEFINED;
 
@@ -393,6 +406,7 @@ static evm_val_t evm_module_buffer_class_writeUInt32LE(evm_t *e, evm_val_t *p, i
 //buf.readInt8(offset[, noAssert])
 static evm_val_t evm_module_buffer_class_readInt8(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
 {
+    EVM_UNUSED(e);
     uint32_t offset = 0;
     if (argc > 0 && evm_is_integer(v))
         offset = evm_2_integer(v);
@@ -406,6 +420,7 @@ static evm_val_t evm_module_buffer_class_readInt8(evm_t *e, evm_val_t *p, int ar
 //buf.readUInt8(offset[, noAssert])
 static evm_val_t evm_module_buffer_class_readUInt8(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
 {
+    EVM_UNUSED(e);
     uint32_t offset = 0;
     if (argc > 0 && evm_is_integer(v))
         offset = evm_2_integer(v);
@@ -419,6 +434,7 @@ static evm_val_t evm_module_buffer_class_readUInt8(evm_t *e, evm_val_t *p, int a
 //buf.readUInt16LE(offset[, noAssert])
 static evm_val_t evm_module_buffer_class_readUInt16LE(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
 {
+    EVM_UNUSED(e);
     uint32_t offset = 0;
     if (argc > 0 && evm_is_integer(v))
         offset = evm_2_integer(v);
@@ -436,21 +452,23 @@ evm_val_t *evm_module_buffer_class_instantiate(evm_t *e, uint32_t size)
 
     if (obj)
     {
-        evm_attr_create(e, obj, 14);
-        evm_attr_append(e, obj, "length", evm_mk_number(size));
-        evm_attr_append(e, obj, "compare", evm_mk_native((intptr_t)evm_module_buffer_class_compare));
-        evm_attr_append(e, obj, "copy", evm_mk_native((intptr_t)evm_module_buffer_class_copy));
-        evm_attr_append(e, obj, "equals", evm_mk_native((intptr_t)evm_module_buffer_class_equals));
-        evm_attr_append(e, obj, "fill", evm_mk_native((intptr_t)evm_module_buffer_class_fill));
-        evm_attr_append(e, obj, "slice", evm_mk_native((intptr_t)evm_module_buffer_class_slice));
-        evm_attr_append(e, obj, "toString", evm_mk_native((intptr_t)evm_module_buffer_class_toString));
-        evm_attr_append(e, obj, "write", evm_mk_native((intptr_t)evm_module_buffer_class_write));
-        evm_attr_append(e, obj, "writeUInt8", evm_mk_native((intptr_t)evm_module_buffer_class_writeUInt8));
-        evm_attr_append(e, obj, "writeUInt16LE", evm_mk_native((intptr_t)evm_module_buffer_class_writeUInt16LE));
-        evm_attr_append(e, obj, "writeUInt32LE", evm_mk_native((intptr_t)evm_module_buffer_class_writeUInt32LE));
-        evm_attr_append(e, obj, "readInt8", evm_mk_native((intptr_t)evm_module_buffer_class_readInt8));
-        evm_attr_append(e, obj, "readUInt8", evm_mk_native((intptr_t)evm_module_buffer_class_readUInt8));
-        evm_attr_append(e, obj, "readUInt16LE", evm_mk_native((intptr_t)evm_module_buffer_class_readUInt16LE));
+        evm_err_t err = evm_attr_create(e, obj, 14);
+        if( err == ec_ok ) {
+            evm_attr_append(e, obj, "length", evm_mk_number(size));
+            evm_attr_append(e, obj, "compare", evm_mk_native((intptr_t)evm_module_buffer_class_compare));
+            evm_attr_append(e, obj, "copy", evm_mk_native((intptr_t)evm_module_buffer_class_copy));
+            evm_attr_append(e, obj, "equals", evm_mk_native((intptr_t)evm_module_buffer_class_equals));
+            evm_attr_append(e, obj, "fill", evm_mk_native((intptr_t)evm_module_buffer_class_fill));
+            evm_attr_append(e, obj, "slice", evm_mk_native((intptr_t)evm_module_buffer_class_slice));
+            evm_attr_append(e, obj, "toString", evm_mk_native((intptr_t)evm_module_buffer_class_toString));
+            evm_attr_append(e, obj, "write", evm_mk_native((intptr_t)evm_module_buffer_class_write));
+            evm_attr_append(e, obj, "writeUInt8", evm_mk_native((intptr_t)evm_module_buffer_class_writeUInt8));
+            evm_attr_append(e, obj, "writeUInt16LE", evm_mk_native((intptr_t)evm_module_buffer_class_writeUInt16LE));
+            evm_attr_append(e, obj, "writeUInt32LE", evm_mk_native((intptr_t)evm_module_buffer_class_writeUInt32LE));
+            evm_attr_append(e, obj, "readInt8", evm_mk_native((intptr_t)evm_module_buffer_class_readInt8));
+            evm_attr_append(e, obj, "readUInt8", evm_mk_native((intptr_t)evm_module_buffer_class_readUInt8));
+            evm_attr_append(e, obj, "readUInt16LE", evm_mk_native((intptr_t)evm_module_buffer_class_readUInt16LE));
+        }
     }
     return obj;
 }
