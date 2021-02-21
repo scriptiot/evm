@@ -18,11 +18,11 @@ INCLUDEPATH += $$PWD/../../../include
 
 SOURCES += \
         main.c \
-    ../../../modules/linux/evm_main.c \
-    ../../../modules/linux/evm_module_net.c \
-    ../../../modules/linux/evm_module_process.c \
-    ../../../modules/linux/evm_module.c \
-    ../../../modules/linux/evm_module_fs.c \
-    ../../../modules/linux/evm_module_events.c \
-    ../../../modules/linux/evm_module_dns.c \
-    ../../../modules/linux/evm_module_timers.c
+    ../../../modules/iotjs/linux/evm_main.c \
+    ../../../modules/iotjs/linux/evm_module_net.c \
+    ../../../modules/iotjs/linux/evm_module_process.c \
+    ../../../modules/iotjs/linux/evm_module.c \
+    ../../../modules/iotjs/linux/evm_module_fs.c \
+    ../../../modules/iotjs/linux/evm_module_events.c \
+    ../../../modules/iotjs/linux/evm_module_dns.c \
+    ../../../modules/iotjs/linux/evm_module_timers.c
