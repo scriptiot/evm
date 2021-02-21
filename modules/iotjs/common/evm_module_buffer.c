@@ -3,6 +3,19 @@
 
 evm_val_t *evm_module_buffer_class_instantiate(evm_t *e, uint32_t size);
 
+static int hex_2_oct(int h) {
+    int re = 0;
+    int k = 16;
+    int n = 1;
+    while (h != 0)
+    {
+        re += (h % 10) * n;
+        h /= 10;
+        n *= k;
+    }
+    return re;
+}
+
 //new Buffer(array)
 //new Buffer(buffer)
 //new Buffer(size)
@@ -38,23 +51,36 @@ static evm_val_t evm_module_buffer_class_new(evm_t *e, evm_val_t *p, int argc, e
         EVM_ASSERT(buf_obj);
         evm_buffer_set(e, buf_obj, evm_buffer_addr(v), 0, length);
     } else if (evm_is_string(v)) {
-        length = evm_string_len(v);
-        buf_obj = evm_module_buffer_class_instantiate(e, length);
-        EVM_ASSERT(buf_obj);
-        memcpy(evm_buffer_addr(buf_obj), evm_2_string(v), length);
-        if (argc > 1 && evm_is_string(v + 1) && strcmp(evm_2_string(v + 1), "hex") == 0) {
+        if (argc > 1 && evm_is_string(v + 1) && !strcmp(evm_2_string(v + 1), "hex")) {
+            length = 0;
             uint8_t *p = evm_2_string(v);
+            char t[2] = {0};
+            while (*p != '\0' && *p) {
+                strncpy(t, p, 2);
+                if (atoi(t))
+                    length++;
+                p += 2;
+            }
+
+            buf_obj = evm_module_buffer_class_instantiate(e, length);
             uint8_t *buffer = evm_buffer_addr(buf_obj);
             EVM_ASSERT(buf_obj);
 
-            char t[3] = {0};
-            uint8_t n;
-            for (uint32_t i = 0; i < length; i += 2) {
+            char n;
+            p = evm_2_string(v);
+            uint32_t cnt = 0;
+            while (*p != '\0' && *p) {
                 strncpy(t, p, 2);
-                n = atoi(t);
-                buffer[i] = evm_mk_number(n);
+                n = (char)hex_2_oct(atoi(t));
+                buffer[cnt] = n;
                 p += 2;
+                cnt++;
             }
+        } else {
+            length = evm_string_len(v);
+            buf_obj = evm_module_buffer_class_instantiate(e, length);
+            EVM_ASSERT(buf_obj);
+            memcpy(evm_buffer_addr(buf_obj), evm_2_string(v), length);
         }
     }
 
@@ -112,43 +138,7 @@ static evm_val_t evm_module_buffer_concat(evm_t *e, evm_val_t *p, int argc, evm_
 //Buffer.from(arrayBuffer[, byteOffset[, length]])
 static evm_val_t evm_module_buffer_from(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
 {
-    EVM_UNUSED(p);
-    if (argc < 1)
-        return EVM_VAL_UNDEFINED;
-
-    uint32_t length = 0;
-    evm_val_t *buf;
-
-    if (evm_is_list(v)) {
-        length = evm_buffer_len(v);
-        buf = evm_module_buffer_class_instantiate(e, length);
-        if (!buf)
-            return EVM_VAL_UNDEFINED;
-        evm_val_t *prop;
-        uint8_t b;
-        for (uint32_t i = 0; i < length; i++) {
-            prop = evm_list_get(e, v + 1, i);
-            if (evm_is_number(prop)) {
-                b = evm_2_integer(prop);
-                buf[i] = b;
-            }
-        }
-    } else if (evm_is_buffer(v)) {
-        length = evm_buffer_len(v);
-        buf = evm_buffer_create(e, length);
-        if (!buf)
-            return EVM_VAL_UNDEFINED;
-        evm_buffer_set(e, buf, evm_buffer_addr(v), 0, length);
-    } else if (evm_is_string(v)) {
-        length = evm_string_len(v);
-        buf = evm_module_buffer_class_instantiate(e, length);
-        if (!buf)
-            return EVM_VAL_UNDEFINED;
-        evm_buffer_set(e, buf, evm_2_string(v), 0, length);
-    } else {
-        return EVM_VAL_UNDEFINED;
-    }
-    return *buf;
+    return evm_module_buffer_class_new(e, p, argc, v);
 }
 
 //Buffer.isBuffer(buffer)
