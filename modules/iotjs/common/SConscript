@@ -1,0 +1,16 @@
+Import('RTT_ROOT')
+Import('rtconfig')
+from building import *
+
+cwd = GetCurrentDir()
+src	= []
+for p in os.listdir(cwd) :
+    if p.endswith(".c"):
+        src += [p]
+
+CPPPATH = [cwd]
+
+group = DefineGroup('modules', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')
+

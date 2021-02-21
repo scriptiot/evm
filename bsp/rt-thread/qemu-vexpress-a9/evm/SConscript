@@ -14,6 +14,9 @@ if rtconfig.CROSS_TOOL == 'gcc':
     LIBS = ['ecma', 'ejs']  
     CPPPATH = [evm_dir + '/include']
     CCFLAGS =   ' -DEVM_LANG_ENABLE_REPL' +\
+                ' -DCONFIG_EVM_MODULE_BUFFER' +\
+                ' -DCONFIG_EVM_MODULE_ASSERT' +\
+                ' -DCONFIG_EVM_MODULE_NET' +\
                 ' -DCONFIG_EVM_MODULE_UART' +\
                 ' -DCONFIG_EVM_MODULE_GPIO' +\
                 ' -DCONFIG_EVM_MODULE_NET' +\
