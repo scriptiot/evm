@@ -79,8 +79,12 @@ extern evm_err_t evm_module_events(evm_t *e);
 extern evm_err_t evm_module_dns(evm_t *e);
 #endif
 
-#ifdef CONFIG_EVM_MODULE_TIMERS
-extern evm_err_t evm_module_timers(evm_t *e);
+#ifdef CONFIG_EVM_MODULE_BUFFER
+extern evm_err_t evm_module_buffer(evm_t *e);
+#endif
+
+#ifdef CONFIG_EVM_MODULE_ASSERT
+extern evm_err_t evm_module_assert(evm_t *e);
 #endif
 
 extern void evm_module_registry_init(evm_t *e, int size);

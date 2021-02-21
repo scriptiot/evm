@@ -273,6 +273,22 @@ evm_err_t evm_module_init(evm_t *env) {
         return err;
     }
 #endif
+
+#ifdef CONFIG_EVM_MODULE_BUFFER
+    err = evm_module_buffer(env);
+    if( err != ec_ok ) {
+        evm_print("Failed to create buffer module\r\n");
+        return err;
+    }
+#endif
+
+#ifdef CONFIG_EVM_MODULE_ASSERT
+    err = evm_module_assert(env);
+    if( err != ec_ok ) {
+        evm_print("Failed to create assert module\r\n");
+        return err;
+    }
+#endif
     return ec_ok;
 }
 
@@ -311,7 +327,7 @@ int evm_main (void) {
     pthread_create(&pid, NULL, evm_event_thread, env);
 
 #ifdef EVM_LANG_ENABLE_REPL
-      evm_repl_run(env, 1000, EVM_LANG_JS);
+    evm_repl_run(env, 1000, EVM_LANG_JS);
 #endif
 
     err = evm_boot(env, "main.js");
