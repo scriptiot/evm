@@ -1,3 +1,6 @@
 [submodule "os/rt-thread"]
 	path = os/rt-thread
 	url = git@gitee.com:rtthread/rt-thread.git
+[submodule "sdk/bl_iot_sdk"]
+	path = sdk/bl_iot_sdk
+	url = git@gitee.com:scriptiot/bl_iot_sdk.git
