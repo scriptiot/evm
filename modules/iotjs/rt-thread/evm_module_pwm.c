@@ -6,13 +6,15 @@ evm_val_t *evm_module_pwm_class_instantiate(evm_t *e, evm_val_t *p, int argc, ev
 //pwm.open(configuration, callback)
 static evm_val_t evm_module_pwm_open(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
 {
-	return EVM_VAL_UNDEFINED;
+
+    return EVM_VAL_UNDEFINED;
 }
 
 //pwm.openSync(configuration)
 static evm_val_t evm_module_pwm_openSync(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
 {
-	return EVM_VAL_UNDEFINED;
+
+    return EVM_VAL_UNDEFINED;
 }
 
 //pwmpin.setPeriod(period[, callback])
@@ -36,7 +38,8 @@ static evm_val_t evm_module_pwm_class_setFrequency(evm_t *e, evm_val_t *p, int a
 //pwmpin.setFrequencySync(frequency)
 static evm_val_t evm_module_pwm_class_setFrequencySync(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
 {
-	return EVM_VAL_UNDEFINED;
+
+    return EVM_VAL_UNDEFINED;
 }
 
 //pwmpin.setDutyCycle(dutyCycle[, callback])

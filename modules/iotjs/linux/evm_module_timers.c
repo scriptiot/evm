@@ -4,9 +4,6 @@
 #include <signal.h>
 #include <errno.h>
 
-#define CLOCKID CLOCK_REALTIME
-#define SIG SIGALRM
-
 static evm_t *timer_e;
 
 static void callback_handler(union sigval v)
@@ -34,7 +31,7 @@ static timer_t timer(int id, int delay, int once)
 
     struct itimerspec its; // duration settings
 
-    ret = timer_create(CLOCKID, &sev, &timerid);
+    ret = timer_create(CLOCK_REALTIME, &sev, &timerid);
     if (ret == -1)
     {
         return NULL;
