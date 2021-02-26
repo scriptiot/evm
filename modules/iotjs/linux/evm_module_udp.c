@@ -1,5 +1,6 @@
 #ifdef CONFIG_EVM_MODULE_UDP
 #include "evm_module.h"
+#include <sys/socket.h>
 
 evm_val_t *evm_module_udp_class_instantiate(evm_t *e, evm_val_t *p, int argc, evm_val_t *v);
 
@@ -16,7 +17,7 @@ static evm_val_t evm_module_udp_dgram_createSocket(evm_t *e, evm_val_t *p, int a
 //  error
 //  listening
 //  message
-static evm_val_t evm_module_udp_dgram_onEvent(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
+static evm_val_t evm_module_udp_dgram_on(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
 {
     return EVM_VAL_UNDEFINED;
 }
@@ -93,12 +94,17 @@ evm_val_t *evm_module_udp_class_instantiate(evm_t *e, evm_val_t *p, int argc, ev
     evm_val_t *obj = evm_object_create(e, GC_OBJECT, 6, 0);
     if (obj)
     {
-        evm_prop_append(e, obj, "read", evm_mk_native((intptr_t)evm_module_udp_class_read));
-        evm_prop_append(e, obj, "readSync", evm_mk_native((intptr_t)evm_module_udp_class_readSync));
-        evm_prop_append(e, obj, "write", evm_mk_native((intptr_t)evm_module_udp_class_write));
-        evm_prop_append(e, obj, "writeSync", evm_mk_native((intptr_t)evm_module_udp_class_writeSync));
+        evm_prop_append(e, obj, "addMembership", evm_mk_native((intptr_t)evm_module_udp_class_addMembership));
+        evm_prop_append(e, obj, "address", evm_mk_native((intptr_t)evm_module_udp_class_address));
+        evm_prop_append(e, obj, "bind", evm_mk_native((intptr_t)evm_module_udp_class_bind));
         evm_prop_append(e, obj, "close", evm_mk_native((intptr_t)evm_module_udp_class_close));
-        evm_prop_append(e, obj, "closeSync", evm_mk_native((intptr_t)evm_module_udp_class_closeSync));
+        evm_prop_append(e, obj, "dropMembership", evm_mk_native((intptr_t)evm_module_udp_class_dropMembership));
+        evm_prop_append(e, obj, "send", evm_mk_native((intptr_t)evm_module_udp_class_send));
+        evm_prop_append(e, obj, "sendto", evm_mk_native((intptr_t)evm_module_udp_class_sendto));
+        evm_prop_append(e, obj, "setBroadcast", evm_mk_native((intptr_t)evm_module_udp_class_closeSync));
+        evm_prop_append(e, obj, "setMulticastLoopback", evm_mk_native((intptr_t)evm_module_udp_class_setMulticastLoopback));
+        evm_prop_append(e, obj, "setMulticastTTL", evm_mk_native((intptr_t)evm_module_udp_class_setMulticastTTL));
+        evm_prop_append(e, obj, "setTTL", evm_mk_native((intptr_t)evm_module_udp_class_setTTL));
     }
     return obj;
 }
@@ -106,8 +112,8 @@ evm_val_t *evm_module_udp_class_instantiate(evm_t *e, evm_val_t *p, int argc, ev
 evm_err_t evm_module_udp(evm_t *e)
 {
     evm_builtin_t builtin[] = {
-        {"open", evm_mk_native((intptr_t)evm_module_udp_open)},
-        {"openSync", evm_mk_native((intptr_t)evm_module_udp_openSync)},
+        {"createSocket", evm_mk_native((intptr_t)evm_module_udp_dgram_createSocket)},
+        {"on", evm_mk_native((intptr_t)evm_module_udp_dgram_on)},
         {NULL, NULL}};
     evm_module_create(e, "dgram", builtin);
     return e->err;
