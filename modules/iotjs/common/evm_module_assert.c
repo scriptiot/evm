@@ -1,10 +1,11 @@
 #ifdef CONFIG_EVM_MODULE_ASSERT
 #include "evm_module.h"
 
-enum {
-    NOT_EQUAL, // !=
-    EQUAL,     // ==
-    GREATER,   // >
+enum
+{
+    NOT_EQUAL,    // !=
+    EQUAL,        // ==
+    GREATER,      // >
     GREATER_THAN, // >=
     LESS_THAN,    // <=
     LESS          // <
@@ -16,7 +17,7 @@ static evm_val_t evm_module_assert_assert(evm_t *e, evm_val_t *p, int argc, evm_
     if (argc < 1)
         return EVM_VAL_UNDEFINED;
 
-    char *message = NULL;
+    const char *message = NULL;
 
     if (argc > 1 && evm_is_string(v + 1))
         message = evm_2_string(v + 1);
@@ -35,6 +36,7 @@ static evm_val_t evm_module_assert_assert(evm_t *e, evm_val_t *p, int argc, evm_
         evm_set_err(e, ec_type, message);
         return NULL;
     }
+    return EVM_VAL_UNDEFINED;
 }
 
 //doesNotThrow(block[, message])
@@ -43,7 +45,7 @@ static evm_val_t evm_module_assert_doesNotThrow(evm_t *e, evm_val_t *p, int argc
     if (argc < 1 || !evm_is_script(v))
         return EVM_VAL_UNDEFINED;
 
-    char *message = NULL;
+    const char *message = NULL;
     if (argc > 1 && evm_is_string(v + 1))
         message = evm_2_string(v + 1);
 
@@ -108,7 +110,7 @@ static evm_val_t evm_module_assert_equal(evm_t *e, evm_val_t *p, int argc, evm_v
     if (argc <= 1)
         return EVM_VAL_UNDEFINED;
 
-    char *message = NULL;
+    const char *message = NULL;
     if (argc > 1 && evm_is_string(v + 1))
         message = evm_2_string(v + 1);
 
@@ -121,7 +123,7 @@ static evm_val_t evm_module_assert_equal(evm_t *e, evm_val_t *p, int argc, evm_v
 }
 
 static evm_val_t compare_by_value(evm_val_t *l, evm_val_t *r, int operator) {
-    evm_val_t *result;
+    evm_val_t result;
     switch (operator) {
     case NOT_EQUAL: {
         if (evm_2_integer(l) != evm_2_integer(r)) {
@@ -172,7 +174,7 @@ static evm_val_t compare_by_value(evm_val_t *l, evm_val_t *r, int operator) {
         break;
     }
     }
-    return *result;
+    return result;
 }
 
 //fail(actual, expected, message, operator)
@@ -182,7 +184,7 @@ static evm_val_t evm_module_assert_fail(evm_t *e, evm_val_t *p, int argc, evm_va
     if (argc <= 3 || !evm_is_string(v + 3))
         return EVM_VAL_UNDEFINED;
 
-    char *message = evm_2_string(v + 2);
+    const char *message = evm_2_string(v + 2);
 
     evm_val_t result = evm_module_assert_equal(e, p, argc, v);
     if (result != EVM_VAL_TRUE) {
@@ -190,7 +192,7 @@ static evm_val_t evm_module_assert_fail(evm_t *e, evm_val_t *p, int argc, evm_va
         return NULL;
     }
 
-    char *operator = evm_2_string(v + 3);
+    const char *operator= evm_2_string(v + 3);
     if (strcmp(operator, "!=") == 0) {
         result = compare_by_value(v, v + 1, NOT_EQUAL);
     } else if (strcmp(operator, "==") == 0) {
@@ -215,7 +217,7 @@ static evm_val_t evm_module_assert_notEqual(evm_t *e, evm_val_t *p, int argc, ev
     if (argc < 2)
         return EVM_VAL_UNDEFINED;
 
-    char *message = NULL;
+    const char *message = NULL;
     if (argc > 1 && evm_is_string(v + 2))
         message = evm_2_string(v + 2);
 
@@ -245,7 +247,7 @@ static evm_val_t evm_module_assert_throws(evm_t *e, evm_val_t *p, int argc, evm_
     if (argc < 1 || !evm_is_script(v))
         return EVM_VAL_UNDEFINED;
 
-    char *message = NULL;
+    const char *message = NULL;
     if (argc > 1 && evm_is_string(v + 1))
         message = evm_2_string(v + 1);
 
