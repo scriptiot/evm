@@ -39,6 +39,10 @@ typedef int32_t  evm_int_t;
 #define EVM_REFRESH_MODULE          1
 #define EVM_INVALID_HASH           -1
 
+#define EVM_RUN_AS_MODULE           0
+#define EVM_RUN_WITH_RETURN         1
+
+
 enum GC_TYPE
 {
     GC_NONE,
@@ -167,6 +171,7 @@ typedef struct evm_t{
     evm_val_t *builtin_string;
     evm_val_t *builtin_boolean;
 
+    uint32_t gc_usage;
 }evm_t;
 
 typedef void (*evm_init_fn)(evm_t * e, evm_val_t * old_self, evm_val_t * new_self);

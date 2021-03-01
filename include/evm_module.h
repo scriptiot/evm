@@ -16,7 +16,7 @@
 #define EVM_GPIO_EDGE_FALLING   2
 #define EVM_GPIO_EDGE_BOTH      3
 
-#define EVM_HEAP_SIZE    (100 * 1024)
+#define EVM_HEAP_SIZE    (20 * 1024)
 #define EVM_STACK_SIZE   (10 * 1024)
 #define EVM_MODULE_REGISTRY_SIZE       100
 

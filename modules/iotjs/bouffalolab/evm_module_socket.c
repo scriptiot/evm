@@ -1,11 +1,12 @@
-#if 1
+#ifdef CONFIG_EVM_MODULE_SOCKET
 #include "evm_module.h"
-#include <pthread.h>
-#include <sys/socket.h>
-#include <unistd.h>
-#include <fcntl.h>
-#include "netdb.h"
-fdsfdsfdsf
+
+#include <FreeRTOS.h>
+#include <task.h>
+#include <lwip/sockets.h>
+#include <lwip/netdb.h>
+#include <lwip/tcp.h>
+#include <lwip/err.h>
 
 #define _SOCKET_READ_BUF_SIZE 4096
 
@@ -19,9 +20,10 @@ typedef struct _net_sock_t
     uint8_t rx_buf[_SOCKET_READ_BUF_SIZE];
 } _net_sock_t;
 
-static void _net_server_thread(_net_sock_t *server_sock)
+static void _net_server_thread(void *pvParameters)
 {
-    _net_sock_t *client_sock;
+    _net_sock_t *server_sock = (_net_sock_t *)pvParameters;
+    _net_sock_t *client_sock = NULL;
     while (client_sock->alive)
     {
         client_sock = evm_malloc(sizeof(_net_sock_t));
@@ -64,7 +66,8 @@ static void _net_client_thread(_net_sock_t *client_sock)
             close(client_sock->sockfd);
             break;
         }
-        usleep(1000);
+
+        vTaskDelay(1); /* 阻塞延时，单位ms */
     }
     evm_free(client_sock);
 }
@@ -88,7 +91,7 @@ static evm_val_t evm_module_net_server_listen(evm_t *e, evm_val_t *p, int argc, 
         return EVM_VAL_UNDEFINED;
     }
 
-    _net_sock_t *server_sock = evm_object_get_ext_data(p);
+    _net_sock_t *server_sock = (_net_sock_t *)evm_object_get_ext_data(p);
     if (!server_sock)
         return EVM_VAL_UNDEFINED;
 
@@ -109,7 +112,13 @@ static evm_val_t evm_module_net_server_listen(evm_t *e, evm_val_t *p, int argc, 
         close(server_sock->sockfd);
     }
 
-    pthread_create(&server_sock->pid, NULL, _net_server_thread, server_sock);
+    xTaskCreate(_net_server_thread,   /* 任务函数名 */
+                "socket-task-listen", /* 任务名，字符串形式，方便调试 */
+                512,                  /* 栈大小，单位为字，即4个字节 */
+                server_sock,          /* 任务形参 void * */
+                10,                   /* 优先级，数值越大，优先级越高 */
+                NULL);                /* 任务句柄 */
+
     return EVM_VAL_UNDEFINED;
 }
 
@@ -136,7 +145,7 @@ static evm_val_t evm_module_net_server_on(evm_t *e, evm_val_t *p, int argc, evm_
 //socket.connect(port[, host][, connectListener])
 static evm_val_t evm_module_net_socket_connect(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
 {
-    _net_sock_t *sock = evm_object_get_ext_data(p);
+    _net_sock_t *sock = (_net_sock_t *)evm_object_get_ext_data(p);
     if (!sock)
         return EVM_VAL_UNDEFINED;
 
@@ -171,7 +180,7 @@ static evm_val_t evm_module_net_socket_connect(evm_t *e, evm_val_t *p, int argc,
         evm_module_event_emit(e, p, "connect", 0, NULL);
     }
 
-    pthread_create(&sock->pid, NULL, _net_client_thread, sock);
+    xTaskCreate(_net_client_thread, "socket-task-connect", 512, sock, 11, NULL);
 
     return EVM_VAL_UNDEFINED;
 }
@@ -179,7 +188,7 @@ static evm_val_t evm_module_net_socket_connect(evm_t *e, evm_val_t *p, int argc,
 //socket.destroy()
 static evm_val_t evm_module_net_socket_destroy(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
 {
-    _net_sock_t *sock = evm_object_get_ext_data(p);
+    _net_sock_t *sock = (_net_sock_t *)evm_object_get_ext_data(p);
     if (!sock)
         return EVM_VAL_UNDEFINED;
     close(sock->sockfd);
@@ -191,7 +200,7 @@ static evm_val_t evm_module_net_socket_destroy(evm_t *e, evm_val_t *p, int argc,
 //socket.end([data][, callback])
 static evm_val_t evm_module_net_socket_end(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
 {
-    _net_sock_t *sock = evm_object_get_ext_data(p);
+    _net_sock_t *sock = (_net_sock_t *)evm_object_get_ext_data(p);
     if (!sock)
         return EVM_VAL_UNDEFINED;
     if (argc > 0)
@@ -230,7 +239,7 @@ static evm_val_t evm_module_net_socket_resume(evm_t *e, evm_val_t *p, int argc, 
 //socket.setKeepAlive([enable][, initialDelay])
 static evm_val_t evm_module_net_socket_setKeepAlive(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
 {
-    _net_sock_t *sock = evm_object_get_ext_data(p);
+    _net_sock_t *sock = (_net_sock_t *)evm_object_get_ext_data(p);
     if (!sock)
         return EVM_VAL_UNDEFINED;
     if (argc > 0 && evm_is_boolean(v))
@@ -258,7 +267,7 @@ static evm_val_t evm_module_net_socket_setTimeout(evm_t *e, evm_val_t *p, int ar
 //socket.write(data[, callback])
 static evm_val_t evm_module_net_socket_write(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
 {
-    _net_sock_t *sock = evm_object_get_ext_data(p);
+    _net_sock_t *sock = (_net_sock_t *)evm_object_get_ext_data(p);
     if (!sock)
         return EVM_VAL_UNDEFINED;
     if (argc > 0)
@@ -417,6 +426,7 @@ evm_val_t *_net_socket_create(evm_t *e)
     evm_object_set_ext_data(obj, (intptr_t)sock);
     sock->alive = 1;
     sock->obj_id = evm_module_registry_add(e, obj);
+    return EVM_VAL_UNDEFINED;
 }
 
 static evm_object_native_t _net_socket_native = {

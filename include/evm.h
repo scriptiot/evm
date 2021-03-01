@@ -49,7 +49,8 @@ EVM_API evm_val_t *evm_list_get(evm_t *e, evm_val_t *o, uint32_t index);
 EVM_API void evm_list_set_len(evm_val_t *v, uint32_t len);
 EVM_API void evm_list_set_count(evm_val_t *v, uint32_t count);
 EVM_API uint32_t evm_list_get_count(evm_val_t *v);
-evm_err_t evm_list_append(evm_t * e, evm_val_t * obj, evm_val_t v);
+EVM_API evm_err_t evm_list_append(evm_t * e, evm_val_t * obj, evm_val_t v);
+EVM_API evm_val_t *evm_list_duplicate(evm_t * e, evm_val_t *o);
 
 /*** 对象操作函数 ***/
 EVM_API evm_val_t *evm_object_create(evm_t *e, evm_type_t type, uint32_t prop_len, uint32_t attr_len);
@@ -128,6 +129,7 @@ EVM_API evm_err_t nevm_start(evm_t *e);
 EVM_API evm_val_t evm_run_script(evm_t * e, const char * full_path);
 EVM_API evm_val_t evm_run_eval(evm_t * e,  evm_val_t *object, char * string,int lang_type);
 EVM_API evm_val_t evm_module_load(evm_t * e, const char * full_path, int8_t refresh_needed);
+EVM_API evm_val_t evm_run_string(evm_t * e, const char * content, int lang_type, int mode);
 
 /*** 外部实现接口 ***/
 EVM_API void evm_register_print(intptr_t fn);

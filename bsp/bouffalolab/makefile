@@ -1,4 +1,4 @@
-BL60X_SDK_PATH = /home/wanli/projects/scriptiot/evm3_publish/sdk/bl_iot_sdk
+BL60X_SDK_PATH = ../../sdk/bl_iot_sdk
 
 PROJECT_NAME := evm
 PROJECT_PATH := $(abspath .)
@@ -17,13 +17,28 @@ endif
 
 EXTRA_COMPONENT_DIRS += $(BL60X_SDK_PATH)/../../modules
 
+COMPONENT_INCLUDES += $(BL60X_SDK_PATH)/../../modules/iotjs/bouffalolab
+
 CFLAGS += -DCONFIG_EVM_MODULE_ASSERT
+CFLAGS += -DCONFIG_EVM_MODULE_SOCKET
+
+CFLAGS += -DEVM_LANG_ENABLE_REPL
+CFLAGS += -DEVM_LANG_ENABLE_JAVASCRIPT
+CFLAGS += -DCONFIG_EVM_ECMA_OBJECT
+CFLAGS += -DCONFIG_EVM_ECMA_ARRAY
+CFLAGS += -DCONFIG_EVM_ECMA_NUMBER
+CFLAGS += -DCONFIG_EVM_ECMA_STRING
+CFLAGS += -DCONFIG_EVM_ECMA_MATH
+CFLAGS += -DCONFIG_EVM_ECMA_TIMEOUT
+CFLAGS += -DCONFIG_EVM_ECMA_CONSOLE
+
+
 
 
 COMPONENTS_BLSYS   := bltime blfdt blmtd bloop loopadc looprt loopset
 COMPONENTS_VFS     := romfs
 
-INCLUDE_COMPONENTS += freertos_riscv_ram bl602 bl602_std hal_drv vfs yloop utils cli blog blog_testc
+INCLUDE_COMPONENTS += freertos_riscv_ram bl602 bl602_std hal_drv lwip lwip_dhcpd vfs yloop utils cli blog blog_testc
 INCLUDE_COMPONENTS += iotjs
 INCLUDE_COMPONENTS += $(COMPONENTS_NETWORK)
 INCLUDE_COMPONENTS += $(COMPONENTS_BLSYS)
@@ -31,3 +46,4 @@ INCLUDE_COMPONENTS += $(COMPONENTS_VFS)
 INCLUDE_COMPONENTS += $(PROJECT_NAME)
 
 include $(BL60X_SDK_PATH)/make_scripts_riscv/project.mk
+
