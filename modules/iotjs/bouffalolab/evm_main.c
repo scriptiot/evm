@@ -2,22 +2,25 @@
 #include "ecma.h"
 
 #include <FreeRTOS.h>
-#include <task.h>
 #include <vfs.h>
-#include <vfs_inode.h>
-#include <vfs_register.h>
-#include <fs/vfs_romfs.h>
 #include <aos/kernel.h>
+#include <aos/yloop.h>
+#include <event_device.h>
+#include <cli.h>
+#include <bl_uart.h>
+#include <bl_chip.h>
+#include <bl_sec.h>
+#include <bl_irq.h>
+#include <bl_dma.h>
+#include <hal_uart.h>
+#include <hal_sys.h>
+#include <hal_boot2.h>
+#include <hal_board.h>
+#include <bl_sys_time.h>
+#include <fdt.h>
+#include <libfdt.h>
+#include <blog.h>
 
-/*****************REPL*******************/
-
-char evm_repl_tty_read(evm_t *e)
-{
-    EVM_UNUSED(e);
-    char ch;
-    while(1);
-    return ch;
-}
 
 /******************文件操作API******************/
 enum FS_MODE
@@ -297,8 +300,6 @@ int evm_main(void)
     evm_module_registry_init(env, EVM_MODULE_REGISTRY_SIZE);
 
     xTaskCreate(evm_event_thread, "evm-main-task", 512, env, 0, NULL);
-
-    vTaskStartScheduler(); // 启动任务调度
 
 #ifdef EVM_LANG_ENABLE_REPL
     evm_repl_run(env, 1000, EVM_LANG_JS);

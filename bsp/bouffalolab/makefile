@@ -1,6 +1,6 @@
 BL60X_SDK_PATH = ../../sdk/bl_iot_sdk
 
-PROJECT_NAME := evm
+PROJECT_NAME := app
 PROJECT_PATH := $(abspath .)
 PROJECT_BOARD := evb
 export PROJECT_PATH PROJECT_BOARD
@@ -32,13 +32,11 @@ CFLAGS += -DCONFIG_EVM_ECMA_MATH
 CFLAGS += -DCONFIG_EVM_ECMA_TIMEOUT
 CFLAGS += -DCONFIG_EVM_ECMA_CONSOLE
 
-
-
-
 COMPONENTS_BLSYS   := bltime blfdt blmtd bloop loopadc looprt loopset
 COMPONENTS_VFS     := romfs
 
 INCLUDE_COMPONENTS += freertos_riscv_ram bl602 bl602_std hal_drv lwip lwip_dhcpd vfs yloop utils cli blog blog_testc
+INCLUDE_COMPONENTS += easyflash4
 INCLUDE_COMPONENTS += iotjs
 INCLUDE_COMPONENTS += $(COMPONENTS_NETWORK)
 INCLUDE_COMPONENTS += $(COMPONENTS_BLSYS)
