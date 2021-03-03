@@ -86,10 +86,8 @@ char *evm_open(evm_t *e, char *filename)
     return buffer;
 }
 /*****************evm文件加载接口*******************/
-static int modules_paths_count = 2;
-static char *modules_paths[] = {
-    "../",
-    "/romfs/test"};
+static int modules_paths_count = 1;
+static char *modules_paths[] = {"/romfs"};
 
 const char *vm_load(evm_t *e, char *path, int type)
 {
@@ -307,7 +305,7 @@ int evm_main()
     evm_repl_run(env, 1000, EVM_LANG_JS);
 #endif
 
-    err = evm_boot(env, "main.js");
+    err = evm_boot(env, "hello.js");
 
     if (err == ec_no_file)
     {
