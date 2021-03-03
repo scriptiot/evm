@@ -16,11 +16,11 @@ $(info ****** Trying SDK PATH [$(BL60X_SDK_PATH)])
 endif
 
 EXTRA_COMPONENT_DIRS += $(BL60X_SDK_PATH)/../../modules
-
 COMPONENT_INCLUDES += $(BL60X_SDK_PATH)/../../modules/iotjs/bouffalolab
 
 CFLAGS += -DCONFIG_EVM_MODULE_ASSERT
-CFLAGS += -DCONFIG_EVM_MODULE_SOCKET
+CFLAGS += -DCONFIG_EVM_MODULE_NET
+CFLAGS += -DCONFIG_EVM_MODULE_DNS
 
 CFLAGS += -DEVM_LANG_ENABLE_REPL
 CFLAGS += -DEVM_LANG_ENABLE_JAVASCRIPT
@@ -32,10 +32,11 @@ CFLAGS += -DCONFIG_EVM_ECMA_MATH
 CFLAGS += -DCONFIG_EVM_ECMA_TIMEOUT
 CFLAGS += -DCONFIG_EVM_ECMA_CONSOLE
 
+COMPONENTS_NETWORK := sntp dns_server
 COMPONENTS_BLSYS   := bltime blfdt blmtd bloop loopadc looprt loopset
 COMPONENTS_VFS     := romfs
 
-INCLUDE_COMPONENTS += freertos_riscv_ram bl602 bl602_std hal_drv lwip lwip_dhcpd vfs yloop utils cli blog blog_testc
+INCLUDE_COMPONENTS += freertos_riscv_ram bl602 bl602_std bl602_wifi bl602_wifidrv hal_drv lwip lwip_dhcpd lwip_mdns vfs yloop utils netutils cli blog blog_testc
 INCLUDE_COMPONENTS += easyflash4
 INCLUDE_COMPONENTS += iotjs
 INCLUDE_COMPONENTS += $(COMPONENTS_NETWORK)

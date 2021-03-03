@@ -89,7 +89,7 @@ char *evm_open(evm_t *e, char *filename)
 static int modules_paths_count = 2;
 static char *modules_paths[] = {
     "../",
-    "../../../test"};
+    "/romfs/test"};
 
 const char *vm_load(evm_t *e, char *path, int type)
 {
@@ -274,7 +274,9 @@ void evm_event_thread(void *pvParameters)
     }
 }
 
-int evm_main(void)
+extern evm_t *env;
+
+int evm_main()
 {
     evm_register_free((intptr_t)vm_free);
     evm_register_malloc((intptr_t)vm_malloc);
@@ -299,7 +301,7 @@ int evm_main(void)
 
     evm_module_registry_init(env, EVM_MODULE_REGISTRY_SIZE);
 
-    xTaskCreate(evm_event_thread, "evm-main-task", 512, env, 0, NULL);
+    xTaskCreate(evm_event_thread, "evm-main-task", 512, env, 2, NULL);
 
 #ifdef EVM_LANG_ENABLE_REPL
     evm_repl_run(env, 1000, EVM_LANG_JS);

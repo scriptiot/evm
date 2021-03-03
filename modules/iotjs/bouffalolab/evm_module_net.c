@@ -1,4 +1,4 @@
-#ifdef CONFIG_EVM_MODULE_SOCKET
+#ifdef CONFIG_EVM_MODULE_NET
 #include "evm_module.h"
 
 #include <FreeRTOS.h>
@@ -180,7 +180,7 @@ static evm_val_t evm_module_net_socket_connect(evm_t *e, evm_val_t *p, int argc,
         evm_module_event_emit(e, p, "connect", 0, NULL);
     }
 
-    xTaskCreate(_net_client_thread, "socket-task-connect", 512, sock, 11, NULL);
+    xTaskCreate(_net_client_thread, "socket-task-connect", 512, sock, 1, NULL);
 
     return EVM_VAL_UNDEFINED;
 }

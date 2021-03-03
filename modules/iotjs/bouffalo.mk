@@ -46,7 +46,8 @@ COMPONENT_SRCS += \
 	common/evm_module_assert.c \
 	common/evm_module.c \
 	bouffalolab/evm_main.c \
-	bouffalolab/evm_module_socket.c
+	bouffalolab/evm_module_dns.c \
+	bouffalolab/evm_module_net.c
 
 COMPONENT_OBJS := $(patsubst %.c,%.o, $(COMPONENT_SRCS))
 
