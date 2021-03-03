@@ -18,7 +18,7 @@
 
 #define EVM_HEAP_SIZE (30 * 1024)
 #define EVM_STACK_SIZE   (10 * 1024)
-#define EVM_MODULE_REGISTRY_SIZE       100
+#define EVM_MODULE_REGISTRY_SIZE 20
 
 #ifdef CONFIG_EVM_MODULE_ADC
 extern evm_err_t evm_module_adc(evm_t *e);

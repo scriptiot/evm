@@ -36,7 +36,7 @@
 #include <fdt.h>
 #include <libfdt.h>
 #include <blog.h>
-#include "evm.h"
+#include "evm_module.h"
 
 #define WIFI_AP_PSM_INFO_SSID "bytecode"
 #define WIFI_AP_PSM_INFO_PASSWORD "bytecode888"

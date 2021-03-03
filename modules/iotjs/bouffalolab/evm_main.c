@@ -135,7 +135,7 @@ const char *vm_load(evm_t *e, char *path, int type)
 
 void *vm_malloc(int size)
 {
-    void *m = malloc(size);
+    void *m = pvPortMalloc(size);
     if (m)
         memset(m, 0, size);
     return m;
@@ -144,7 +144,7 @@ void *vm_malloc(int size)
 void vm_free(void *mem)
 {
     if (mem)
-        free(mem);
+        vPortFree(mem);
 }
 
 evm_err_t evm_module_init(evm_t *env)
@@ -272,8 +272,6 @@ void evm_event_thread(void *pvParameters)
     }
 }
 
-extern evm_t *env;
-
 int evm_main()
 {
     evm_register_free((intptr_t)vm_free);
@@ -299,19 +297,22 @@ int evm_main()
 
     evm_module_registry_init(env, EVM_MODULE_REGISTRY_SIZE);
 
-    xTaskCreate(evm_event_thread, "evm-main-task", 512, env, 2, NULL);
+    static StackType_t event_stack[1024];
+    static StaticTask_t event_task;
+
+    xTaskCreateStatic(evm_event_thread, "evm-main-task", 1024, NULL, 13, event_stack, &event_task);
 
 #ifdef EVM_LANG_ENABLE_REPL
-    evm_repl_run(env, 1000, EVM_LANG_JS);
+    evm_repl_run(env, 100, EVM_LANG_JS);
 #endif
 
-    err = evm_boot(env, "hello.js");
+    // err = evm_boot(env, "hello.js");
 
-    if (err == ec_no_file)
-    {
-        evm_print("can't open file\r\n");
-        return err;
-    }
+    // if (err == ec_no_file)
+    // {
+    //     evm_print("can't open file\r\n");
+    //     return err;
+    // }
 
     err = evm_start(env);
     return err;
