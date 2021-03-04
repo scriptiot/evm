@@ -46,6 +46,7 @@ COMPONENT_SRCS += \
 	common/evm_module.c \
 	common/evm_module_assert.c \
 	common/evm_module_process.c \
+	common/evm_module_buffer.c \
 	bouffalolab/evm_main.c \
 	bouffalolab/evm_module_dns.c \
 	bouffalolab/evm_module_net.c
