@@ -268,7 +268,7 @@ void evm_event_thread(void *pvParameters)
 #ifdef CONFIG_EVM_MODULE_PROCESS
         evm_module_process_poll(e);
 #endif
-        vTaskDelay(1);
+        vTaskDelay(10);
     }
 }
 
@@ -300,20 +300,23 @@ int evm_main()
     static StackType_t event_stack[1024];
     static StaticTask_t event_task;
 
-    xTaskCreateStatic(evm_event_thread, "evm-main-task", 1024, NULL, 13, event_stack, &event_task);
+    taskENTER_CRITICAL();
+    xTaskCreateStatic(evm_event_thread, (char *)"evm-event-task", 1024, env, 14, event_stack, &event_task);
+    taskEXIT_CRITICAL();
 
 #ifdef EVM_LANG_ENABLE_REPL
     evm_repl_run(env, 100, EVM_LANG_JS);
 #endif
 
-    // err = evm_boot(env, "hello.js");
+    err = evm_boot(env, "hello.js");
 
-    // if (err == ec_no_file)
-    // {
-    //     evm_print("can't open file\r\n");
-    //     return err;
-    // }
+    if (err == ec_no_file)
+    {
+        evm_print("can't open file\r\n");
+        return err;
+    }
 
     err = evm_start(env);
+
     return err;
 }

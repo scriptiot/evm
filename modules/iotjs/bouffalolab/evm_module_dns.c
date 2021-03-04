@@ -13,6 +13,7 @@ static evm_val_t evm_module_dns_lookup(evm_t *e, evm_val_t *p, int argc, evm_val
     {
         return EVM_VAL_UNDEFINED;
     }
+
     struct hostent *hostinfo;
     const char *hostname = evm_2_string(v);
     hostinfo = gethostbyname(hostname);

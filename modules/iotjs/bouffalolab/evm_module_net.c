@@ -23,7 +23,7 @@ typedef struct _net_sock_t
 static void _net_server_thread(void *pvParameters)
 {
     _net_sock_t *server_sock = (_net_sock_t *)pvParameters;
-    _net_sock_t *client_sock = NULL;
+    _net_sock_t *client_sock;
     while (client_sock->alive)
     {
         client_sock = evm_malloc(sizeof(_net_sock_t));
@@ -112,12 +112,14 @@ static evm_val_t evm_module_net_server_listen(evm_t *e, evm_val_t *p, int argc, 
         close(server_sock->sockfd);
     }
 
+    taskENTER_CRITICAL();
     xTaskCreate(_net_server_thread,   /* 任务函数名 */
                 "socket-task-listen", /* 任务名，字符串形式，方便调试 */
                 512,                  /* 栈大小，单位为字，即4个字节 */
                 server_sock,          /* 任务形参 void * */
-                10,                   /* 优先级，数值越大，优先级越高 */
+                13,                   /* 优先级，数值越大，优先级越高 */
                 NULL);                /* 任务句柄 */
+    taskEXIT_CRITICAL();
 
     return EVM_VAL_UNDEFINED;
 }
@@ -180,7 +182,9 @@ static evm_val_t evm_module_net_socket_connect(evm_t *e, evm_val_t *p, int argc,
         evm_module_event_emit(e, p, "connect", 0, NULL);
     }
 
-    xTaskCreate(_net_client_thread, "socket-task-connect", 512, sock, 1, NULL);
+    taskENTER_CRITICAL();
+    xTaskCreate(_net_client_thread, "socket-task-connect", 512, sock, 13, NULL);
+    taskEXIT_CRITICAL();
 
     return EVM_VAL_UNDEFINED;
 }

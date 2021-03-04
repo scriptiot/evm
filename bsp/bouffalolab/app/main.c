@@ -661,7 +661,7 @@ void bfl_main(void)
     static StackType_t aos_loop_proc_stack[1024];
     static StaticTask_t aos_loop_proc_task;
 
-    static StackType_t evm_stack[1024];
+    static StackType_t evm_stack[2048];
     static StaticTask_t evm_task;
 
     time_main = bl_timer_now_us();
@@ -670,6 +670,7 @@ void bfl_main(void)
      * and baudrate of 2M
      */
     bl_uart_init(0, 16, 7, 255, 255, 2 * 1000 * 1000);
+    bl_uart_init(1, 4, 3, 255, 255, 115200);
     puts("Starting bl602 now....\r\n");
 
     _dump_boot_info();
@@ -684,7 +685,7 @@ void bfl_main(void)
 
     puts("[OS] Starting aos_loop_proc task...\r\n");
     xTaskCreateStatic(aos_loop_proc, (char *)"event_loop", 1024, NULL, 15, aos_loop_proc_stack, &aos_loop_proc_task);
-    xTaskCreateStatic(evm_task_proc, (char *)"evm", 1024, NULL, 14, evm_stack, &evm_task);
+    xTaskCreateStatic(evm_task_proc, (char *)"evm", 2048, NULL, 12, evm_stack, &evm_task);
     tcpip_init(NULL, NULL);
 
     puts("[OS] Starting OS Scheduler...\r\n");
