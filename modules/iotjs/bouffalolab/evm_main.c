@@ -86,10 +86,8 @@ char *evm_open(evm_t *e, char *filename)
     return buffer;
 }
 /*****************evm文件加载接口*******************/
-static int modules_paths_count = 2;
-static char *modules_paths[] = {
-    "../",
-    "../../../test"};
+static int modules_paths_count = 1;
+static char *modules_paths[] = {"/romfs"};
 
 const char *vm_load(evm_t *e, char *path, int type)
 {
@@ -137,7 +135,7 @@ const char *vm_load(evm_t *e, char *path, int type)
 
 void *vm_malloc(int size)
 {
-    void *m = malloc(size);
+    void *m = pvPortMalloc(size);
     if (m)
         memset(m, 0, size);
     return m;
@@ -146,7 +144,7 @@ void *vm_malloc(int size)
 void vm_free(void *mem)
 {
     if (mem)
-        free(mem);
+        vPortFree(mem);
 }
 
 evm_err_t evm_module_init(evm_t *env)
@@ -270,11 +268,11 @@ void evm_event_thread(void *pvParameters)
 #ifdef CONFIG_EVM_MODULE_PROCESS
         evm_module_process_poll(e);
 #endif
-        vTaskDelay(1);
+        vTaskDelay(10);
     }
 }
 
-int evm_main(void)
+int evm_main()
 {
     evm_register_free((intptr_t)vm_free);
     evm_register_malloc((intptr_t)vm_malloc);
@@ -299,13 +297,18 @@ int evm_main(void)
 
     evm_module_registry_init(env, EVM_MODULE_REGISTRY_SIZE);
 
-    xTaskCreate(evm_event_thread, "evm-main-task", 512, env, 0, NULL);
+    static StackType_t event_stack[1024];
+    static StaticTask_t event_task;
+
+    taskENTER_CRITICAL();
+    xTaskCreateStatic(evm_event_thread, (char *)"evm-event-task", 1024, env, 14, event_stack, &event_task);
+    taskEXIT_CRITICAL();
 
 #ifdef EVM_LANG_ENABLE_REPL
-    evm_repl_run(env, 1000, EVM_LANG_JS);
+    evm_repl_run(env, 100, EVM_LANG_JS);
 #endif
 
-    err = evm_boot(env, "main.js");
+    err = evm_boot(env, "hello.js");
 
     if (err == ec_no_file)
     {
@@ -314,5 +317,6 @@ int evm_main(void)
     }
 
     err = evm_start(env);
+
     return err;
 }

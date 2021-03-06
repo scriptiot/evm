@@ -13,25 +13,31 @@ typedef struct _gpio_dev_t {
 	int edge;
 } _gpio_dev_t;
 
-evm_val_t *evm_module_uart_class_instantiate(evm_t *e);
-
 static void _gpio_set_mode(_gpio_dev_t *dev) {
 	int mode = PIN_MODE_INPUT;
-	switch( dev->direction) {
-		case EVM_GPIO_DIRECTION_IN: mode = PIN_MODE_INPUT;break;
-		case EVM_GPIO_DIRECTION_OUT:mode = PIN_MODE_OUTPUT;break;
-	}
+    switch (dev->direction)
+    {
+    case EVM_GPIO_DIRECTION_IN:
+        mode = PIN_MODE_INPUT;
+        break;
+    case EVM_GPIO_DIRECTION_OUT:
+        mode = PIN_MODE_OUTPUT;
+        break;
+    }
 
-	switch( dev->mode ) {
-		case EVM_GPIO_MODE_PUSHPULL:
-		case EVM_GPIO_MODE_FLOAT:
-		case EVM_GPIO_MODE_NONE:break;
-		case EVM_GPIO_MODE_PULLUP: {
-			if( mode == PIN_MODE_INPUT )
-				mode = PIN_MODE_INPUT_PULLUP;
-			break;
-		}
-		case EVM_GPIO_MODE_PULLDOWN: {
+    switch (dev->mode)
+    {
+    case EVM_GPIO_MODE_PUSHPULL:
+    case EVM_GPIO_MODE_FLOAT:
+    case EVM_GPIO_MODE_NONE:
+        break;
+    case EVM_GPIO_MODE_PULLUP:
+    {
+        if (mode == PIN_MODE_INPUT)
+            mode = PIN_MODE_INPUT_PULLUP;
+        break;
+    }
+        case EVM_GPIO_MODE_PULLDOWN: {
 			if( mode == PIN_MODE_INPUT )
 				mode = PIN_MODE_INPUT_PULLDOWN;
 			break;
@@ -41,8 +47,8 @@ static void _gpio_set_mode(_gpio_dev_t *dev) {
 				mode = PIN_MODE_OUTPUT_OD;
 			break;
 		}
-	}
-	dev->rt_mode = mode;
+        }
+    dev->rt_mode = mode;
 }
 
 static evm_val_t _gpio_open_device(evm_t *e, evm_val_t *p, int argc, evm_val_t *v, int is_sync) {
@@ -104,8 +110,8 @@ static evm_val_t _gpio_open_device(evm_t *e, evm_val_t *p, int argc, evm_val_t *
 	_gpio_set_mode(dev);
 	rt_pin_mode(dev->pin, dev->rt_mode);
 
-    ret_obj = evm_module_uart_class_instantiate(e);
-	if( ret_obj == NULL ) {
+    ret_obj = evm_module_gpio_class_instantiate(e, p, argc, v);
+    if( ret_obj == NULL ) {
 		args = evm_mk_foreign_string("Failed to instantiate");
 		if( cb )
 			evm_run_callback(e, cb, NULL, &args, 1);

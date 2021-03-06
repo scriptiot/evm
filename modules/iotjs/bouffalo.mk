@@ -43,10 +43,16 @@ ECMA_SOURCES := \
 COMPONENT_SRCS += $(EVM_SOURCES)
 COMPONENT_SRCS += $(ECMA_SOURCES)
 COMPONENT_SRCS += \
-	common/evm_module_assert.c \
 	common/evm_module.c \
+	common/evm_module_assert.c \
+	common/evm_module_process.c \
+	common/evm_module_buffer.c \
 	bouffalolab/evm_main.c \
-	bouffalolab/evm_module_socket.c
+	bouffalolab/evm_module_dns.c \
+	bouffalolab/evm_module_net.c \
+	bouffalolab/evm_module_timers.c \
+	bouffalolab/evm_module_gpio.c \
+	bouffalolab/evm_module_uart.c
 
 COMPONENT_OBJS := $(patsubst %.c,%.o, $(COMPONENT_SRCS))
 

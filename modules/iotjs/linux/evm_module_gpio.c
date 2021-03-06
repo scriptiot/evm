@@ -13,8 +13,6 @@ typedef struct _gpio_dev_t {
 	int edge;
 } _gpio_dev_t;
 
-evm_val_t *evm_module_uart_class_instantiate(evm_t *e);
-
 static void _gpio_set_mode(_gpio_dev_t *dev) {
 	int mode = PIN_MODE_INPUT;
 	switch( dev->direction) {
@@ -104,7 +102,7 @@ static evm_val_t _gpio_open_device(evm_t *e, evm_val_t *p, int argc, evm_val_t *
 	_gpio_set_mode(dev);
 	rt_pin_mode(dev->pin, dev->rt_mode);
 
-    ret_obj = evm_module_uart_class_instantiate(e);
+    ret_obj = evm_module_gpio_class_instantiate(e);
 	if( ret_obj == NULL ) {
 		args = evm_mk_foreign_string("Failed to instantiate");
 		if( cb )
