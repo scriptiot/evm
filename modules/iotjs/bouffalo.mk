@@ -17,7 +17,7 @@ EVM_SOURCES := \
     $(EVM_PATH)/libevm/native.c \
     $(EVM_PATH)/libevm/evm_gc.c \
     $(EVM_PATH)/libevm/jsparser.c \
-	$(EVM_PATH)/native/repl/evm_repl.c 
+	$(EVM_PATH)/native/repl/evm_repl.c
 
 ECMA_SOURCES := \
     $(ECMA_PATH)/src/ecma.c \

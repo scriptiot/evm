@@ -15,36 +15,36 @@ typedef struct _gpio_dev_t
 
 static evm_val_t _gpio_open_device(evm_t *e, evm_val_t *p, int argc, evm_val_t *v, int is_sync)
 {
-    evm_val_t *val = NULL;
-    evm_val_t *ret_obj;
-    evm_val_t *cb = NULL;
-    evm_val_t args;
-    _gpio_dev_t *dev;
-
     if (argc < 1)
         return EVM_VAL_UNDEFINED;
 
+    evm_val_t *cb = NULL;
     if (argc > 1 && evm_is_script(v + 1) && !is_sync)
     {
         cb = v + 1;
     }
 
-    dev = evm_malloc(sizeof(_gpio_dev_t));
+    evm_val_t args[2];
+
+    _gpio_dev_t *dev = evm_malloc(sizeof(_gpio_dev_t));
     if (!dev)
     {
-        args = evm_mk_foreign_string("Insufficient external memory");
+        args[0] = evm_mk_foreign_string("Insufficient external memory");
+        args[1] = EVM_VAL_NULL;
         if (cb)
-            evm_run_callback(e, cb, NULL, &args, 1);
+            evm_run_callback(e, cb, NULL, args, 2);
         evm_set_err(e, ec_memory, "Insufficient external memory");
         return EVM_VAL_UNDEFINED;
     }
 
+    evm_val_t *val = NULL;
     val = evm_prop_get(e, v, "pin", 0);
     if (val == NULL || !evm_is_integer(val))
     {
-        args = evm_mk_foreign_string("Configuration has no 'pin' member");
+        args[0] = evm_mk_foreign_string("Configuration has no 'pin' member");
+        args[1] = EVM_VAL_NULL;
         if (cb)
-            evm_run_callback(e, cb, NULL, &args, 1);
+            evm_run_callback(e, cb, NULL, args, 2);
         evm_free(dev);
         evm_set_err(e, ec_type, "Configuration has no 'pin' member");
         return EVM_VAL_UNDEFINED;
@@ -54,9 +54,11 @@ static evm_val_t _gpio_open_device(evm_t *e, evm_val_t *p, int argc, evm_val_t *
     val = evm_prop_get(e, v, "direction", 0);
     if (val == NULL || !evm_is_integer(val))
     {
-        args = evm_mk_foreign_string("Configuration has no 'direction' member");
+        args[0] = evm_mk_foreign_string("Configuration has no 'direction' member");
+        args[1] = EVM_VAL_NULL;
         if (cb)
-            evm_run_callback(e, cb, NULL, &args, 1);
+            evm_run_callback(e, cb, NULL, args, 2);
+
         evm_free(dev);
         evm_set_err(e, ec_type, "Configuration has no 'direction' member");
         return EVM_VAL_UNDEFINED;
@@ -66,9 +68,10 @@ static evm_val_t _gpio_open_device(evm_t *e, evm_val_t *p, int argc, evm_val_t *
     val = evm_prop_get(e, v, "mode", 0);
     if (val == NULL || !evm_is_integer(val))
     {
-        args = evm_mk_foreign_string("Configuration has no 'mode' member");
+        args[0] = evm_mk_foreign_string("Configuration has no 'mode' member");
+        args[1] = EVM_VAL_NULL;
         if (cb)
-            evm_run_callback(e, cb, NULL, &args, 1);
+            evm_run_callback(e, cb, NULL, args, 2);
         evm_free(dev);
         evm_set_err(e, ec_type, "Configuration has no 'mode' member");
         return EVM_VAL_UNDEFINED;
@@ -84,18 +87,29 @@ static evm_val_t _gpio_open_device(evm_t *e, evm_val_t *p, int argc, evm_val_t *
         bl_gpio_enable_output(dev->pin, dev->direction ? 1 : 0, dev->direction ? 0 : 1);
     }
 
-    ret_obj = evm_module_gpio_class_instantiate(e, p, argc, v);
+    evm_val_t *ret_obj = evm_module_gpio_class_instantiate(e, p, argc, v);
     if (ret_obj == NULL)
     {
-        args = evm_mk_foreign_string("Failed to instantiate");
+        args[0] = evm_mk_foreign_string("Failed to instantiate");
+        args[1] = EVM_VAL_NULL;
         if (cb)
-            evm_run_callback(e, cb, NULL, &args, 1);
+            evm_run_callback(e, cb, NULL, args, 2);
         evm_free(dev);
         return EVM_VAL_UNDEFINED;
     }
 
     evm_object_set_ext_data(ret_obj, (intptr_t)dev);
-    return *ret_obj;
+    if (cb)
+    {
+        args[0] = EVM_VAL_NULL;
+        args[1] = *ret_obj;
+        evm_run_callback(e, v + 1, &e->scope, args, 2);
+        return EVM_VAL_UNDEFINED;
+    }
+    else
+    {
+        return *ret_obj;
+    }
 }
 
 //gpio.open(configuration, callback)
@@ -240,8 +254,8 @@ evm_err_t evm_module_gpio(evm_t *e)
     evm_val_t *dir_prop = evm_object_create(e, GC_OBJECT, 2, 0);
     if (dir_prop)
     {
-        evm_prop_append(e, dir_prop, "IN", evm_mk_number(EVM_GPIO_DIRECTION_IN));
-        evm_prop_append(e, dir_prop, "OUT", evm_mk_number(EVM_GPIO_DIRECTION_OUT));
+        evm_prop_append(e, dir_prop, "IN", evm_mk_number(EVM_GPIO_DIRECTION_OUT));
+        evm_prop_append(e, dir_prop, "OUT", evm_mk_number(EVM_GPIO_DIRECTION_IN));
     }
     else
     {
