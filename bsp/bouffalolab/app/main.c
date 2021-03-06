@@ -22,7 +22,6 @@
 #include <bl_sec.h>
 #include <bl_irq.h>
 #include <bl_dma.h>
-#include <bl_timer.h>
 #include <hal_uart.h>
 #include <hal_wifi.h>
 #include <hal_sys.h>
@@ -33,7 +32,6 @@
 #include <easyflash.h>
 #include <bl60x_fw_api.h>
 #include <wifi_mgmr_ext.h>
-#include <hal_hwtimer.h>
 #include <fdt.h>
 #include <libfdt.h>
 #include <blog.h>
@@ -49,7 +47,6 @@ extern int evm_main(void);
 extern void ble_stack_start(void);
 volatile uint32_t uxTopUsedPriority __attribute__((used)) = configMAX_PRIORITIES - 1;
 
-static uint32_t time_main;
 static int fd_console;
 
 static wifi_interface_t wifi_interface;
@@ -389,7 +386,7 @@ static void event_cb_wifi_event(input_event_t *event, void *private_data)
     break;
     case CODE_WIFI_ON_MGMR_DONE:
     {
-        printf("[APP] [EVT] MGMR DONE %lld, now %lums\r\n", aos_now_ms(), bl_timer_now_us() / 1000);
+        printf("[APP] [EVT] MGMR DONE %lld\r\n", aos_now_ms());
         _connect_wifi();
     }
     break;
@@ -592,10 +589,8 @@ static void cmd_stack_wifi(char *buf, int len, int argc, char **argv)
     }
     stack_wifi_init = 1;
 
-    printf("Start Wi-Fi fw @%lums\r\n", bl_timer_now_us() / 1000);
     hal_wifi_start_firmware_task();
     /*Trigger to start Wi-Fi*/
-    printf("Start Wi-Fi fw is Done @%lums\r\n", bl_timer_now_us() / 1000);
     aos_post_event(EV_WIFI, CODE_WIFI_ON_INIT_DONE, 0);
 }
 
@@ -636,8 +631,6 @@ static void aos_loop_proc(void *pvParameters)
     aos_register_event_filter(EV_WIFI, event_cb_wifi_event, NULL);
     cmd_stack_wifi(NULL, 0, 0, NULL);
 
-    hal_hwtimer_init();
-
     aos_loop_run();
 
     puts("------------------------------------------\r\n");
@@ -667,7 +660,6 @@ void bfl_main(void)
     static StackType_t evm_stack[2048];
     static StaticTask_t evm_task;
 
-    time_main = bl_timer_now_us();
     /*
      * Init UART using pins 16+7 (TX+RX)
      * and baudrate of 2M
@@ -681,7 +673,6 @@ void bfl_main(void)
     printf("Heap %u@%p, %u@%p\r\n",
            (unsigned int)&_heap_size, &_heap_start,
            (unsigned int)&_heap_wifi_size, &_heap_wifi_start);
-    printf("Boot2 consumed %lums\r\n", time_main / 1000);
 
     system_init();
 

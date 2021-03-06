@@ -50,4 +50,3 @@ INCLUDE_COMPONENTS += $(COMPONENTS_VFS)
 INCLUDE_COMPONENTS += $(PROJECT_NAME)
 
 include $(BL60X_SDK_PATH)/make_scripts_riscv/project.mk
-

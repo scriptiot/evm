@@ -1,6 +1,8 @@
-setInterval(function () {
+var timer = setInterval(function () {
     print('hello,world')
 }, 500);
-
-// setTimeout(null, 3000);
-
+setTimeout(function () {
+    print("123213")
+    print(timer)
+    clearInterval(timer);
+ }, 2000)
