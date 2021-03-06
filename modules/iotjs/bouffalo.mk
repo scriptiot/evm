@@ -49,7 +49,10 @@ COMPONENT_SRCS += \
 	common/evm_module_buffer.c \
 	bouffalolab/evm_main.c \
 	bouffalolab/evm_module_dns.c \
-	bouffalolab/evm_module_net.c
+	bouffalolab/evm_module_net.c \
+	bouffalolab/evm_module_timers.c \
+	bouffalolab/evm_module_gpio.c \
+	bouffalolab/evm_module_uart.c
 
 COMPONENT_OBJS := $(patsubst %.c,%.o, $(COMPONENT_SRCS))
 

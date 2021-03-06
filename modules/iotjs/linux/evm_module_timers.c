@@ -71,7 +71,6 @@ static evm_val_t evm_module_timers_setTimeout(evm_t *e, evm_val_t *p, int argc, 
     {
         return EVM_VAL_UNDEFINED;
     }
-
     int id = evm_module_registry_add(e, v);
     if (id < 0)
         return EVM_VAL_UNDEFINED;

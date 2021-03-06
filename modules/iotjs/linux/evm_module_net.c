@@ -56,8 +56,6 @@ static void _net_client_thread(_net_sock_t *client_sock) {
     evm_free(client_sock);
 }
 
-
-
 //server.close([closeListener])
 static evm_val_t evm_module_net_server_close(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
 {

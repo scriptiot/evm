@@ -33,6 +33,7 @@
 #include <easyflash.h>
 #include <bl60x_fw_api.h>
 #include <wifi_mgmr_ext.h>
+#include <hal_hwtimer.h>
 #include <fdt.h>
 #include <libfdt.h>
 #include <blog.h>
@@ -635,6 +636,8 @@ static void aos_loop_proc(void *pvParameters)
     aos_register_event_filter(EV_WIFI, event_cb_wifi_event, NULL);
     cmd_stack_wifi(NULL, 0, 0, NULL);
 
+    hal_hwtimer_init();
+
     aos_loop_run();
 
     puts("------------------------------------------\r\n");
@@ -670,7 +673,6 @@ void bfl_main(void)
      * and baudrate of 2M
      */
     bl_uart_init(0, 16, 7, 255, 255, 2 * 1000 * 1000);
-    bl_uart_init(1, 4, 3, 255, 255, 115200);
     puts("Starting bl602 now....\r\n");
 
     _dump_boot_info();
