@@ -19,9 +19,13 @@ static void callback_handler()
     for (; index < evm_list_len(timer_list); index++)
     {
         evm_val_t *element = evm_list_get(timer_e, timer_list, index);
+        if (!element)
+            continue;
         if (evm_is_script(element))
         {
             _evm_timer_t *timer = (_evm_timer_t *)evm_object_get_ext_data(element);
+            if (!timer)
+                continue;
             if (timer->count == 0)
             {
                 evm_module_next_tick(timer_e, 1, element);
@@ -41,7 +45,6 @@ static void callback_handler()
 //setTimeout(callback, delay[, args..])
 static evm_val_t evm_module_timers_setTimeout(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
 {
-    printf("*********setTimeout*********\n");
     if (argc < 2 || !evm_is_script(v) || !evm_is_integer(v + 1))
     {
         return EVM_VAL_UNDEFINED;
@@ -74,7 +77,16 @@ static evm_val_t evm_module_timers_clearTimeout(evm_t *e, evm_val_t *p, int argc
         return EVM_VAL_UNDEFINED;
     }
 
+    evm_val_t *element = evm_list_get(e, timer_list, evm_2_integer(v));
+    if (!element)
+        return EVM_VAL_UNDEFINED;
+
+    _evm_timer_t *timer = (_evm_timer_t *)evm_object_get_ext_data(element);
+    if (!timer)
+        return EVM_VAL_UNDEFINED;
+
     evm_list_set(e, timer_list, evm_2_integer(v), EVM_VAL_UNDEFINED);
+    evm_free(timer);
 
     return EVM_VAL_UNDEFINED;
 }
