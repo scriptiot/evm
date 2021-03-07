@@ -132,45 +132,47 @@ static evm_val_t evm_module_http_request(evm_t *e, evm_val_t *p, int argc, evm_v
     if (host)
         return EVM_VAL_UNDEFINED;
 
-    uint8_t p = 80;
-    evm_val_t *port = evm_prop_get(e, v, "port", 0);
-    if (port)
-        p = evm_2_integer(port);
+    uint8_t port = 80;
+    evm_val_t *p = evm_prop_get(e, v, "port", 0);
+    if (evm_is_number(p))
+        port = evm_2_integer(p);
 
-    char *m = "GET";
-    evm_val_t *method = evm_prop_get(e, v, "method", 0);
-    if (method)
-        p = evm_2_string(method);
+    char *method = "GET";
+    evm_val_t *m = evm_prop_get(e, v, "method", 0);
+    if (evm_is_string(m))
+        method = evm_2_string(m);
 
-    char *pth = "/";
-    evm_val_t *path = evm_prop_get(e, v, "path", 0);
-    if (path)
-        pth = evm_2_string(path);
+    char *path = "/";
+    evm_val_t *p = evm_prop_get(e, v, "path", 0);
+    if (evm_is_string(p))
+        path = evm_2_string(p);
 
     evm_val_t *result = evm_module_http_client_new(e);
     if (!result)
         return EVM_VAL_UNDEFINED;
     struct webclient_session *session = evm_object_get_ext_data(result);
 
-    const char *url;
-    sprintf(url, "%s:%d%s", host, p, pth);
+    evm_val_t *url = evm_heap_string_create(strlen(host) + strlen(itoa(port)) + strlen(path));
+    sprintf(evm_heap_string_addr(url), "%s:%d%s", host, port, path);
 
     evm_val_t *opts = evm_prop_get(e, v, "headers", 0);
+    if (evm_is_undefined(opts))
+        return EVM_VAL_UNDEFINED;
 
     if (evm_is_object(opts))
     {
-        uint32_t count = evm_object_get_count(opts);
-        uint32_t len = evm_prop_len(opts);
-        while (count < len)
+        uint32_t length = evm_prop_len(opts);
+        for (uint_32_t index = 0; index < length; index++)
         {
-            evm_hash_t key = evm_prop_get_key_by_index(e, opts, count);
+            evm_hash_t key = evm_prop_get_key_by_index(e, opts, index);
             if (key == EVM_INVALID_HASH)
             {
-                continue;
+                break;
             }
+            evm_val_t *v = evm_prop_get_by_index(e, key, index);
             const char *name = evm_string_get(e, key);
-            webclient_header_fields_add(session, "%s: %d\r\n", name);
-            count++;
+            if (evm_is_string(v)) webclient_header_fields_add(session, "%s: %s\r\n", name);
+            else webclient_header_fields_add(session, "%s: %d\r\n", name);
         }
     }
 
@@ -182,10 +184,6 @@ static evm_val_t evm_module_http_request_get(evm_t *e, evm_val_t *p, int argc, e
 {
     if (argc < 1 || !evm_is_object(v))
         return EVM_VAL_UNDEFINED;
-
-    // evm_val_t *method = evm_prop_get(e, v, "method", 0);
-    // if (!method)
-    //     return EVM_VAL_UNDEFINED;
 
     evm_prop_set_value(e, p, "method", evm_mk_heap_string((intptr_t) "GET"));
 

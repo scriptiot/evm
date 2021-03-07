@@ -75,7 +75,7 @@ static void _net_client_thread(_net_sock_t *client_sock)
 //server.close([closeListener])
 static evm_val_t evm_module_net_server_close(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
 {
-    _net_sock_t *server_sock = evm_object_get_ext_data(p);
+    _net_sock_t *server_sock = (_net_sock_t *)evm_object_get_ext_data(p);
     if (!server_sock)
         return EVM_VAL_UNDEFINED;
     close(server_sock->sockfd);
@@ -291,6 +291,9 @@ static evm_val_t evm_module_net_socket_write(evm_t *e, evm_val_t *p, int argc, e
 //socket.on(event, callback)
 static evm_val_t evm_module_net_socket_on(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
 {
+    if (argc < 1 || !evm_is_string(v))
+        return EVM_VAL_UNDEFINED;
+
     _net_sock_t *sock = (_net_sock_t *)evm_object_get_ext_data(p);
     if (!sock)
         return EVM_VAL_UNDEFINED;

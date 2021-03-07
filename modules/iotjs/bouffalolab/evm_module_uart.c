@@ -1,6 +1,7 @@
 #ifdef CONFIG_EVM_MODULE_UART
 #include "evm_module.h"
 #include <bl_uart.h>
+#include <hal_uart.h>
 #include <hal_board.h>
 #include <vfs.h>
 #include <fdt.h>
@@ -18,6 +19,36 @@ typedef struct _uart_dev_t {
 } _uart_dev_t;
 
 evm_val_t *evm_module_uart_class_instantiate(evm_t *e);
+
+static void _uart_thread(_uart_dev_t *uart)
+{
+    int bytes_read;
+    while (1)
+    {
+        bytes_read = aos_read(uart->fd, uart->buffer, _UART_READ_BUF_SIZE);
+        if (bytes_read > 0 && bytes_read < _UART_READ_BUF_SIZE)
+        {
+            evm_val_t *obj = evm_module_registry_get(evm_runtime, uart->obj_id);
+            if (obj)
+            {
+                evm_val_t *args = evm_buffer_create(evm_runtime, bytes_read);
+                if (args)
+                {
+                    memcpy(evm_buffer_addr(args), uart->buffer, bytes_read);
+                    evm_module_event_emit(evm_runtime, obj, "data", 1, args);
+                    evm_pop(evm_runtime);
+                }
+            }
+        }
+        else if (bytes_read < 0)
+        {
+            close(uart->fd);
+            break;
+        }
+        vTaskDelay(10);
+    }
+    evm_free(uart);
+}
 
 static int get_dts_addr(const char *name, uint32_t *start, uint32_t *off)
 {
@@ -50,36 +81,6 @@ static evm_val_t evm_module_uart_on(evm_t *e, evm_val_t *p, int argc, evm_val_t 
 
     evm_module_event_add_listener(e, p, evm_2_string(v), v + 1);
     return EVM_VAL_UNDEFINED;
-}
-
-static void _uart_thread(_uart_dev_t *uart)
-{
-    int bytes_read;
-    while (1)
-    {
-        bytes_read = aos_read(uart->fd, uart->buffer, _UART_READ_BUF_SIZE);
-        if (bytes_read > 0 && bytes_read < _UART_READ_BUF_SIZE)
-        {
-            evm_val_t *obj = evm_module_registry_get(evm_runtime, uart->obj_id);
-            if (obj)
-            {
-                evm_val_t *args = evm_buffer_create(evm_runtime, bytes_read);
-                if (args)
-                {
-                    memcpy(evm_buffer_addr(args), uart->buffer, bytes_read);
-                    evm_module_event_emit(evm_runtime, obj, "data", 1, args);
-                    evm_pop(evm_runtime);
-                }
-            }
-        }
-        else if (bytes_read < 0)
-        {
-            close(uart->fd);
-            break;
-        }
-        vTaskDelay(10);
-    }
-    evm_free(uart);
 }
 
 static evm_val_t _uart_open_device(evm_t *e, evm_val_t *p, int argc, evm_val_t *v, int is_sync) {
