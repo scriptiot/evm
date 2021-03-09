@@ -156,6 +156,7 @@ static evm_val_t _uart_open_device(evm_t *e, evm_val_t *p, int argc, evm_val_t *
 		return EVM_VAL_UNDEFINED;
     }
     aos_ioctl(dev->fd, IOCTL_UART_IOC_BAUD_MODE, dev->databits);
+    aos_ioctl(dev->fd, IOCTL_UART_IOC_READ_BLOCK, 0);
 
     xTaskCreate(_uart_thread, "uart-task", 100, dev, 13, NULL);
 
