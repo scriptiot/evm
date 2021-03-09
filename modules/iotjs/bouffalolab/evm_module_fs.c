@@ -5,6 +5,12 @@
 #include <aos/kernel.h>
 #include <bl_romfs.h>
 
+#define O_RDONLY 0
+#define O_RDWR 2
+#define O_CREAT 0x0200
+#define O_WRONLY 1
+#define O_APPEND 02000
+
 //stats.isDirectory()
 static evm_val_t evm_module_fs_stats_isDirectory(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
 {
@@ -158,47 +164,47 @@ static evm_val_t evm_module_fs_openSync(evm_t *e, evm_val_t *p, int argc, evm_va
     int mode;
     if (!strcmp(flag, "r"))
     {
-        mode = 0;
+        mode = O_RDONLY;
     }
     else if (!strcmp(flag, "rs"))
     {
-        mode = 0;
+        mode = O_RDONLY;
     }
     else if (!strcmp(flag, "r+"))
     {
-        mode = 2;
+        mode = O_RDWR;
     }
     else if (!strcmp(flag, "w"))
     {
-        mode = 0x0200 | 1;
+        mode = O_CREAT | O_WRONLY;
     }
     else if (!strcmp(flag, "wx") || !strcmp(flag, "xw"))
     {
-        mode = 1;
+        mode = O_WRONLY;
     }
     else if (!strcmp(flag, "w+"))
     {
-        mode = 0x0200 | 2;
+        mode = O_CREAT | O_RDWR;
     }
     else if (!strcmp(flag, "wx+") || !strcmp(flag, "xw+"))
     {
-        mode = 2;
+        mode = O_RDWR;
     }
     else if (!strcmp(flag, "a"))
     {
-        mode = 0x0200 | 02000;
+        mode = O_CREAT | O_APPEND;
     }
     else if (!strcmp(flag, "ax"))
     {
-        mode = 02000;
+        mode = O_APPEND;
     }
     else if (!strcmp(flag, "a+"))
     {
-        mode = 0x0200 | 02000 | 0;
+        mode = O_CREAT | O_APPEND | O_RDONLY;
     }
     else if (!strcmp(flag, "ax+") || !strcmp(flag, "xa+"))
     {
-        mode = 02000 | 0;
+        mode = O_APPEND | O_RDONLY;
     }
     return evm_mk_number(aos_open(evm_2_string(v), mode));
 }
@@ -462,7 +468,7 @@ static evm_val_t evm_module_fs_writeFileSync(evm_t *e, evm_val_t *p, int argc, e
     if (argc < 2 || !evm_is_string(v) || !(evm_is_buffer(v + 1) || evm_is_string(v + 1)))
         return EVM_VAL_UNDEFINED;
 
-    int fd = aos_open(evm_2_string(v), 0x0200 | 1);
+    int fd = aos_open(evm_2_string(v), O_CREAT | O_WRONLY);
     if (fd == -1)
         return EVM_VAL_UNDEFINED;
 

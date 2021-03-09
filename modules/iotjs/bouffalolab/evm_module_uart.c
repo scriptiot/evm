@@ -42,7 +42,7 @@ static void _uart_thread(_uart_dev_t *uart)
         }
         else if (bytes_read < 0)
         {
-            close(uart->fd);
+            aos_close(uart->fd);
             break;
         }
         vTaskDelay(10);
@@ -139,8 +139,7 @@ static evm_val_t _uart_open_device(evm_t *e, evm_val_t *p, int argc, evm_val_t *
 	}
 	dev->databits = evm_2_integer(val);
 
-    // id tx_pin rx_pin cts_pin rts_pin baudrate
-    bl_uart_init(1, 4, 3, 255, 255, dev->baudrate);
+    // bl_uart_init(1, 4, 3, 255, 255, dev->baudrate);
 
     uint32_t fdt = 0, offset = 0;
     /* uart */
@@ -156,6 +155,7 @@ static evm_val_t _uart_open_device(evm_t *e, evm_val_t *p, int argc, evm_val_t *
         evm_set_err(e, ec_type, "Failed to open uart");
 		return EVM_VAL_UNDEFINED;
     }
+    aos_ioctl(dev->fd, IOCTL_UART_IOC_BAUD_MODE, dev->databits);
 
     xTaskCreate(_uart_thread, "uart-task", 100, dev, 13, NULL);
 
@@ -230,7 +230,7 @@ static evm_val_t evm_module_uart_class_writeSync(evm_t *e, evm_val_t *p, int arg
 static int _uart_class_close(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
 {
     _uart_dev_t *dev = (_uart_dev_t*)evm_object_get_ext_data(p);
-    if( !dev )
+    if (dev == NULL)
         return -1;
 
     int ret = aos_close(dev->fd);

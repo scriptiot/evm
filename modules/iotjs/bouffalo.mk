@@ -44,7 +44,6 @@ ECMA_SOURCES := \
 COMPONENT_SRCS += $(EVM_SOURCES)
 COMPONENT_SRCS += $(ECMA_SOURCES)
 COMPONENT_SRCS += \
-	../../components/webclient/src/webclient.c \
 	common/evm_module.c \
 	common/evm_module_assert.c \
 	common/evm_module_process.c \
@@ -56,7 +55,8 @@ COMPONENT_SRCS += \
 	bouffalolab/evm_module_gpio.c \
 	bouffalolab/evm_module_uart.c \
 	bouffalolab/evm_module_fs.c \
-	bouffalolab/evm_module_http.c
+	bouffalolab/evm_module_http.c \
+	../../components/webclient/src/webclient.c
 
 COMPONENT_OBJS := $(patsubst %.c,%.o, $(COMPONENT_SRCS))
 

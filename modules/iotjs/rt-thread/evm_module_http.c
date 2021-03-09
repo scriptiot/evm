@@ -169,7 +169,7 @@ static evm_val_t evm_module_http_request(evm_t *e, evm_val_t *p, int argc, evm_v
             {
                 break;
             }
-            evm_val_t *v = evm_prop_get_by_index(e, key, index);
+            evm_val_t *v = evm_prop_get_by_key(e, opts, key, index);
             const char *name = evm_string_get(e, key);
             if (evm_is_string(v)) webclient_header_fields_add(session, "%s: %s\r\n", name);
             else webclient_header_fields_add(session, "%s: %d\r\n", name);

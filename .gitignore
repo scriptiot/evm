@@ -23,6 +23,7 @@ Makefile.*
 *.Release
 *.rc
 *.zip
+.vscode*
 
 debug
 release

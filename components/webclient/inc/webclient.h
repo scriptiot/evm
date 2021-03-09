@@ -17,8 +17,6 @@
 #ifndef __WEBCLIENT_H__
 #define __WEBCLIENT_H__
 
-#include "evm_module.h"
-
 #ifdef WEBCLIENT_USING_TLS
 #include <tls_client.h>
 #endif
@@ -28,24 +26,37 @@ extern "C"
 {
 #endif
 
+#ifdef LINUX
+
 #ifndef web_malloc
-#define web_malloc evm_malloc
-#endif
-
-#ifndef web_calloc
-#define web_calloc evm_malloc
-#endif
-
-#ifndef web_realloc
-#define web_realloc evm_malloc
+#define web_malloc malloc
 #endif
 
 #ifndef web_free
-#define web_free evm_free
+#define web_free free
 #endif
 
-#ifndef web_strdup
-#define web_strdup strdup
+#ifndef closesocket
+#define closesocket close
+#endif
+
+#elif FREERTOS
+
+#ifndef web_malloc
+#define web_malloc pvPortMalloc
+#endif
+
+#ifndef web_free
+#define web_free vPortFree
+#endif
+
+#ifndef strdup
+#define strdup web_strdup
+#endif
+
+#else
+#define web_malloc NULL
+#define web_free NULL
 #endif
 
 #define WEBCLIENT_SW_VERSION "2.0.1"
@@ -78,7 +89,6 @@ extern "C"
     {
         char *buffer;
         size_t length; /* content header buffer size */
-
         size_t size; /* maximum support header size */
     };
 

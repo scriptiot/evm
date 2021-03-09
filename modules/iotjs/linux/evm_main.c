@@ -297,7 +297,7 @@ void evm_event_thread(evm_t *e) {
 #ifdef CONFIG_EVM_MODULE_PROCESS
     evm_module_process_poll(e);
 #endif
-    vTaskDelay(1);
+    usleep(1000);
     }
 }
 

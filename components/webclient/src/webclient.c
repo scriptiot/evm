@@ -16,21 +16,36 @@
 
 #include <string.h>
 #include <stdio.h>
+#include <stdarg.h>
+#include <errno.h>
 #include <sys/time.h>
 
+#ifdef FREERTOS
+#include <FreeRTOS.h>
+#endif
+
 /* support both enable and disable "SAL_USING_POSIX" */
-#if defined(RT_USING_SAL)
+#if defined(LINUX)
 #include <netdb.h>
 #include <sys/socket.h>
 #else
 #include <lwip/netdb.h>
 #include <lwip/sockets.h>
-#endif /* RT_USING_SAL */
+#endif
 
 #include "webclient.h"
 
 /* default receive or send timeout */
 #define WEBCLIENT_DEFAULT_TIMEO 3
+
+static char *web_strdup(const char *s)
+{
+    size_t len = strlen(s) + 1;
+    void *new = web_malloc(len);
+    if (new == NULL)
+        return NULL;
+    return (char *)memcpy(new, s, len);
+}
 
 static int webclient_send(struct webclient_session *session, const unsigned char *buffer, size_t len, int flag)
 {
@@ -218,7 +233,7 @@ static int webclient_resolve_address(struct webclient_session *session, struct a
 
 #ifdef WEBCLIENT_USING_TLS
         if (session->tls_session)
-            session->tls_session->host = web_strdup(host_addr_new);
+            session->tls_session->host = strdup(host_addr_new);
 #endif
     }
 
@@ -232,7 +247,7 @@ static int webclient_resolve_address(struct webclient_session *session, struct a
 #ifdef WEBCLIENT_USING_TLS
         if (session->tls_session)
         {
-            session->tls_session->port = web_strdup(port_str);
+            session->tls_session->port = strdup(port_str);
             ret = getaddrinfo(session->tls_session->host, port_str, &hint, res);
             if (ret != 0)
             {
@@ -291,7 +306,7 @@ static int webclient_open_tls(struct webclient_session *session, const char *URI
         return -WEBCLIENT_ERROR;
     }
 
-    session->tls_session = (MbedTLSSession *)web_calloc(1, sizeof(MbedTLSSession));
+    session->tls_session = (MbedTLSSession *)web_malloc(sizeof(MbedTLSSession));
     if (session->tls_session == NULL)
     {
         return -WEBCLIENT_NOMEM;
@@ -375,7 +390,7 @@ int webclient_connect(struct webclient_session *session, const char *URI)
     /* copy host address */
     if (*req_url)
     {
-        session->req_url = web_strdup(req_url);
+        session->req_url = strdup(req_url);
     }
 
 #ifdef WEBCLIENT_USING_TLS
@@ -468,6 +483,7 @@ int webclient_header_fields_add(struct webclient_session *session, const char *f
         return WEBCLIENT_ERROR;
     }
 
+    va_start(args, fmt);
     length = vsnprintf(session->header->buffer + session->header->length,
                        session->header->size - session->header->length, fmt, args);
     if (length < 0)
@@ -475,16 +491,15 @@ int webclient_header_fields_add(struct webclient_session *session, const char *f
         // "add fields header data failed, return length(%d) error.", length
         return -WEBCLIENT_ERROR;
     }
+    va_end(args);
 
     session->header->length += length;
-
     /* check header size */
     if (session->header->length >= session->header->size)
     {
         // "not enough header buffer size(%d)!", session->header->size
         return -WEBCLIENT_ERROR;
     }
-
     return length;
 }
 
@@ -611,7 +626,7 @@ int webclient_send_header(struct webclient_session *session, int method)
                 char *header_buffer = NULL;
                 int length = 0;
 
-                header_buffer = web_strdup(session->header->buffer);
+                header_buffer = strdup(session->header->buffer);
                 if (header_buffer == NULL)
                 {
                     // "no memory for header buffer!"
@@ -728,7 +743,7 @@ int webclient_handle_response(struct webclient_session *session)
     }
 
     /* get HTTP status code */
-    mime_ptr = web_strdup(session->header->buffer);
+    mime_ptr = strdup(session->header->buffer);
     if (mime_ptr == NULL)
     {
         // "no memory for get http status code buffer!"
@@ -805,9 +820,8 @@ struct webclient_session *webclient_session_create(size_t header_sz)
     }
 
     session->content_length = -1;
-
     session->header = (struct webclient_header *)web_malloc(sizeof(struct webclient_header));
-    memset(session, 0, sizeof(struct webclient_header));
+    memset(session->header, 0, sizeof(struct webclient_header));
     if (session->header == NULL)
     {
         // "webclient create failed, no memory for session header!"
@@ -1371,9 +1385,13 @@ int webclient_response(struct webclient_session *session, unsigned char **respon
             unsigned char *new_resp = NULL;
 
             result_sz = total_read + WEBCLIENT_RESPONSE_BUFSZ;
-            new_resp = web_malloc(sizeof(response_buf) + result_sz + 1);
-            memcpy(new_resp, response_buf, sizeof(response_buf) + result_sz + 1);
-            web_free(response_buf);
+            // new_resp = pvPortRealloc(response_buf, result_sz + 1);
+            new_resp = response_buf;
+            response_buf = web_malloc(sizeof(response_buf) + result_sz + 1);
+            memcpy(response_buf, new_resp, sizeof(response_buf));
+            web_free(new_resp);
+            new_resp = response_buf;
+
             if (new_resp == NULL)
             {
                 // "no memory for realloc new response buffer!"
