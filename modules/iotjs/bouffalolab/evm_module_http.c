@@ -7,6 +7,8 @@
 #define HTTP_HEADER_SIZE (1024)
 #define HTTP_RECV_MAX_SIZE (10 * 1024)
 
+static evm_t *http_obj_e;
+
 enum http_method
 {
     GET,
@@ -22,17 +24,16 @@ typedef struct _http_client_t
     int obj_id;
     int method;
     uint32_t buffer_length;
-    pthread_t pid;
     struct webclient_session *session;
 } _http_client_t;
 
 static void _http_response_thread(_http_client_t *client)
 {
-    if (client == NULL)
+    if (client == NULL || (client->buffer_length > 0 && client->session == NULL))
         return;
     int total_read = 0;
     int content_length = webclient_content_length_get(client->session);
-    evm_val_t *obj = evm_module_registry_get(evm_runtime, client->obj_id);
+    evm_val_t *obj = evm_module_registry_get(http_obj_e, client->obj_id);
     if (evm_is_undefined(obj) || evm_is_null(obj) || obj == NULL)
         return;
 
@@ -61,14 +62,14 @@ static void _http_response_thread(_http_client_t *client)
             cur_read = webclient_read(client->session, out_content + total_read, buf_size);
             if (cur_read > 0)
             {
-                total_read += cur_read;
-                args = evm_buffer_create(evm_runtime, buf_size);
+                args = evm_buffer_create(http_obj_e, cur_read);
                 if (args)
                 {
-                    memcpy(evm_buffer_addr(args), out_content + total_read, buf_size);
-                    evm_module_event_emit(evm_runtime, obj, "data", 1, args);
-                    evm_pop(evm_runtime);
+                    memcpy(evm_buffer_addr(args), out_content + total_read, cur_read);
+                    evm_module_event_emit(http_obj_e, obj, "data", 1, args);
+                    evm_pop(http_obj_e);
                 }
+                total_read += cur_read;
             }
             if (cur_read <= buf_size)
                 break;
@@ -97,12 +98,12 @@ static void _http_response_thread(_http_client_t *client)
             printf("not equal, need read = %d, bytes_read = %d\n", content_length, total_read);
             goto err;
         }
-        evm_val_t *args = evm_buffer_create(evm_runtime, total_read);
+        evm_val_t *args = evm_buffer_create(http_obj_e, total_read);
         if (args)
         {
             memcpy(evm_buffer_addr(args), out_content, total_read);
-            evm_module_event_emit(evm_runtime, obj, "data", 1, args);
-            evm_pop(evm_runtime);
+            evm_module_event_emit(http_obj_e, obj, "data", 1, args);
+            evm_pop(http_obj_e);
         }
     }
     printf("Bug is here: %s, line: %d\n", __FUNCTION__, __LINE__);
@@ -135,13 +136,6 @@ static evm_val_t evm_module_http_request_abort(evm_t *e, evm_val_t *p, int argc,
     return EVM_VAL_UNDEFINED;
 }
 
-//request.end([data][, callback])
-//完成发送请求。 如果部分请求主体还未发送，则将它们刷新到流中。 如果请求被分块，则发送终止符 '0\r\n\r\n'。
-static evm_val_t evm_module_http_request_end(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
-{
-    return EVM_VAL_UNDEFINED;
-}
-
 //request.setTimeout(ms[, callback])
 static evm_val_t evm_module_http_request_setTimeout(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
 {
@@ -157,11 +151,15 @@ static evm_val_t evm_module_http_request_on(evm_t *e, evm_val_t *p, int argc, ev
     }
 
     _http_client_t *client = (_http_client_t *)evm_object_get_ext_data(p);
-    if (!client)
+    if (client == NULL)
         return EVM_VAL_UNDEFINED;
 
-    if (client->obj_id < 1)
-        return EVM_VAL_UNDEFINED;
+    evm_val_t *obj = evm_module_registry_get(e, client->obj_id);
+    uint32_t flag = 0;
+    evm_hash_t arguments = evm_str_lookup(e, "arguments", &flag);
+    evm_val_t *args = evm_list_create(e, GC_LIST, 1);
+    evm_list_set(e, args, 0, *obj);
+    evm_attr_append_with_key(e, v + 1, arguments, *args);
 
     evm_module_event_add_listener(e, p, evm_2_string(v), v + 1);
     return EVM_VAL_UNDEFINED;
@@ -170,15 +168,85 @@ static evm_val_t evm_module_http_request_on(evm_t *e, evm_val_t *p, int argc, ev
 //request.write(data[, callback])
 static evm_val_t evm_module_http_request_write(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
 {
-    if (argc < 1 || !evm_is_string(v) || !evm_is_buffer(v))
-        return EVM_VAL_UNDEFINED;
+    if (argc < 1)
+        return EVM_VAL_FALSE;
 
-    struct webclient_session *session = (struct webclient_session *)evm_object_get_ext_data(p);
-    if (!session)
-        return EVM_VAL_UNDEFINED;
-    webclient_write(session, evm_buffer_addr(v), evm_buffer_len(v));
+    char *buffer = NULL;
+    uint32_t length = 0;
+    if (argc > 0)
+    {
+        if (evm_is_string(v))
+        {
+            buffer = evm_2_string(v);
+            length = evm_string_len(v);
+        }
+        else if (evm_is_buffer(v))
+        {
+            buffer = evm_buffer_addr(v);
+            length = evm_buffer_len(v);
+        }
+    }
+
+    _http_client_t *client = (_http_client_t *)evm_object_get_ext_data(p);
+    if (client == NULL || client->session == NULL)
+        return EVM_VAL_FALSE;
+
+    if (buffer != NULL && length > 0)
+    {
+        uint32_t total_len = client->buffer_length + length;
+        char *temp_buf = evm_malloc(total_len);
+        evm_free(client->buffer);
+
+        memcpy(temp_buf, client->buffer, client->buffer_length);
+        memcpy(temp_buf + client->buffer_length, buffer, length);
+        client->buffer = temp_buf;
+        client->buffer_length = total_len;
+    }
+
     if (argc > 1 && evm_is_script(v + 1))
         evm_run_callback(e, v + 1, &e->scope, NULL, 0);
+
+    return EVM_VAL_TRUE;
+}
+
+//request.end([data][, callback])
+//完成发送请求。 如果部分请求主体还未发送，则将它们刷新到流中。 如果请求被分块，则发送终止符 '0\r\n\r\n'。
+static evm_val_t evm_module_http_request_end(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
+{
+    if (argc > 0)
+    {
+        evm_module_http_request_write(e, p, argc, v);
+    }
+
+    _http_client_t *client = (_http_client_t *)evm_object_get_ext_data(p);
+    if (client == NULL)
+        return EVM_VAL_UNDEFINED;
+
+    int status_code = -1;
+    if (client->method == GET)
+    {
+        status_code = webclient_get(client->session, client->url);
+    }
+    else
+    {
+        status_code = webclient_post(client->session, client->url, client->buffer);
+    }
+
+    if (client->obj_id < 1)
+        return EVM_VAL_UNDEFINED;
+
+    evm_val_t *obj = evm_module_registry_get(e, client->obj_id);
+    if (obj)
+    {
+        evm_prop_set_value(e, obj, "statusCode", evm_mk_number(status_code));
+    }
+
+    evm_module_event_emit(e, p, "response", 0, NULL);
+
+    //    if (argc > 1 && evm_is_script(v + 1))
+    //        evm_run_callback(e, v + 1, &e->scope, NULL, 0);
+
+    return EVM_VAL_UNDEFINED;
 }
 
 static evm_val_t evm_module_http_client_new_request(evm_t *e)
@@ -221,17 +289,51 @@ static evm_val_t evm_module_http_response_on(evm_t *e, evm_val_t *p, int argc, e
     if (!client)
         return EVM_VAL_UNDEFINED;
 
-    if (client->obj_id < 1)
-        return EVM_VAL_UNDEFINED;
-
     evm_module_event_add_listener(e, p, evm_2_string(v), v + 1);
+    // pthread_create(&client->pid, NULL, _http_response_thread, client);
+    xTaskCreate((TaskFunction_t)_http_response_thread, "http-response-task", 512, client, 13, NULL);
     return EVM_VAL_UNDEFINED;
 }
 
 //response.end([data][, callback])
 static evm_val_t evm_module_http_response_end(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
 {
-    // 此方法向服务器发出信号，表明已发送所有响应头和主体
+    char *buffer = NULL;
+    uint32_t length = 0;
+    if (argc > 0)
+    {
+        if (evm_is_string(v))
+        {
+            buffer = evm_2_string(v);
+            length = evm_string_len(v);
+        }
+        else if (evm_is_buffer(v))
+        {
+            buffer = evm_buffer_addr(v);
+            length = evm_buffer_len(v);
+        }
+    }
+    _http_client_t *client = (_http_client_t *)evm_object_get_ext_data(p);
+    int status_code = -1;
+    if (client->method == GET)
+    {
+        status_code = webclient_get(client->session, client->url);
+    }
+    else
+    {
+        uint32_t total_len = client->buffer_length + evm_buffer_len(v);
+        char *temp_buf = evm_malloc(total_len);
+        evm_free(client->buffer);
+        memcpy(temp_buf, client->buffer, client->buffer_length);
+        memcpy(temp_buf + client->buffer_length, buffer, length);
+        client->buffer = temp_buf;
+        status_code = webclient_post(client->session, client->url, client->buffer);
+    }
+
+    if (argc > 1 && evm_is_script(v + 1))
+        evm_run_callback(e, v + 1, &e->scope, NULL, 0);
+    // pthread_create(&client->pid, NULL, _http_response_thread, client);
+    xTaskCreate((TaskFunction_t)_http_response_thread, "http-response-task", 512, client, 13, NULL);
     return EVM_VAL_UNDEFINED;
 }
 
@@ -241,11 +343,11 @@ static evm_val_t evm_module_http_response_getHeader(evm_t *e, evm_val_t *p, int 
     if (argc < 1 || !evm_is_string(v))
         return EVM_VAL_UNDEFINED;
 
-    struct webclient_session *session = (struct webclient_session *)evm_object_get_ext_data(p);
-    if (!session)
+    _http_client_t *client = (_http_client_t *)evm_object_get_ext_data(p);
+    if (client == NULL || client->session == NULL)
         return EVM_VAL_UNDEFINED;
 
-    return evm_mk_foreign_string(webclient_header_fields_get(session, evm_2_string(v)));
+    return evm_mk_foreign_string(webclient_header_fields_get(client->session, evm_2_string(v)));
 }
 
 //response.removeHeader(name)
@@ -260,17 +362,29 @@ static evm_val_t evm_module_http_response_setHeader(evm_t *e, evm_val_t *p, int 
     if (argc < 1 || !evm_is_string(v) || !evm_is_string(v + 1))
         return EVM_VAL_UNDEFINED;
 
-    struct webclient_session *session = (struct webclient_session *)evm_object_get_ext_data(p);
-    if (!session)
+    _http_client_t *client = (_http_client_t *)evm_object_get_ext_data(p);
+    if (client == NULL || client->session == NULL)
         return EVM_VAL_UNDEFINED;
 
-    webclient_header_fields_add(session, evm_2_string(v), evm_2_string(v + 1));
+    webclient_header_fields_add(client->session, evm_2_string(v), evm_2_string(v + 1));
     return EVM_VAL_UNDEFINED;
 }
 
 //response.setTimeout(ms, cb)
 static evm_val_t evm_module_http_response_setTimeout(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
 {
+    if (argc < 1 || !evm_is_integer(v))
+        return EVM_VAL_UNDEFINED;
+
+    _http_client_t *client = (_http_client_t *)evm_object_get_ext_data(p);
+    if (client == NULL || client->session == NULL)
+        return EVM_VAL_UNDEFINED;
+
+    webclient_set_timeout(client->session, evm_2_integer(v));
+
+    if (argc > 1 && evm_is_script(v + 1))
+        evm_run_callback(e, v + 1, &e->scope, NULL, 0);
+
     return EVM_VAL_UNDEFINED;
 }
 
@@ -280,10 +394,12 @@ static evm_val_t evm_module_http_response_write(evm_t *e, evm_val_t *p, int argc
     if (argc < 1 || !evm_is_string(v) || !evm_is_buffer(v))
         return EVM_VAL_UNDEFINED;
 
-    struct webclient_session *session = (struct webclient_session *)evm_object_get_ext_data(p);
-    if (!session)
+    _http_client_t *client = (_http_client_t *)evm_object_get_ext_data(p);
+    if (client == NULL || client->session == NULL)
         return EVM_VAL_UNDEFINED;
-    webclient_write(session, evm_buffer_addr(v), evm_buffer_len(v));
+
+    webclient_write(client->session, evm_buffer_addr(v), evm_buffer_len(v));
+
     if (argc > 1 && evm_is_script(v + 1))
         evm_run_callback(e, v + 1, &e->scope, NULL, 0);
 }
@@ -297,23 +413,24 @@ static evm_val_t evm_module_http_response_writeHead(evm_t *e, evm_val_t *p, int 
 static evm_val_t evm_module_http_client_new_response(evm_t *e)
 {
     evm_val_t *obj = evm_object_create(e, GC_DICT, 6, 0);
-    if (obj)
-    {
-        evm_prop_append(e, obj, "abort", evm_mk_native((intptr_t)evm_module_http_response_abort));
-        evm_prop_append(e, obj, "end", evm_mk_native((intptr_t)evm_module_http_response_end));
-        evm_prop_append(e, obj, "on", evm_mk_native((intptr_t)evm_module_http_response_on));
-        evm_prop_append(e, obj, "setTimeout", evm_mk_native((intptr_t)evm_module_http_response_setTimeout));
-        evm_prop_append(e, obj, "write", evm_mk_native((intptr_t)evm_module_http_response_write));
-        evm_prop_append(e, obj, "writeHead", evm_mk_native((intptr_t)evm_module_http_response_writeHead));
+    if (obj == NULL)
+        return EVM_VAL_UNDEFINED;
 
-        _http_client_t *client = evm_malloc(sizeof(_http_client_t));
-        if (client)
-        {
-            evm_object_set_ext_data(obj, (intptr_t)client);
-        }
-        client->obj_id = evm_module_registry_add(e, obj);
-        return *obj;
+    evm_prop_append(e, obj, "abort", evm_mk_native((intptr_t)evm_module_http_response_abort));
+    evm_prop_append(e, obj, "end", evm_mk_native((intptr_t)evm_module_http_response_end));
+    evm_prop_append(e, obj, "on", evm_mk_native((intptr_t)evm_module_http_response_on));
+    evm_prop_append(e, obj, "setTimeout", evm_mk_native((intptr_t)evm_module_http_response_setTimeout));
+    evm_prop_append(e, obj, "write", evm_mk_native((intptr_t)evm_module_http_response_write));
+    evm_prop_append(e, obj, "writeHead", evm_mk_native((intptr_t)evm_module_http_response_writeHead));
+
+    _http_client_t *client = evm_malloc(sizeof(_http_client_t));
+    if (client)
+    {
+        evm_object_set_ext_data(obj, (intptr_t)client);
     }
+    client->obj_id = evm_module_registry_add(e, obj);
+    return *obj;
+
     return EVM_VAL_UNDEFINED;
 }
 
@@ -367,57 +484,58 @@ static evm_val_t evm_module_http_request(evm_t *e, evm_val_t *p, int argc, evm_v
             webclient_header_fields_add(session, "%s: %s\r\n", name, value);
     }
 
-    uint32_t len = evm_string_len(host) + 5 + evm_string_len(path);
-    evm_val_t *url = evm_heap_string_create(e, "", len);
-    sprintf(evm_heap_string_addr(url), "%s:%d%s", evm_2_string(host), evm_2_integer(port), evm_2_string(path));
+    evm_val_t result = evm_module_http_client_new_request(e);
+    if (result == EVM_VAL_UNDEFINED)
+        return EVM_VAL_UNDEFINED;
 
-    evm_val_t *args;
-    evm_val_t *result = evm_module_http_client_new_request(e);
-    int status_code = -1;
+    evm_val_t *obj = evm_object_create(e, GC_DICT, 8, 0);
+    if (obj == NULL)
+        return EVM_VAL_UNDEFINED;
+
+    evm_prop_append(e, obj, "abort", evm_mk_native((intptr_t)evm_module_http_response_abort));
+    evm_prop_append(e, obj, "end", evm_mk_native((intptr_t)evm_module_http_response_end));
+    evm_prop_append(e, obj, "on", evm_mk_native((intptr_t)evm_module_http_response_on));
+    evm_prop_append(e, obj, "setTimeout", evm_mk_native((intptr_t)evm_module_http_response_setTimeout));
+    evm_prop_append(e, obj, "write", evm_mk_native((intptr_t)evm_module_http_response_write));
+    evm_prop_append(e, obj, "writeHead", evm_mk_native((intptr_t)evm_module_http_response_writeHead));
+    evm_prop_append(e, obj, "statusCode", evm_mk_number(-1));
+    evm_prop_append(e, obj, "headers", evm_mk_null());
+
+    _http_client_t *client = evm_malloc(sizeof(_http_client_t));
+    if (client)
+    {
+        evm_object_set_ext_data(&result, (intptr_t)client);
+        evm_object_set_ext_data(obj, (intptr_t)client);
+    }
+
+    uint32_t len = evm_string_len(host) + 5 + evm_string_len(path);
+    client->obj_id = evm_module_registry_add(e, obj);
+    client->session = session;
+    client->url = evm_malloc(len * sizeof(char));
+    sprintf(client->url, "%s:%d%s", evm_2_string(host), evm_2_integer(port), evm_2_string(path));
+    client->buffer = NULL;
+    client->buffer_length = 0;
+
     if (strcmp(evm_2_string(method), "get") == 0 || strcmp(evm_2_string(method), "GET") == 0)
     {
-        status_code = webclient_get(session, evm_2_string(url));
+        client->method = GET;
     }
     else
     {
-        status_code = webclient_post(session, evm_2_string(url), NULL);
-    }
-
-    if (status_code != 200)
-    {
-        args = evm_mk_null();
-    }
-    else
-    {
-        evm_val_t *obj = evm_object_create(e, GC_DICT, 6, 0);
-        if (obj == NULL)
-            return EVM_VAL_UNDEFINED;
-
-        evm_prop_append(e, obj, "abort", evm_mk_native((intptr_t)evm_module_http_response_abort));
-        evm_prop_append(e, obj, "end", evm_mk_native((intptr_t)evm_module_http_response_end));
-        evm_prop_append(e, obj, "on", evm_mk_native((intptr_t)evm_module_http_response_on));
-        evm_prop_append(e, obj, "setTimeout", evm_mk_native((intptr_t)evm_module_http_response_setTimeout));
-        evm_prop_append(e, obj, "write", evm_mk_native((intptr_t)evm_module_http_response_write));
-        evm_prop_append(e, obj, "writeHead", evm_mk_native((intptr_t)evm_module_http_response_writeHead));
-
-        _http_client_t *client = evm_malloc(sizeof(_http_client_t));
-        if (client)
-        {
-            evm_object_set_ext_data(obj, (intptr_t)client);
-        }
-        client->obj_id = evm_module_registry_add(e, obj);
-        client->session = session;
-        args = obj;
-
-        taskENTER_CRITICAL();
-        xTaskCreate(_http_response_thread, "http-response-task", 512, client, 13, NULL);
-        taskEXIT_CRITICAL();
+        client->method = POST;
     }
 
     if (evm_is_script(v + 1))
-        evm_run_callback(e, v + 1, &e->scope, args, 1);
+    {
+        uint32_t flag = 0;
+        evm_hash_t arguments = evm_str_lookup(e, "arguments", &flag);
+        evm_val_t *args = evm_list_create(e, GC_LIST, 1);
+        evm_list_set(e, args, 0, *obj);
+        evm_attr_append_with_key(e, v + 1, arguments, *args);
+        evm_module_event_add_listener(e, &result, "response", v + 1);
+    }
 
-    return *result;
+    return result;
 }
 
 //http.get(options[, callback])
@@ -442,7 +560,7 @@ static evm_val_t evm_module_http_get(evm_t *e, evm_val_t *p, int argc, evm_val_t
     if (evm_is_number(pt))
         port = evm_2_integer(pt);
 
-    char *path;
+    char *path = "/";
     evm_val_t *pa = evm_prop_get(e, v, "path", 0);
     if (evm_is_string(pa))
         path = evm_2_string(pa);
@@ -465,65 +583,58 @@ static evm_val_t evm_module_http_get(evm_t *e, evm_val_t *p, int argc, evm_val_t
         {
             break;
         }
-
         evm_val_t *value = evm_prop_get_by_key(e, headers, key, index);
         const char *name = evm_string_get(e, key);
-        if (evm_is_number(value))
-        {
-            webclient_header_fields_add(session, "%s: %d\r\n", name, evm_2_integer(value));
-        }
+        if (evm_is_integer(value))
+            webclient_header_fields_add(session, "%s: %d\r\n", name, value);
         else
-        {
-            webclient_header_fields_add(session, "%s: %s\r\n", name, evm_2_string(value));
-        }
+            webclient_header_fields_add(session, "%s: %s\r\n", name, value);
+    }
+
+    evm_val_t result = evm_module_http_client_new_request(e);
+    if (result == EVM_VAL_UNDEFINED)
+        return EVM_VAL_UNDEFINED;
+
+    evm_val_t *obj = evm_object_create(e, GC_DICT, 8, 0);
+    if (obj == NULL)
+        return EVM_VAL_UNDEFINED;
+
+    evm_prop_append(e, obj, "abort", evm_mk_native((intptr_t)evm_module_http_response_abort));
+    evm_prop_append(e, obj, "end", evm_mk_native((intptr_t)evm_module_http_response_end));
+    evm_prop_append(e, obj, "on", evm_mk_native((intptr_t)evm_module_http_response_on));
+    evm_prop_append(e, obj, "setTimeout", evm_mk_native((intptr_t)evm_module_http_response_setTimeout));
+    evm_prop_append(e, obj, "write", evm_mk_native((intptr_t)evm_module_http_response_write));
+    evm_prop_append(e, obj, "writeHead", evm_mk_native((intptr_t)evm_module_http_response_writeHead));
+    evm_prop_append(e, obj, "statusCode", evm_mk_number(-1));
+    evm_prop_append(e, obj, "headers", evm_mk_null());
+
+    _http_client_t *client = evm_malloc(sizeof(_http_client_t));
+    if (client)
+    {
+        evm_object_set_ext_data(&result, (intptr_t)client);
+        evm_object_set_ext_data(obj, (intptr_t)client);
     }
 
     uint32_t len = evm_string_len(h) + 5 + evm_string_len(pa);
-    evm_val_t *url = evm_heap_string_create(e, "", len);
-    sprintf(evm_heap_string_addr(url), "%s:%d%s", host, port, path);
-
-    evm_val_t *args;
-    evm_val_t *result = evm_module_http_client_new_request(e);
-    _http_client_t *request = (_http_client_t *)evm_object_get_ext_data(result);
-
-    int status_code = webclient_get(session, evm_2_string(url));
-    if (status_code != 200)
-    {
-        args = evm_mk_null();
-    }
-    else
-    {
-        evm_val_t *obj = evm_object_create(e, GC_DICT, 6, 0);
-        if (obj == NULL)
-            return EVM_VAL_UNDEFINED;
-
-        evm_prop_append(e, obj, "abort", evm_mk_native((intptr_t)evm_module_http_response_abort));
-        evm_prop_append(e, obj, "end", evm_mk_native((intptr_t)evm_module_http_response_end));
-        evm_prop_append(e, obj, "on", evm_mk_native((intptr_t)evm_module_http_response_on));
-        evm_prop_append(e, obj, "setTimeout", evm_mk_native((intptr_t)evm_module_http_response_setTimeout));
-        evm_prop_append(e, obj, "write", evm_mk_native((intptr_t)evm_module_http_response_write));
-        evm_prop_append(e, obj, "writeHead", evm_mk_native((intptr_t)evm_module_http_response_writeHead));
-
-        _http_client_t *client = evm_malloc(sizeof(_http_client_t));
-        if (client == NULL)
-            return EVM_VAL_UNDEFINED;
-
-        client->obj_id = evm_module_registry_add(e, obj);
-        client->session = session;
-
-        taskENTER_CRITICAL();
-        xTaskCreate(_http_response_thread, "http-response-task", 512, client, 13, NULL);
-        taskEXIT_CRITICAL();
-        printf("Bug is here: %s, line is: %d\n", __func__, __LINE__);
-        evm_object_set_ext_data(obj, (intptr_t)client);
-        args = obj;
-    }
+    client->obj_id = evm_module_registry_add(e, obj);
+    client->session = session;
+    client->url = evm_malloc(len * sizeof(char));
+    sprintf(client->url, "%s:%d%s", host, port, path);
+    client->buffer = NULL;
+    client->buffer_length = 0;
+    client->method = GET;
 
     if (evm_is_script(v + 1))
-        evm_run_callback(e, v + 1, &e->scope, args, 1);
+    {
+        uint32_t flag = 0;
+        evm_hash_t arguments = evm_str_lookup(e, "arguments", &flag);
+        evm_val_t *args = evm_list_create(e, GC_LIST, 1);
+        evm_list_set(e, args, 0, *obj);
+        evm_attr_append_with_key(e, v + 1, arguments, *args);
+        evm_module_event_add_listener(e, &result, "response", v + 1);
+    }
 
-    request->session = session;
-    return *result;
+    return result;
 }
 
 //server.on(event, callback)
@@ -543,10 +654,11 @@ static evm_val_t evm_module_http_server_listen(evm_t *e, evm_val_t *p, int argc,
 //server.close([callback])
 static evm_val_t evm_module_http_server_close(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
 {
-    struct webclient_session *session = (struct webclient_session *)evm_object_get_ext_data(p);
-    if (!session)
+    _http_client_t *client = (_http_client_t *)evm_object_get_ext_data(p);
+    if (client == NULL || client->session == NULL)
         return EVM_VAL_UNDEFINED;
-    webclient_close(session);
+
+    webclient_close(client->session);
     if (argc > 0 && evm_is_script(v))
         evm_run_callback(e, v, &e->scope, NULL, 0);
 }
@@ -557,11 +669,11 @@ static evm_val_t evm_module_http_server_setTimeout(evm_t *e, evm_val_t *p, int a
     if (argc < 0 || !evm_is_number(v))
         return EVM_VAL_UNDEFINED;
 
-    struct webclient_session *session = (struct webclient_session *)evm_object_get_ext_data(p);
-    if (!session)
+    _http_client_t *client = (_http_client_t *)evm_object_get_ext_data(p);
+    if (client == NULL || client->session == NULL)
         return EVM_VAL_UNDEFINED;
 
-    webclient_set_timeout(session, evm_2_integer(v));
+    webclient_set_timeout(client->session, evm_2_integer(v));
 
     if (argc > 1 && evm_is_script(v + 1))
         evm_run_callback(e, v + 1, &e->scope, NULL, 0);
@@ -571,6 +683,7 @@ static evm_val_t evm_module_http_server_setTimeout(evm_t *e, evm_val_t *p, int a
 
 evm_err_t evm_module_http(evm_t *e)
 {
+    http_obj_e = e;
     evm_builtin_t builtin[] = {
         {"createServer", evm_mk_native((intptr_t)evm_module_http_createServer)},
         {"request", evm_mk_native((intptr_t)evm_module_http_request)},
