@@ -49,7 +49,10 @@ static void _http_response_thread(_http_client_t *client)
             buf_size += 512;
             old_content = out_content;
             out_content = evm_malloc(buf_size);
-
+            if (out_content == NULL) {
+                printf("Exception is here: %s, line: %d\r\n", __FUNCTION__, __LINE__);
+                break;
+            }
             if (old_content != NULL)
             {
                 memcpy(out_content, old_content, buf_size);
@@ -84,6 +87,10 @@ static void _http_response_thread(_http_client_t *client)
         }
 
         out_content = evm_malloc(content_length);
+        if (out_content == NULL) {
+            printf("Exception is here: %s, line: %d\r\n", __FUNCTION__, __LINE__);
+            return;
+        }
         total_read = webclient_read(client->session, out_content, content_length);
         if (total_read != content_length)
         {
@@ -145,12 +152,19 @@ static evm_val_t evm_module_http_request_on(evm_t *e, evm_val_t *p, int argc, ev
         return EVM_VAL_UNDEFINED;
 
     evm_val_t *obj = evm_module_registry_get(e, client->obj_id);
+    if (obj == NULL)
+        return EVM_VAL_UNDEFINED;
     uint32_t flag = 0;
     evm_hash_t arguments = evm_str_lookup(e, "arguments", &flag);
+    if (arguments == EVM_INVALID_HASH) {
+        return EVM_VAL_UNDEFINED;
+    }
     evm_val_t *args = evm_list_create(e, GC_LIST, 1);
+    if (args == NULL)
+        return EVM_VAL_UNDEFINED;
+
     evm_list_set(e, args, 0, *obj);
     evm_attr_append_with_key(e, v + 1, arguments, *args);
-
     evm_module_event_add_listener(e, p, evm_2_string(v), v + 1);
     return EVM_VAL_UNDEFINED;
 }
@@ -184,9 +198,13 @@ static evm_val_t evm_module_http_request_write(evm_t *e, evm_val_t *p, int argc,
     if (buffer != NULL && length > 0) {
         uint32_t total_len = client->buffer_length + length;
         char *temp_buf = evm_malloc(total_len);
-        evm_free(client->buffer);
+        if (temp_buf == NULL)
+            return EVM_VAL_FALSE;
 
-        memcpy(temp_buf, client->buffer, client->buffer_length);
+        if (client->buffer) {
+            memcpy(temp_buf, client->buffer, client->buffer_length);
+            evm_free(client->buffer);
+        }
         memcpy(temp_buf + client->buffer_length, buffer, length);
         client->buffer = temp_buf;
         client->buffer_length = total_len;
@@ -208,7 +226,7 @@ static evm_val_t evm_module_http_request_end(evm_t *e, evm_val_t *p, int argc, e
     }
 
     _http_client_t *client = (_http_client_t *)evm_object_get_ext_data(p);
-    if (client == NULL)
+    if (client == NULL || client->session == NULL)
         return EVM_VAL_UNDEFINED;
 
     int status_code = -1;
@@ -302,6 +320,9 @@ static evm_val_t evm_module_http_response_end(evm_t *e, evm_val_t *p, int argc, 
         }
     }
     _http_client_t *client = (_http_client_t *)evm_object_get_ext_data(p);
+    if (client == NULL || client->session == NULL)
+        return EVM_VAL_UNDEFINED;
+
     int status_code = -1;
     if (client->method == GET)
     {
@@ -311,8 +332,13 @@ static evm_val_t evm_module_http_response_end(evm_t *e, evm_val_t *p, int argc, 
     {
         uint32_t total_len = client->buffer_length + evm_buffer_len(v);
         char *temp_buf = evm_malloc(total_len);
-        evm_free(client->buffer);
-        memcpy(temp_buf, client->buffer, client->buffer_length);
+        if (temp_buf == NULL)
+            return EVM_VAL_UNDEFINED;
+
+        if (client->buffer) {
+            memcpy(temp_buf, client->buffer, client->buffer_length);
+            evm_free(client->buffer);
+        }
         memcpy(temp_buf + client->buffer_length, buffer, length);
         client->buffer = temp_buf;
         status_code = webclient_post(client->session, client->url, client->buffer);
@@ -462,10 +488,12 @@ static evm_val_t evm_module_http_request(evm_t *e, evm_val_t *p, int argc, evm_v
             break;
         }
         evm_val_t *value = evm_prop_get_by_key(e, headers, key, index);
+        if (value == NULL)
+            break;
         const char *name = evm_string_get(e, key);
-        if (evm_is_integer(value))
+        if (evm_is_integer(value) && name)
             webclient_header_fields_add(session, "%s: %d\r\n", name, value);
-        else
+        else if (name)
             webclient_header_fields_add(session, "%s: %s\r\n", name, value);
     }
 
@@ -497,7 +525,8 @@ static evm_val_t evm_module_http_request(evm_t *e, evm_val_t *p, int argc, evm_v
     client->obj_id = evm_module_registry_add(e, obj);
     client->session = session;
     client->url = evm_malloc(len * sizeof(char));
-    sprintf(client->url, "%s:%d%s", evm_2_string(host), evm_2_integer(port), evm_2_string(path));
+    if (client->url)
+        sprintf(client->url, "%s:%d%s", evm_2_string(host), evm_2_integer(port), evm_2_string(path));
     client->buffer = NULL;
     client->buffer_length = 0;
 
@@ -514,7 +543,11 @@ static evm_val_t evm_module_http_request(evm_t *e, evm_val_t *p, int argc, evm_v
     {
         uint32_t flag = 0;
         evm_hash_t arguments = evm_str_lookup(e, "arguments", &flag);
+        if (arguments == EVM_INVALID_HASH)
+            return EVM_VAL_UNDEFINED;
         evm_val_t *args = evm_list_create(e, GC_LIST, 1);
+        if (args == NULL)
+            return EVM_VAL_UNDEFINED;
         evm_list_set(e, args, 0, *obj);
         evm_attr_append_with_key(e, v + 1, arguments, *args);
         evm_module_event_add_listener(e, &result, "response", v + 1);
@@ -569,7 +602,11 @@ static evm_val_t evm_module_http_get(evm_t *e, evm_val_t *p, int argc, evm_val_t
             break;
         }
         evm_val_t *value = evm_prop_get_by_key(e, headers, key, index);
+        if (value == NULL)
+            return EVM_VAL_UNDEFINED;
         const char *name = evm_string_get(e, key);
+        if (name == NULL)
+            return EVM_VAL_UNDEFINED;
         if (evm_is_integer(value))
             webclient_header_fields_add(session, "%s: %d\r\n", name, value);
         else
@@ -604,7 +641,8 @@ static evm_val_t evm_module_http_get(evm_t *e, evm_val_t *p, int argc, evm_val_t
     client->obj_id = evm_module_registry_add(e, obj);
     client->session = session;
     client->url = evm_malloc(len * sizeof(char));
-    sprintf(client->url, "%s:%d%s", host, port, path);
+    if (client->url)
+        sprintf(client->url, "%s:%d%s", host, port, path);
     client->buffer = NULL;
     client->buffer_length = 0;
     client->method = GET;
@@ -613,7 +651,11 @@ static evm_val_t evm_module_http_get(evm_t *e, evm_val_t *p, int argc, evm_val_t
     {
         uint32_t flag = 0;
         evm_hash_t arguments = evm_str_lookup(e, "arguments", &flag);
+        if (arguments == EVM_INVALID_HASH)
+            return EVM_VAL_UNDEFINED;
         evm_val_t *args = evm_list_create(e, GC_LIST, 1);
+        if (args == NULL)
+            return EVM_VAL_UNDEFINED;
         evm_list_set(e, args, 0, *obj);
         evm_attr_append_with_key(e, v + 1, arguments, *args);
         evm_module_event_add_listener(e, &result, "response", v + 1);

@@ -4,7 +4,7 @@
 COMPONENT_ADD_INCLUDEDIRS += ../../include
 COMPONENT_ADD_INCLUDEDIRS += ../../components/webclient/inc
 COMPONENT_ADD_INCLUDEDIRS += ../../../ecma/inc
-COMPONENT_ADD_INCLUDEDIRS += ../../../evm
+COMPONENT_ADD_INCLUDEDIRS += ../../../evm/libevm
 COMPONENT_ADD_INCLUDEDIRS += ../../../evm/native/repl
 
 COMPONENT_INCLUDES += bouffalolab
@@ -37,7 +37,6 @@ ECMA_SOURCES := \
     $(ECMA_PATH)/src/ecma_string.c \
     $(ECMA_PATH)/src/ecma_timeout.c \
     $(ECMA_PATH)/src/re.c
-
 
 ## This component's src
 

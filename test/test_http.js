@@ -43,9 +43,9 @@ request.on("response", function (response) {
 
   if (response)
     response.on("data", function (chunk) {
-      var buf2 = new Buffer(chunk);
-      print(buf2.toString());
-      print("come in.......");
+    //   var buf2 = new Buffer(chunk);
+    //   print(buf2.toString());
+    //   print("come in.......");
       print(chunk);
     });
 });
