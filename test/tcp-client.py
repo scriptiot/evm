@@ -5,6 +5,7 @@ import socket
 import time
 import threading
 
+
 class GracefulKiller:
     kill_now = False
 
@@ -15,11 +16,13 @@ class GracefulKiller:
     def exit_gracefully(self, signum, frame):
         self.kill_now = True
 
+
 # 这里需要修改为你电脑局域网IP地址
 client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-client.connect(("192.168.31.226", 7878))
+client.connect(("127.0.0.1", 12345))
 
 client.send(b"hello,world")
+
 
 def main():
     killer = GracefulKiller()
@@ -37,6 +40,7 @@ def main():
         if killer.kill_now:
             client.close()
             break
+
 
 if __name__ == "__main__":
     main()

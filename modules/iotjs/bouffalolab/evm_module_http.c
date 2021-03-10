@@ -7,12 +7,23 @@
 #define HTTP_HEADER_SIZE (1024)
 #define HTTP_RECV_MAX_SIZE (10 * 1024)
 
+enum http_method
+{
+    GET,
+    POST,
+    PUT,
+    DELETE
+};
+
 typedef struct _http_client_t
 {
-    struct webclient_session *session;
+    char *url;
+    char *buffer;
     int obj_id;
-    // char *buffer;
-    // int method;
+    int method;
+    uint32_t buffer_length;
+    pthread_t pid;
+    struct webclient_session *session;
 } _http_client_t;
 
 static void _http_response_thread(_http_client_t *client)
@@ -20,7 +31,6 @@ static void _http_response_thread(_http_client_t *client)
     if (client == NULL)
         return;
     int total_read = 0;
-    int resp_status = 0;
     int content_length = webclient_content_length_get(client->session);
     evm_val_t *obj = evm_module_registry_get(evm_runtime, client->obj_id);
     if (evm_is_undefined(obj) || evm_is_null(obj) || obj == NULL)
@@ -28,24 +38,26 @@ static void _http_response_thread(_http_client_t *client)
 
     printf("%s Conten-Length=%d\n", __FUNCTION__, content_length);
     uint8_t *out_content = NULL;
-    printf("Bug is here: %s, line: %s\n", __FUNCTION__, __LINE__);
     if (content_length <= 0)
     {
-        printf("Bug is here: %s, line: %s\n", __FUNCTION__, __LINE__);
+        printf("Bug is here: %s, line: %d\n", __FUNCTION__, __LINE__);
         int cur_read = 0;
         size_t buf_size = 0;
         uint8_t *old_content = NULL;
-        printf("Bug is here: %s, line: %s\n", __FUNCTION__, __LINE__);
+        printf("Bug is here: %s, line: %d\n", __FUNCTION__, __LINE__);
         evm_val_t *args;
         while (total_read < HTTP_RECV_MAX_SIZE)
         {
-            printf("Bug is here: %s, line: %s\n", __FUNCTION__, __LINE__);
+            printf("Bug is here: %s, line: %d\n", __FUNCTION__, __LINE__);
             buf_size += 512;
             old_content = out_content;
-            printf("Bug is here: %s, line: %s\n", __FUNCTION__, __LINE__);
             out_content = evm_malloc(buf_size);
-            memcpy(out_content, old_content, buf_size);
-            evm_free(old_content);
+            printf("Bug is here: %s, line: %d\n", __FUNCTION__, __LINE__);
+            if (old_content != NULL)
+            {
+                memcpy(out_content, old_content, buf_size);
+                evm_free(old_content);
+            }
             cur_read = webclient_read(client->session, out_content + total_read, buf_size);
             if (cur_read > 0)
             {
@@ -60,18 +72,18 @@ static void _http_response_thread(_http_client_t *client)
             }
             if (cur_read <= buf_size)
                 break;
-        }
-        printf("Bug is here: %s, line: %s\n", __FUNCTION__, __LINE__);
+            }
+            printf("Bug is here: %s, line: %d\n", __FUNCTION__, __LINE__);
 
-        if (total_read >= HTTP_RECV_MAX_SIZE)
-        {
-            printf("total_read is too large: %d\n", total_read);
-            goto err;
+            if (total_read >= HTTP_RECV_MAX_SIZE)
+            {
+                printf("total_read is too large: %d\n", total_read);
+                goto err;
         }
     }
     else
     {
-        printf("Bug is here: %s, line: %s\n", __FUNCTION__, __LINE__);
+        printf("Bug is here: %s, line: %d\n", __FUNCTION__, __LINE__);
         if (content_length >= HTTP_RECV_MAX_SIZE)
         {
             printf("content length is too large: %d\n", content_length);
@@ -93,7 +105,7 @@ static void _http_response_thread(_http_client_t *client)
             evm_pop(evm_runtime);
         }
     }
-    printf("Bug is here: %s, line: %s\n", __FUNCTION__, __LINE__);
+    printf("Bug is here: %s, line: %d\n", __FUNCTION__, __LINE__);
 
 err:
     if (out_content)
@@ -101,7 +113,13 @@ err:
 
     webclient_close(client->session);
     if (client)
+    {
+        if (client->url)
+            evm_free(client->url);
+        if (client->buffer)
+            evm_free(client->buffer);
         evm_free(client);
+    }
 }
 
 //http.createServer([options][, requestListener])
@@ -351,7 +369,6 @@ static evm_val_t evm_module_http_request(evm_t *e, evm_val_t *p, int argc, evm_v
 
     uint32_t len = evm_string_len(host) + 5 + evm_string_len(path);
     evm_val_t *url = evm_heap_string_create(e, "", len);
-
     sprintf(evm_heap_string_addr(url), "%s:%d%s", evm_2_string(host), evm_2_integer(port), evm_2_string(path));
 
     evm_val_t *args;
@@ -372,9 +389,25 @@ static evm_val_t evm_module_http_request(evm_t *e, evm_val_t *p, int argc, evm_v
     }
     else
     {
-        args = evm_module_http_client_new_response(e);
-        _http_client_t *client = (_http_client_t *)evm_object_get_ext_data(args);
+        evm_val_t *obj = evm_object_create(e, GC_DICT, 6, 0);
+        if (obj == NULL)
+            return EVM_VAL_UNDEFINED;
+
+        evm_prop_append(e, obj, "abort", evm_mk_native((intptr_t)evm_module_http_response_abort));
+        evm_prop_append(e, obj, "end", evm_mk_native((intptr_t)evm_module_http_response_end));
+        evm_prop_append(e, obj, "on", evm_mk_native((intptr_t)evm_module_http_response_on));
+        evm_prop_append(e, obj, "setTimeout", evm_mk_native((intptr_t)evm_module_http_response_setTimeout));
+        evm_prop_append(e, obj, "write", evm_mk_native((intptr_t)evm_module_http_response_write));
+        evm_prop_append(e, obj, "writeHead", evm_mk_native((intptr_t)evm_module_http_response_writeHead));
+
+        _http_client_t *client = evm_malloc(sizeof(_http_client_t));
+        if (client)
+        {
+            evm_object_set_ext_data(obj, (intptr_t)client);
+        }
+        client->obj_id = evm_module_registry_add(e, obj);
         client->session = session;
+        args = obj;
 
         taskENTER_CRITICAL();
         xTaskCreate(_http_response_thread, "http-response-task", 512, client, 13, NULL);

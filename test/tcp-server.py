@@ -38,7 +38,7 @@ def connection_handler(client, address):
 
 
 server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-server.bind(("0.0.0.0", 7878))
+server.bind(("0.0.0.0", 12345))
 server.listen(5)  # 只监听5个连接，不传值则监听任意多个连接
 
 killer = GracefulKiller()
