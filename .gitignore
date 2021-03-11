@@ -12,7 +12,6 @@
 *.lai
 *.la
 
-
 # Executables
 *.exe
 *.out
@@ -23,7 +22,9 @@ Makefile.*
 *.Release
 *.rc
 *.zip
-.vscode*
+*.classpath
+*.project
+*.cproject
 
 debug
 release
@@ -31,9 +32,13 @@ build*
 distwin/
 build/
 .vscode/
+.vscode*
+.settings/
+bin/
 
 *.pro.user
 vm.pro.user
 vm.pro.user.*
 thirds/littlevgl_qml/ports/Qt/build
 thirds/littlevgl_qml/ports/stm32/build/
+/bin/
