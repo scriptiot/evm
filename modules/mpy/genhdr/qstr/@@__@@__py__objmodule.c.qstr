@@ -1,0 +1,7 @@
+Q(__name__)
+Q(module)
+Q(__name__)
+Q(__main__)
+Q(builtins)
+Q(micropython)
+Q(ustruct)

@@ -4,3 +4,6 @@
 [submodule "sdk/bl_iot_sdk"]
 	path = sdk/bl_iot_sdk
 	url = git@gitee.com:scriptiot/bl_iot_sdk.git
+[submodule "components/micropython"]
+	path = components/micropython
+	url = git@gitee.com:scriptiot/micropython.git

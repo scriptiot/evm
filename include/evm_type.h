@@ -172,6 +172,10 @@ typedef struct evm_t{
     evm_val_t *builtin_string;
     evm_val_t *builtin_boolean;
 
+    evm_val_t *token_object;
+    uint8_t *token_buf;
+    uint32_t token_index;
+    uint32_t token_size;
     uint32_t gc_usage;
 }evm_t;
 
