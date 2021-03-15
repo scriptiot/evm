@@ -307,9 +307,7 @@ int evm_main()
 #ifdef EVM_LANG_ENABLE_REPL
     evm_repl_run(env, 100, EVM_LANG_JS);
 #endif
-
-    err = evm_boot(env, "hello.js");
-
+    err = evm_boot(env, "test.js");
     if (err == ec_no_file)
     {
         evm_print("can't open file\r\n");
@@ -317,6 +315,5 @@ int evm_main()
     }
 
     err = evm_start(env);
-
     return err;
 }

@@ -26,6 +26,7 @@ typedef int32_t  evm_int_t;
 #define EVM_LANG_QML    6   /** QML语法*/
 #define EVM_LANG_HML    7   /** HML语法*/
 #define EVM_LANG_CSS    8   /** CSS语法*/
+#define EVM_LANG_HTML   9   /** HTML语法*/
 
 #define EVM_VER                   300  /** 虚拟机版本号*/
 #define EVM_VAR_NAME_MAX_LEN      255  /** 虚拟机解析文件变量名称最大长度*/

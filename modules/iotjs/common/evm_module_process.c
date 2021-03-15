@@ -5,7 +5,8 @@ static evm_hash_t _name_arguments;
 static evm_val_t *evm_process_queue;
 //process.nextTick(callback, [...args]);
 evm_val_t evm_module_process_nextTick(evm_t *e, evm_val_t *p, int argc, evm_val_t *v) {
-    if( argc > 0 && evm_is_script(v) ) {
+    if (argc > 0 && evm_is_script(v))
+    {
         if( argc > 1 ) {
             evm_val_t *arguments = evm_list_create(e, GC_LIST, argc - 1);
             if( arguments ) {

@@ -2,8 +2,9 @@
 #
 ## These include paths would be exported to project level
 COMPONENT_ADD_INCLUDEDIRS += ../../include
+COMPONENT_ADD_INCLUDEDIRS += ../../components/webclient/inc
 COMPONENT_ADD_INCLUDEDIRS += ../../../ecma/inc
-COMPONENT_ADD_INCLUDEDIRS += ../../../evm
+COMPONENT_ADD_INCLUDEDIRS += ../../../evm/libevm
 COMPONENT_ADD_INCLUDEDIRS += ../../../evm/native/repl
 
 COMPONENT_INCLUDES += bouffalolab
@@ -17,7 +18,7 @@ EVM_SOURCES := \
     $(EVM_PATH)/libevm/native.c \
     $(EVM_PATH)/libevm/evm_gc.c \
     $(EVM_PATH)/libevm/jsparser.c \
-	$(EVM_PATH)/native/repl/evm_repl.c 
+	$(EVM_PATH)/native/repl/evm_repl.c
 
 ECMA_SOURCES := \
     $(ECMA_PATH)/src/ecma.c \
@@ -37,7 +38,6 @@ ECMA_SOURCES := \
     $(ECMA_PATH)/src/ecma_timeout.c \
     $(ECMA_PATH)/src/re.c
 
-
 ## This component's src
 
 COMPONENT_SRCS += $(EVM_SOURCES)
@@ -52,8 +52,11 @@ COMPONENT_SRCS += \
 	bouffalolab/evm_module_net.c \
 	bouffalolab/evm_module_timers.c \
 	bouffalolab/evm_module_gpio.c \
-	bouffalolab/evm_module_uart.c
+	bouffalolab/evm_module_uart.c \
+	bouffalolab/evm_module_fs.c \
+	bouffalolab/evm_module_http.c \
+	../../components/webclient/src/webclient.c
 
 COMPONENT_OBJS := $(patsubst %.c,%.o, $(COMPONENT_SRCS))
 
-COMPONENT_SRCDIRS += common bouffalolab ../../../evm/libevm ../../../ecma/src ../../../evm/native/repl
+COMPONENT_SRCDIRS += common bouffalolab ../../../evm/libevm ../../../ecma/src ../../../evm/native/repl ../../components/webclient/src

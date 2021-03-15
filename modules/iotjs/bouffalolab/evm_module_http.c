@@ -1,7 +1,8 @@
 #ifdef CONFIG_EVM_MODULE_HTTP
 #include "evm_module.h"
+#include <FreeRTOS.h>
+#include <timers.h>
 #include "webclient.h"
-#include <pthread.h>
 
 #define HTTP_HEADER_SIZE (1024)
 #define HTTP_RECV_MAX_SIZE (10 * 1024)
@@ -23,7 +24,6 @@ typedef struct _http_client_t
     int obj_id;
     int method;
     uint32_t buffer_length;
-    pthread_t pid;
     struct webclient_session *session;
 } _http_client_t;
 
@@ -43,27 +43,28 @@ static void _http_response_thread(_http_client_t *client)
         int cur_read = 0;
         size_t buf_size = 0;
         uint8_t *old_content = NULL;
+
         evm_val_t *args;
         while (total_read < HTTP_RECV_MAX_SIZE)
         {
             buf_size += 512;
             old_content = out_content;
             out_content = evm_malloc(buf_size);
-            if (out_content == NULL) {
-                printf("Exception is here: %s, line: %d\r\n", __FUNCTION__, __LINE__);
+            if (out_content == NULL)
                 break;
-            }
             if (old_content != NULL)
             {
                 memcpy(out_content, old_content, buf_size);
                 evm_free(old_content);
             }
+
             cur_read = webclient_read(client->session, out_content + total_read, buf_size);
             if (cur_read > 0)
             {
                 args = evm_buffer_create(http_obj_e, cur_read);
                 if (args)
                 {
+                    printf("Bug is here: %s, line: %d\r\n", __FUNCTION__, __LINE__);
                     memcpy(evm_buffer_addr(args), out_content + total_read, cur_read);
                     evm_module_event_emit(http_obj_e, obj, "data", 1, args);
                     evm_pop(http_obj_e);
@@ -76,6 +77,7 @@ static void _http_response_thread(_http_client_t *client)
 
         if (total_read >= HTTP_RECV_MAX_SIZE)
         {
+            printf("total_read is too large: %d\r\n", total_read);
             goto err;
         }
     }
@@ -83,17 +85,17 @@ static void _http_response_thread(_http_client_t *client)
     {
         if (content_length >= HTTP_RECV_MAX_SIZE)
         {
+            printf("content length is too large: %d\n", content_length);
             goto err;
         }
 
         out_content = evm_malloc(content_length);
-        if (out_content == NULL) {
-            printf("Exception is here: %s, line: %d\r\n", __FUNCTION__, __LINE__);
+        if (out_content == NULL)
             return;
-        }
         total_read = webclient_read(client->session, out_content, content_length);
         if (total_read != content_length)
         {
+            printf("not equal, need read = %d, bytes_read = %d\n", content_length, total_read);
             goto err;
         }
         evm_val_t *args = evm_buffer_create(http_obj_e, total_read);
@@ -142,7 +144,7 @@ static evm_val_t evm_module_http_request_setTimeout(evm_t *e, evm_val_t *p, int 
 //request.on(event, callback)
 static evm_val_t evm_module_http_request_on(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
 {
-    if (argc < 1 || !evm_is_string(v) || !evm_is_script(v + 1))
+    if (argc < 2 || !evm_is_string(v) || !evm_is_script(v + 1))
     {
         return EVM_VAL_UNDEFINED;
     }
@@ -156,9 +158,8 @@ static evm_val_t evm_module_http_request_on(evm_t *e, evm_val_t *p, int argc, ev
         return EVM_VAL_UNDEFINED;
     uint32_t flag = 0;
     evm_hash_t arguments = evm_str_lookup(e, "arguments", &flag);
-    if (arguments == EVM_INVALID_HASH) {
+    if (arguments == EVM_INVALID_HASH)
         return EVM_VAL_UNDEFINED;
-    }
     evm_val_t *args = evm_list_create(e, GC_LIST, 1);
     if (args == NULL)
         return EVM_VAL_UNDEFINED;
@@ -195,16 +196,16 @@ static evm_val_t evm_module_http_request_write(evm_t *e, evm_val_t *p, int argc,
     if (client == NULL || client->session == NULL)
         return EVM_VAL_FALSE;
 
-    if (buffer != NULL && length > 0) {
+    if (buffer != NULL && length > 0)
+    {
         uint32_t total_len = client->buffer_length + length;
         char *temp_buf = evm_malloc(total_len);
-        if (temp_buf == NULL)
-            return EVM_VAL_FALSE;
 
-        if (client->buffer) {
-            memcpy(temp_buf, client->buffer, client->buffer_length);
-            evm_free(client->buffer);
-        }
+        if (temp_buf == NULL || client->buffer == NULL)
+            return EVM_VAL_UNDEFINED;
+
+        memcpy(temp_buf, client->buffer, client->buffer_length);
+        evm_free(client->buffer);
         memcpy(temp_buf + client->buffer_length, buffer, length);
         client->buffer = temp_buf;
         client->buffer_length = total_len;
@@ -243,7 +244,8 @@ static evm_val_t evm_module_http_request_end(evm_t *e, evm_val_t *p, int argc, e
         return EVM_VAL_UNDEFINED;
 
     evm_val_t *obj = evm_module_registry_get(e, client->obj_id);
-    if (obj) {
+    if (obj)
+    {
         evm_prop_set_value(e, obj, "statusCode", evm_mk_number(status_code));
     }
 
@@ -266,7 +268,7 @@ static evm_val_t evm_module_http_client_new_request(evm_t *e)
         evm_prop_append(e, obj, "setTimeout", evm_mk_native((intptr_t)evm_module_http_request_setTimeout));
         evm_prop_append(e, obj, "write", evm_mk_native((intptr_t)evm_module_http_request_write));
 
-        _http_client_t *client = (_http_client_t *)evm_malloc(sizeof(_http_client_t));
+        _http_client_t *client = evm_malloc(sizeof(_http_client_t));
         if (client)
         {
             evm_object_set_ext_data(obj, (intptr_t)client);
@@ -296,12 +298,12 @@ static evm_val_t evm_module_http_response_on(evm_t *e, evm_val_t *p, int argc, e
         return EVM_VAL_UNDEFINED;
 
     evm_module_event_add_listener(e, p, evm_2_string(v), v + 1);
-    pthread_create(&client->pid, NULL, _http_response_thread, client);
+
+    xTaskCreate((TaskFunction_t)_http_response_thread, "http-response-task", 512, client, 13, NULL);
     return EVM_VAL_UNDEFINED;
 }
 
 //response.end([data][, callback])
-//通知操作系统，已经发送完成，可以将缓存区数据发送给客户端
 static evm_val_t evm_module_http_response_end(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
 {
     char *buffer = NULL;
@@ -320,9 +322,6 @@ static evm_val_t evm_module_http_response_end(evm_t *e, evm_val_t *p, int argc, 
         }
     }
     _http_client_t *client = (_http_client_t *)evm_object_get_ext_data(p);
-    if (client == NULL || client->session == NULL)
-        return EVM_VAL_UNDEFINED;
-
     int status_code = -1;
     if (client->method == GET)
     {
@@ -332,13 +331,11 @@ static evm_val_t evm_module_http_response_end(evm_t *e, evm_val_t *p, int argc, 
     {
         uint32_t total_len = client->buffer_length + evm_buffer_len(v);
         char *temp_buf = evm_malloc(total_len);
-        if (temp_buf == NULL)
+        if (temp_buf == NULL || client->buffer == NULL)
             return EVM_VAL_UNDEFINED;
 
-        if (client->buffer) {
-            memcpy(temp_buf, client->buffer, client->buffer_length);
-            evm_free(client->buffer);
-        }
+        memcpy(temp_buf, client->buffer, client->buffer_length);
+        evm_free(client->buffer);
         memcpy(temp_buf + client->buffer_length, buffer, length);
         client->buffer = temp_buf;
         status_code = webclient_post(client->session, client->url, client->buffer);
@@ -346,7 +343,8 @@ static evm_val_t evm_module_http_response_end(evm_t *e, evm_val_t *p, int argc, 
 
     if (argc > 1 && evm_is_script(v + 1))
         evm_run_callback(e, v + 1, &e->scope, NULL, 0);
-    pthread_create(&client->pid, NULL, _http_response_thread, client);
+
+    xTaskCreate((TaskFunction_t)_http_response_thread, "http-response-task", 512, client, 13, NULL);
     return EVM_VAL_UNDEFINED;
 }
 
@@ -383,7 +381,7 @@ static evm_val_t evm_module_http_response_setHeader(evm_t *e, evm_val_t *p, int 
     return EVM_VAL_UNDEFINED;
 }
 
-//response.setTimeout(ms[, callback])
+//response.setTimeout(ms, cb)
 static evm_val_t evm_module_http_response_setTimeout(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
 {
     if (argc < 1 || !evm_is_integer(v))
@@ -443,6 +441,8 @@ static evm_val_t evm_module_http_client_new_response(evm_t *e)
     }
     client->obj_id = evm_module_registry_add(e, obj);
     return *obj;
+
+    return EVM_VAL_UNDEFINED;
 }
 
 //http.request(options[, callback])
@@ -488,12 +488,14 @@ static evm_val_t evm_module_http_request(evm_t *e, evm_val_t *p, int argc, evm_v
             break;
         }
         evm_val_t *value = evm_prop_get_by_key(e, headers, key, index);
-        if (value == NULL)
-            break;
         const char *name = evm_string_get(e, key);
-        if (evm_is_integer(value) && name)
+
+        if (value == NULL || name == NULL)
+            break;
+
+        if (evm_is_integer(value))
             webclient_header_fields_add(session, "%s: %d\r\n", name, value);
-        else if (name)
+        else
             webclient_header_fields_add(session, "%s: %s\r\n", name, value);
     }
 
@@ -602,11 +604,9 @@ static evm_val_t evm_module_http_get(evm_t *e, evm_val_t *p, int argc, evm_val_t
             break;
         }
         evm_val_t *value = evm_prop_get_by_key(e, headers, key, index);
-        if (value == NULL)
-            return EVM_VAL_UNDEFINED;
         const char *name = evm_string_get(e, key);
-        if (name == NULL)
-            return EVM_VAL_UNDEFINED;
+        if (value == NULL || name == NULL)
+            break;
         if (evm_is_integer(value))
             webclient_header_fields_add(session, "%s: %d\r\n", name, value);
         else
