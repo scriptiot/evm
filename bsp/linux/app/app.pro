@@ -7,6 +7,8 @@ DEFINES += LINUX
 DEFINES += EVM_LANG_ENABLE_REPL
 DEFINES += EVM_LANG_ENABLE_JAVASCRIPT
 
+QMAKE_CFLAGS += -m32
+QMAKE_LFLAGS += -m32
 
 #DEFINES += CONFIG_EVM_MODULE_FS
 DEFINES += CONFIG_EVM_MODULE_NET
@@ -19,7 +21,13 @@ DEFINES += CONFIG_EVM_MODULE_ASSERT
 DEFINES += CONFIG_EVM_MODULE_HTTP
 DEFINES += CONFIG_EVM_MODULE_MPY
 
-LIBS += -L$$PWD/../../../lib/x86/linux -lecma -lejs
+if(contains(DEFINES, CONFIG_EVM_MODULE_MPY)) {
+    LIBS += -L$$PWD/../../../lib/x86/linux32 -lecma -lejs
+} else{
+    LIBS += -L$$PWD/../../../lib/x86/linux -lecma -lejs
+}
+
+
 LIBS += -lpthread
 LIBS += -lrt
 INCLUDEPATH += $$PWD/../../../include

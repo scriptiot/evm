@@ -176,6 +176,23 @@ evm_val_t _compat_mp_convert_basic_type_to_evm_type(evm_t * e, mp_obj_t from){
     }
 }
 
+static char *stack_top;
+#if MICROPY_ENABLE_GC
+static char heap[2048];
+#endif
+
+#if MICROPY_ENABLE_GC
+void gc_collect(void) {
+    // WARNING: This gc_collect implementation doesn't try to get root
+    // pointers from CPU registers, and thus may function incorrectly.
+    void *dummy;
+    gc_collect_start();
+    gc_collect_root(&dummy, ((mp_uint_t)stack_top - (mp_uint_t)&dummy) / sizeof(mp_uint_t));
+    gc_collect_end();
+    gc_dump_info();
+}
+#endif
+
 evm_err_t compat_mp_module(evm_t * e) {
     evm_builtin_t natives[] = {
         {"eval", evm_mk_native( (intptr_t)_compat_mp_eval )},
