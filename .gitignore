@@ -21,10 +21,6 @@ Makefile.*
 *.Debug
 *.Release
 *.rc
-*.zip
-*.classpath
-*.project
-*.cproject
 
 debug
 release
@@ -35,6 +31,13 @@ build/
 .vscode*
 .settings/
 bin/
+.vscode-tags
+*.zip
+*.autotools
+*.classpath
+*.project
+*.cproject
+*.settings
 
 *.pro.user
 vm.pro.user
