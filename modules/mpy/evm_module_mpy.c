@@ -12,6 +12,19 @@
 static char *_compat_mp_stack_top;
 evm_val_t _compat_mp_convert_basic_type_to_evm_type(evm_t * e, mp_obj_t from);
 
+static uint32_t _compact_mp_get_real_prop_len(evm_t * e, evm_val_t *v) {
+    if( !evm_is_object(v) )
+        return 0;
+    uint32_t size = evm_prop_len(v);
+    uint32_t i;
+    for (i = 0; i < size; i++) {
+        evm_hash_t key_hash = evm_prop_get_key_by_index(e, v, i);
+        if( key_hash == EVM_INVALID_HASH )
+            break;
+    }
+    return i;
+}
+
 static void _compact_mp_do_str(const char *src, mp_parse_input_kind_t input_kind) {
     nlr_buf_t nlr;
     if (nlr_push(&nlr) == 0) {
@@ -55,12 +68,14 @@ static void _compat_mp_convert_from_evm_type(evm_t * e, int argc, evm_val_t * fr
             }break;
             case TYPE_OBJECT:{
                 if( evm_get_gc_type(e, from + i) == GC_DICT ) {
-                    int size = evm_prop_len(from + i);
+                    uint32_t size = _compact_mp_get_real_prop_len(e, from + i);
                     mp_obj_t dict_obj = mp_obj_new_dict(size);
                     mp_obj_t item;
-                    for (int j = 0; j < size; j++) {
+                    for (uint32_t j = 0; j < size; j++) {
                         _compat_mp_convert_from_evm_type(e, 1, evm_prop_get_by_index(e, from + i, j), &item);
-                        uint32_t key_hash = evm_prop_get_key_by_index(e, from + i, j);
+                        evm_hash_t key_hash = evm_prop_get_key_by_index(e, from + i, j);
+                        if( key_hash == EVM_INVALID_HASH )
+                            break;
                         const char * str = evm_string_get(e, key_hash);
                         mp_obj_dict_store(dict_obj, mp_obj_new_str(str, strlen(str)), item);
                     }

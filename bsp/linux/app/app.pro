@@ -7,8 +7,7 @@ DEFINES += LINUX
 DEFINES += EVM_LANG_ENABLE_REPL
 DEFINES += EVM_LANG_ENABLE_JAVASCRIPT
 
-QMAKE_CFLAGS += -m32
-QMAKE_LFLAGS += -m32
+
 
 #DEFINES += CONFIG_EVM_MODULE_FS
 DEFINES += CONFIG_EVM_MODULE_NET
@@ -19,36 +18,12 @@ DEFINES += CONFIG_EVM_MODULE_TIMERS
 DEFINES += CONFIG_EVM_MODULE_BUFFER
 DEFINES += CONFIG_EVM_MODULE_ASSERT
 DEFINES += CONFIG_EVM_MODULE_HTTP
-DEFINES += CONFIG_EVM_MODULE_MPY
+#DEFINES += CONFIG_EVM_MODULE_MPY
 
 if(contains(DEFINES, CONFIG_EVM_MODULE_MPY)) {
-    LIBS += -L$$PWD/../../../lib/x86/linux32 -lecma -lejs
-} else{
-    LIBS += -L$$PWD/../../../lib/x86/linux -lecma -lejs
-}
-
-
-LIBS += -lpthread
-LIBS += -lrt
-INCLUDEPATH += $$PWD/../../../include
-INCLUDEPATH += $$PWD/../../../components/webclient/inc
-INCLUDEPATH += $$PWD/../../../components/micropython
-INCLUDEPATH += $$PWD/../../../modules/mpy
-
+    QMAKE_CFLAGS += -m32
+    QMAKE_LFLAGS += -m32
 SOURCES += \
-        main.c \
-    ../../../modules/iotjs/linux/evm_main.c \
-    ../../../modules/iotjs/linux/evm_module_net.c \
-    ../../../modules/iotjs/common/evm_module_process.c \
-    ../../../modules/iotjs/common/evm_module.c \
-    ../../../modules/iotjs/linux/evm_module_fs.c \
-    ../../../modules/iotjs/common/evm_module_events.c \
-    ../../../modules/iotjs/linux/evm_module_dns.c \
-    ../../../modules/iotjs/linux/evm_module_timers.c \
-    ../../../modules/iotjs/common/evm_module_buffer.c \
-    ../../../modules/iotjs/common/evm_module_assert.c \
-    ../../../modules/iotjs/linux/evm_module_http.c \
-    ../../../components/webclient/src/webclient.c \
     ../../../components/micropython/py/argcheck.c \
     ../../../components/micropython/py/asmarm.c \
     ../../../components/micropython/py/asmbase.c \
@@ -174,12 +149,7 @@ SOURCES += \
     ../../../components/micropython/lib/utils/pyexec.c \
     ../../../components/micropython/lib/utils/stdout_helpers.c \
     ../../../components/micropython/lib/utils/printf.c \
-    ../../../components/micropython/lib/mp-readline/readline.c \
-    ../../../../evm/libevm/evm.c \
-    ../../../../evm/libevm/evm_gc.c \
-    ../../../../evm/libevm/evm_compiler.c \
-    ../../../../evm/libevm/jsparser.c \
-    ../../../../evm/libevm/native.c
+    ../../../components/micropython/lib/mp-readline/readline.c
 
 HEADERS += \
     ../../../components/micropython/py/asmarm.h \
@@ -244,3 +214,32 @@ HEADERS += \
     ../../../components/micropython/py/stream.h \
     ../../../components/micropython/py/unicode.h \
     ../../../components/micropython/py/vmentrytable.h
+
+    LIBS += -L$$PWD/../../../lib/x86/linux32 -lecma -lejs
+} else {
+    LIBS += -L$$PWD/../../../lib/x86/linux -lecma -lejs
+}
+
+LIBS += -lpthread
+LIBS += -lrt
+INCLUDEPATH += $$PWD/../../../include
+INCLUDEPATH += $$PWD/../../../components/webclient/inc
+INCLUDEPATH += $$PWD/../../../components/micropython
+INCLUDEPATH += $$PWD/../../../modules/mpy
+
+SOURCES += \
+        main.c \
+    ../../../modules/iotjs/linux/evm_main.c \
+    ../../../modules/iotjs/linux/evm_module_net.c \
+    ../../../modules/iotjs/common/evm_module_process.c \
+    ../../../modules/iotjs/common/evm_module.c \
+    ../../../modules/iotjs/linux/evm_module_fs.c \
+    ../../../modules/iotjs/common/evm_module_events.c \
+    ../../../modules/iotjs/linux/evm_module_dns.c \
+    ../../../modules/iotjs/linux/evm_module_timers.c \
+    ../../../modules/iotjs/common/evm_module_buffer.c \
+    ../../../modules/iotjs/common/evm_module_assert.c \
+    ../../../modules/iotjs/linux/evm_module_http.c \
+    ../../../components/webclient/src/webclient.c
+
+
