@@ -8,11 +8,11 @@
 
  **`EVM`** 全称 `Embedded Virtural Machine`，本质上是一款通用、精简的嵌入式虚拟机，由语法解析前端框架和字节码运行后端构成，可运行在资源受限制的单片机上。
 
-![evm](./doc/logo.png)
+![evm](./docs/logo.png)
 
 ### 2. EVM 技术架构
 
-![evm](./doc/evm.png)
+![evm](./docs/evm.png)
 
 ### 3. EVM 优势特点
 
@@ -40,7 +40,7 @@
 | :-------- | --------:|
 | **bsp**| 开发板适配目录 |
 | **components**| 第三方组件目录 |
-| **doc**| 图片文档资源目录 |
+| **docs**| 图片文档资源目录 |
 | **include**|   头文件目录  | 
 | **lib**|   静态库  |
 | **modules**|  模块目录  |
@@ -61,35 +61,35 @@
 
 ## 1. 启动页面
 
-![](./doc/evue-litewearable-1.png)
+![](./docs/evue-litewearable-1.png)
 
 ## 2. 首页
 
-![](./doc/evue-litewearable-2.png)
+![](./docs/evue-litewearable-2.png)
 
 ## 3. 电话
 
-![](./doc/evue-litewearable-3.png)
+![](./docs/evue-litewearable-3.png)
 
 ## 4. 运动曲线
 
-![](./doc/evue-litewearable-4.png)
+![](./docs/evue-litewearable-4.png)
 
 ## 5. 音乐应用
 
-![](./doc/evue-litewearable-5.png)
+![](./docs/evue-litewearable-5.png)
 
 ## 6. 天气应用
 
-![](./doc/evue-litewearable-6.png)
+![](./docs/evue-litewearable-6.png)
 
 ## 7. 运动记录
 
-![](./doc/evue-litewearable-7.png)
+![](./docs/evue-litewearable-7.png)
 
 ## 8. 更新
 
-![](./doc/evue-litewearable-8.png)
+![](./docs/evue-litewearable-8.png)
 
 
 五、贡献代码
@@ -115,12 +115,12 @@
 + 享受EVM团队零距离接触，欢迎加入EVM团队共创未来
 + 享受EVM企业版无偿技术支持，多种技术解决方案自由分享
 
-![evm-weixin](./doc/evm-weixin.jpg)
+![evm-weixin](./docs/evm-weixin.jpg)
 
 
 > 如果群二维码失效，请加微信号dragondjf，备注：`张三--虚拟机爱好者--武汉`， 第一时间会拉你入群，谢谢！
 
-![evm-djf](./doc/evm-djf.jpg)
+![evm-djf](./docs/evm-djf.jpg)
 
 ## 2. EVM英雄帖
 
@@ -140,13 +140,13 @@ EVM处于创业高速成长期，欢迎有志之士加入，共同开辟物联�
 
 > 群号：`399011436`
 
-![evm](./doc/QQ.jpg)
+![evm](./docs/QQ.jpg)
 
 ## 4. 关注EVM公众号
 
 > 公众号名称： `EVM字节码`
 
-![evm-gzh](./doc/evm-gzh.jpg)
+![evm-gzh](./docs/evm-gzh.jpg)
 
 
 ## 5. 联系我们
