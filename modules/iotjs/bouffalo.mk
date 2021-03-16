@@ -26,13 +26,3 @@ COMPONENT_SRCS += \
 COMPONENT_OBJS := $(patsubst %.c,%.o, $(COMPONENT_SRCS))
 
 COMPONENT_SRCDIRS += common bouffalolab ../../components/webclient/src
-
-COMPONENT_LIB_ONLY := 1
-LIBS_PATH := $(BL60X_SDK_PATH)/../../lib/riscv/bouffalolab
-LIBS := ejs
-COMPONENT_ADD_LDFLAGS += -L$(LIBS_PATH) $(addprefix -l,$(LIBS))
-ALL_LIB_FILES := $(patsubst %,$(LIBS_PATH)/lib%.a,$(LIBS))
-
-$(warning $(ALL_LIB_FILES))
-
-COMPONENT_ADD_LINKER_DEPS := $(ALL_LIB_FILES)
