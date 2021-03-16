@@ -31,9 +31,9 @@ build/
 .vscode*
 .settings/
 bin/
-.vscode-tags
+.autotools
+.vscode-ctags
 *.zip
-*.autotools
 *.classpath
 *.project
 *.cproject

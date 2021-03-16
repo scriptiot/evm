@@ -1,5 +1,3 @@
-# BL60X_SDK_PATH = ../../sdk/bl_iot_sdk
-
 PROJECT_NAME := app
 PROJECT_PATH := $(abspath .)
 PROJECT_BOARD := evb
