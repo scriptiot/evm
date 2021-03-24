@@ -6,13 +6,13 @@
 
 ###  1.  EVM 是什么
 
- **`EVM`** 全称 `Embedded Virtural Machine`，本质上是一款通用、精简的嵌入式虚拟机，由语法解析前端框架和字节码运行后端构成，可运行在资源受限制的单片机上。
+ **`EVM`** 全称 `Embedded Virtual Machine`，本质上是一款通用、精简的嵌入式虚拟机，由语法解析前端框架和字节码运行后端构成，可运行在资源受限制的单片机上。
 
 ![evm](./docs/logo.png)
 
 ### 2. EVM 技术架构
 
-![evm](./docs/evm.png)
+![evm](./docs/evm-2021-ecosystem.png)
 
 ### 3. EVM 优势特点
 
@@ -52,44 +52,28 @@
 三、EVM 在线帮助手册
 ========================================
 
++ [EVM语雀在线文档](https://www.yuque.com/bytecode/evm)
++ [EVUE语雀在线文档](https://www.yuque.com/bytecode/evue)
 + [evm在线帮助手册Github](https://scriptiot.github.io/evm_doc/#/zh-cn/evm_what)
 + [evm在线帮助手册Gitee](https://scriptiot.gitee.io/evm_doc/#/zh-cn/evm_what)
 
 
-四、基于EVUE的智能穿戴应用展示
+四、基于EVM的解决方案
 ========================================
 
-## 1. 启动页面
+## 1. EVM物联网小程序
 
-![](./docs/evue-litewearable-1.png)
++ 支持单页应用SAP的开发
++ 支持多页应用epk的开发
 
-## 2. 首页
+![](./docs/evue-watch-01.png)
+![](./docs/evue-watch-02.png)
+![](./docs/evue-watch-03.png)
+![](./docs/evue-watch-04.png)
 
-![](./docs/evue-litewearable-2.png)
+## 2. EVM应用商店
 
-## 3. 电话
-
-![](./docs/evue-litewearable-3.png)
-
-## 4. 运动曲线
-
-![](./docs/evue-litewearable-4.png)
-
-## 5. 音乐应用
-
-![](./docs/evue-litewearable-5.png)
-
-## 6. 天气应用
-
-![](./docs/evue-litewearable-6.png)
-
-## 7. 运动记录
-
-![](./docs/evue-litewearable-7.png)
-
-## 8. 更新
-
-![](./docs/evue-litewearable-8.png)
+![](./docs/evm-store.png)
 
 
 五、贡献代码
