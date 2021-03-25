@@ -8,13 +8,13 @@
 
  **`EVM`** 全称 `Embedded Virtual Machine`，本质上是一款通用、精简的嵌入式虚拟机，由语法解析前端框架和字节码运行后端构成，可运行在资源受限制的单片机上。
 
-![evm](./docs/logo.png)
+![evm](./docs/evm-arch.png)
 
-### 2. EVM 技术架构
+### 2. EVM物联网应用生态建设
 
-![evm](./docs/evm-2021-ecosystem.png)
+![evm](./docs/evm-ecosystem.png)
 
-### 3. EVM 优势特点
+### 3. EVM优势特点
 
 + 纯C开发、零依赖、跨平台、内置REPL；
 + 最小编译体积50KB，最小内存占用2KB;
@@ -48,14 +48,13 @@
 | **sdk**|  第三方工具链 |
 | **test**|   测试代码 |
 | **tools**|  工具 |
+| **tools/evue-simulator**|  EVUE模拟器 |
 
 三、EVM 在线帮助手册
 ========================================
 
-+ [EVM语雀在线文档](https://www.yuque.com/bytecode/evm)
-+ [EVUE语雀在线文档](https://www.yuque.com/bytecode/evue)
-+ [evm在线帮助手册Github](https://scriptiot.github.io/evm_doc/#/zh-cn/evm_what)
-+ [evm在线帮助手册Gitee](https://scriptiot.gitee.io/evm_doc/#/zh-cn/evm_what)
++ [EVM语雀在线帮助手册](https://www.yuque.com/bytecode/evm)
++ [EVUE语雀在线帮助手册](https://www.yuque.com/bytecode/evue)
 
 
 四、基于EVM的解决方案
@@ -76,7 +75,20 @@
 ![](./docs/evm-store.png)
 
 
-五、贡献代码
+五、EVM 芯片支持计划
+========================================
+
+EVM团队愿意携手广大的芯片厂家和方案公司，给物联网行业的开发者推出更加简单高效的解决方案，打破物联网和互联网人才边界，赋能物联网企业和开发者提供全新的开发模式，降低物联网开发门槛，极速提升开发效率。
+
+
+| 芯片      |    应用场景|  方案|
+| :-------- | -------:| ------:|
+| ASR3601| 可用于功能机、儿童手表、POS机、对讲机、智能音箱等应用 | 基于EVM的物联网小程序解决方案<br/>基于EVM的应用商店解决方案 |
+| stm32L4R9| 健康手环，智能手表，小型医疗设备，智能表计和智能工业传感器 | 基于EVM的物联网小程序解决方案 |
+| BL602| Wi-Fi + BLE 组合(大写)的芯片组，用于低功耗和高性能应用开发 | 基于EVM的服务应用解决方案 |
+
+
+六、贡献代码
 ========================================
 + 在您自己的GitHub账户下Fork **`EVM`** 开源项目；
 + 根据您的需求在本地clone 一份 **`EVM`** 代码；
@@ -84,7 +96,7 @@
 + 创建 pull request，向 **`EVM`** 官方开发分支提交合入请求；
 + **`EVM`** 研发团队会定期review代码，通过测试后合入。
 
-六、加入EVM
+七、加入EVM
 ========================================
 
 技术创造未来，**EVM**团队需要你的参与，**EVM**团队现面向社区招募有激情有梦想的社区开发者，共同开创物联网新生态；
