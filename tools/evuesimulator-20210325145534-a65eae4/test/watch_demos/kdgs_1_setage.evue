@@ -1,0 +1,107 @@
+<html>
+<div class="container">
+    <image src="kdgs_1_logo2.bin" style="width:5px;height:5px;top:5px;left:5px;border-radius: 5px;background-color: white;"></image>
+    <image src="kdgs_1_reduce.bin" onclick="changeAge" id="jian"  style="top:100px;left:30px"></image>
+    <image src="kdgs_1_plus.bin" onclick="changeAge"  id="jia"   style="top:100px;left:165px"></image>
+    <text font-size="30" class="text" style="top: 107px;left: 114px;">{{age}}</text>
+    <text class="text" style="top: 60px;left: 60px;">小朋友几岁了?</text>
+    <div class="btn" onclick="toIndex" url="kdgs_1_index">确定</div>
+    <text class="text" style="top: 187px;left: 106px;color:#382830">确定</text>
+</div>
+</html>
+<script>
+router = require("@system.router")
+
+export default {
+    data: {
+        title: 'Hello,Developer!',
+        age:5
+    },
+    onInit: function() {
+        print("==========onInit index==========")
+    },
+
+    onReady: function() {
+        print("==========onReady index==========")
+    },
+
+    onShow: function() {
+        print("==========onShow index==========")
+    },
+
+    onHide: function() {
+        print("==========onHide index==========")
+    },
+
+    onDestroy: function() {
+        print("==========onDestroy index==========")
+    },
+    changeAge(obj){
+        if(obj.attributes.id=='jia'){
+            if(this.age!=50){
+                this.age=this.age+1;
+            }
+        }else{
+            if(this.age!=0){
+                this.age=this.age-1;
+            }
+        }
+
+    },
+    toIndex(obj){
+        router.push({
+            path: obj.attributes.url
+        })
+    }
+
+}
+</script>
+<style>
+.container {
+    width: 240px;
+    height: 240px;
+    border-width: 0px;
+    border-radius: 0px;
+    margin: 0px;
+    padding: 0px;
+    opacity: 0;
+    background-color: #362A30;
+    align-items: off;
+}
+
+.btn{
+    background-color: #FDD02D;
+    border-radius: 30px;
+    width:220px;
+    height:45px;
+    top:175px;
+    left:10px
+}
+
+.out-layer-ring {
+    padding: 3px;
+    width: 200px;
+    height: 20px;
+    stroke-width: 35x;
+    border-width: 1px;
+    border-color: white;
+    background-color: black;
+}
+
+.text{
+    width: 200px;
+    height: 80px;
+    margin: 0px;
+    margin: 0px;
+    padding: 0px;
+    color: white;
+    font-size: 40px;
+    /* font-family: simsun; */
+    background-color: transparent;
+}
+
+image {
+    left: 90px;
+    top: 50px;
+}
+</style>

@@ -1,0 +1,47 @@
+<html>
+<div class="container" onclick="onReturn">
+    <image :src="fpath" style="top: 25px;left: 40px; width: 150px; height: 150px;"></image>
+    <text style="top: 200px;left: 0px;background-color: transparent;color: white;font-size: 20px;width: 240px;height: 25px;text-align: center;"> {{fpath}}</text>
+</div>
+
+</html>
+<script>
+    router = require("@system.router")
+    camera = require("@system.camera")
+
+    export default {
+        data: {
+            clickcount: 0,
+            fpath: 'evue_logo.bin'
+        },
+        onShow: function() {
+            this.clickcount = 0;
+            setTimeout(function() {
+                camera.create(function(fpath) {
+                    this.fpath = camera.lastPhoto();
+                });
+            }, 500)
+        },
+        onReturn: function() {
+            this.clickcount += 1;
+            if (this.clickcount >= 2) {
+                router.push({
+                    path: "evue_dock"
+                })
+            }
+        }
+    }
+</script>
+<style>
+    .container {
+        width: 240px;
+        height: 240px;
+        border-width: 0px;
+        border-radius: 0px;
+        margin: 0px;
+        padding: 0px;
+        opacity: 0;
+        background-color: transparent;
+        align-items: off;
+    }
+</style>

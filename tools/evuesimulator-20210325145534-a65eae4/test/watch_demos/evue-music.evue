@@ -1,0 +1,43 @@
+<html>
+<div class="container">
+    <evue-container></evue-container>
+    <image src="evue-logo.bin" style="top: 40px;left: 40px; " clickable="true" onclick="onReturn"></image>
+    <text style="top: 200px;left: 70px;background-color: transparent;color: white;font-size: 20px;width: 100px;height: 25px;text-align: center;text-overflow: scrollcircle;" clickable="true" onclick="onReturn" onlongpress="onlongpress">404 Not Found</text>
+</div>
+</html>
+<script>
+router = require("@system.router")
+
+export default {
+    data: {
+        title: 'World'
+    },
+    onclick: function() {
+        this.data.title = 'hello';
+        print("=====onclick=====");
+        show();
+        gc();
+    },
+    onlongpress: function() {
+        print("=====longpress=====");
+    },
+    onReturn: function() {
+        print("=====onReturn=====");
+        router.push({
+            path: "evue-dock"
+        })
+    }
+}
+</script>
+<style>
+.container {
+    width: 240px;
+    height: 240px;
+    margin: 0px;
+    padding: 0px;
+    border-radius: 0px;
+    border-width: 0px;
+    border-color: red;
+    background-color: black;
+}
+</style>

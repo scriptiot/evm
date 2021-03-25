@@ -1,0 +1,19 @@
+<div class="container">
+    <evue-container></evue-container>
+    <div class="img-modal">
+        <image class="current-img" :style="currentImg0" src="pic1.bin"></image>
+        <image class="current-img" :style="currentImg1" src="pic2.bin"></image>
+        <image class="current-img" :style="currentImg2" src="pic3.bin"></image>
+        <div class="btn-group">
+            <div style="left: 40px; width: 40px; height: 40px; background-color: transparent;" onclick="onButtonClick">
+                <image src="left.bin"></image>
+            </div>
+            <div class="close-icon" style="top: 10px; left: 105px; width: 40px; height: 40px; background-color: transparent;" onclick="onClose">
+                <image src="close.bin" style="top: 0px; left: 10px;"></image>
+            </div>
+            <div style="left: 170px; width: 40px; height: 40px; background-color: transparent;" onclick="onButtonClick">
+                <image src="right.bin"></image>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,24 @@
+.container {
+    width: 240px;
+    height: 240px;
+    margin: 0px;
+    padding: 0px;
+    border-radius: 0px;
+    border-width: 0px;
+    border-color: red;
+    background-color: transparent;
+}
+
+.row-container {
+    flex-direction: row;
+    background-color: black;
+    background-color: black;
+    border-width: 0px;
+    border-color: transparent;
+    border-radius: 0px;
+}
+
+.icon-img {
+    width: 64px;
+    height: 64px;
+}

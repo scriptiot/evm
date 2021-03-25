@@ -1,0 +1,55 @@
+<html>
+<div class="container">
+    <text class="text" style="top:30px;left: 20px;" font-size="30">{{keyword}}</text>
+    <text class="text" style="top: 100px;left: 20px;color: #d3b962" font-size="20">松开完成</text>
+    <image class="img" src="kdgs_1_voice.bin" style="top:120px;left: 55px;" url="kdgs_1_search3" onclick="toSearch"></image>
+</div>
+</html>
+<script>
+router = require("@system.router")
+
+export default {
+    data: {
+        title: 'Hello,Developer!',
+        keyword:"孙悟空",
+    },
+    onReturn(){
+        router.pash({
+            path:"kdgs_1_search3",
+            params:{
+                keyword:this.data.keyword,
+            }
+
+        })
+    },
+    toSearch(obj){
+        router.push({
+            path: obj.attributes.url
+        })
+    }
+}
+</script>
+<style>
+.container {
+    width: 240px;
+    height: 240px;
+    margin: 0px;
+    padding: 0px;
+    border-radius: 0px;
+    border-width: 0px;
+    background-color: #362A30;
+}
+.text {
+    width:200px;
+    text-align: center;
+    top:86px;
+    background-color:transparent;
+    color:white;
+}
+.img{
+    width: 40px;
+    height: 40px;
+    background-color:transparent;
+}
+
+</style>

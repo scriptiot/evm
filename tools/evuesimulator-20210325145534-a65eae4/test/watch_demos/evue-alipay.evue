@@ -1,0 +1,47 @@
+<html>
+<div class="container">
+    <evue-container></evue-container>
+    
+</div>
+</html>
+<script>
+router = require("@system.router")
+
+export default {
+    data: {
+        title: 'World'
+    },
+    onclick: function() {
+        this.data.title = 'hello';
+        print("=====onclick=====");
+        show();
+        gc();
+    },
+    onlongpress: function() {
+        print("=====longpress=====");
+    },
+    onReturn: function() {
+        print("=====onReturn=====");
+        router.push({
+            path: "evue-dock"
+        })
+    }
+}
+</script>
+<style>
+.container {
+    width: 240px;
+    height: 240px;
+    margin: 0px;
+    padding: 0px;
+    border-radius: 0px;
+    border-width: 0px;
+}
+
+.background {
+    width: 240px;
+    height: 240px;
+    padding: 0px;
+    margin: 0px;
+}
+</style>

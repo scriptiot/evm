@@ -1,0 +1,5 @@
+<div class="container">
+    <text class="text" style="top:30px;left: 20px;" font-size="30">{{keyword}}</text>
+    <text class="text" style="top: 100px;left: 20px;color: #d3b962" font-size="20">松开完成</text>
+    <image class="img" src="kdgs_1_voice.bin" style="top:120px;left: 55px;" url="kdgs_1_search3" onclick="toSearch"></image>
+</div>

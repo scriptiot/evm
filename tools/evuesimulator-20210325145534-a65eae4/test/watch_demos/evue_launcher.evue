@@ -1,0 +1,66 @@
+<html>
+<div class="container">
+    <image src="evue-logo.bin" style="top: 20px;left: 40px;"></image>
+    <text style="top:190px;background-color: transparent; color: white;font-size: 20px;width: 240px;height: 25px;text-align: center;">Power by EVM</text>
+</div>
+</html>
+<script>
+router = require("@system.router")
+
+export default {
+    data: {
+        title: 'Hello,Developer!'
+    },
+    onInit: function() {
+        print("==========onInit index==========")
+    },
+
+    onReady: function() {
+        print("==========onReady index==========")
+    },
+
+    onShow: function() {
+        print("==========onShow index==========")
+        setTimeout(function() {
+            print("==========xxxxxxxxxxxxxxxxxxx==========")
+            router.push({ path: "evue_404_gif" })
+        }, 200)
+    },
+
+    onHide: function() {
+        print("==========onHide index==========")
+    },
+
+    onDestroy: function() {
+        print("==========onDestroy index==========")
+    },
+}
+</script>
+<style>
+.container {
+    width: 240px;
+    height: 240px;
+    border-width: 0px;
+    border-radius: 0px;
+    margin: 0px;
+    padding: 0px;
+    opacity: 0;
+    background-color: transparent;
+    align-items: off;
+}
+
+.out-layer-ring {
+    padding: 3px;
+    width: 200px;
+    height: 20px;
+    stroke-width: 35x;
+    border-width: 1px;
+    border-color: white;
+    background-color: black;
+}
+
+image {
+    left: 90px;
+    top: 50px;
+}
+</style>

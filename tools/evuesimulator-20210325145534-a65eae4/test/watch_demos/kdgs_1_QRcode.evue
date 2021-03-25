@@ -1,0 +1,84 @@
+<html>
+<div class="container">
+    <image src="kdgs_setAge.bin" style="width:6px;height:6px;top:5px;left:205px;" url="kdgs_1_setage" onclick="onPageRedirect"></image>
+	<div class="QRcode"  url="kdgs_1_index" onclick="onPageRedirect">
+        <image src="kdgs_QRcode1.bin" ></image>
+	</div>
+	<text class="text" >扫码登录</text>
+</div>
+</html>
+<script>
+router = require("@system.router")
+
+export default {
+    data: {
+        title: 'World',
+    },
+
+    onInit: function () {
+        print("==========onInit==========")
+    },
+
+    onReady: function () {
+        print("==========onReady==========")
+    },
+
+    onShow: function () {
+        print("==========onShow==========")
+    },
+
+    onHide: function () {
+        print("==========onHide==========")
+    },
+
+    onDestroy: function () {
+        print("==========onDestroy==========")
+    },
+
+    onPageRedirect: function (obj) {
+        print("==========onclick==========")
+        print(obj.attributes.url)
+
+        router.push({
+            path: obj.attributes.url
+        })
+    },
+}
+</script>
+<style>
+.container {
+    width: 240px;
+    height: 240px;
+    margin: 0px;
+    padding: 0px;
+    border-radius: 0px;
+    border-width: 0px;
+    background-color:#382830;
+}
+.imgbox{
+    width:28px;
+    height: 32px;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+.QRcode{
+    overflow: hidden;
+    align-content: center;
+    left:50px;
+    top: 40px;
+    width: 140px;
+    height: 140px;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+.text{
+    width: 100px;
+    left: 90px;
+    top: 195px;
+    background-color: transparent;
+    color: white
+}
+</style>

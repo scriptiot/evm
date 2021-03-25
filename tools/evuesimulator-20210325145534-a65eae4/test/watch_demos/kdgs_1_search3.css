@@ -1,0 +1,80 @@
+.container {
+    width: 240px;
+    height: 240px;
+    margin: 0px;
+    padding: 0px;
+    border-radius: 0px;
+    border-width: 0px;
+    background-color: #362A30;
+}
+
+.list-container {
+    width: 240px;
+    height: 200px;
+    left: 0px;
+    top: 40px;
+    border-width: 0px;
+    background-color: transparent;
+}
+
+.text {
+    width:90px;
+    text-align: center;
+    top:103px;
+    background-color: #362A30;
+    color:white;
+    font-size: 10px;
+}
+
+.div {
+    width: 95px;
+    height: 123px;
+    left: -10px;
+    float: left;
+    border-width: 0px;
+    background-color: #362A30;
+}
+
+.app-icon {
+    /* top: 20px; */
+    left: 8px;
+}
+
+.arrow-icon {
+    top: 18px;
+    left: 180px;
+}
+
+.maintitle {
+    top: 21px;
+    left: 80px;
+    width: 160px;
+    height: 50px;
+    margin: 0px;
+    margin: 0px;
+    padding: 0px;
+    color: white;
+    font-size: 30px;
+    /* font-family: simsun; */
+    background-color: transparent;
+}
+
+.maintitle-note {
+    top: 58px;
+    left: 160px;
+    color: white;
+    width: 100px;
+    height: 25px;
+    font-family: simsun;
+    font-size: 20px;
+}
+
+.subtitle {
+    top: 20px;
+    left: 180px;
+    color: white;
+    width: 100px;
+    height: 25px;
+    font-family: simsun;
+    font-size: 20px;
+}

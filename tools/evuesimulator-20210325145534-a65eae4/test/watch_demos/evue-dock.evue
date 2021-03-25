@@ -1,0 +1,367 @@
+<html>
+<div class="container">
+    <!-- <common></common> -->
+    <tabview currentIndex="0" loopon="true">
+        <template for="apps" key="appItem" index="index">
+            <tab class="tab-wrap">
+                <div class="list-item" :url="appItem[0].appUrl" style="left: 18px;top: 18px;" onclick="onPageRedirect">
+                    <image :src="appItem[0].appIcon"></image>
+                    <text class="list-item-title">{{appItem[0].appName}}</text>
+                </div>
+                <div class="list-item" :url="appItem[1].appUrl" style="left: 120px;top: 18px;" onclick="onPageRedirect">
+                    <image class="item-image" :src="appItem[1].appIcon"></image>
+                    <text class="list-item-title">{{appItem[1].appName}}</text>
+                </div>
+                <div class="list-item" :url="appItem[2].appUrl" style="left: 18px;top: 120px;" onclick="onPageRedirect">
+                    <image class="item-image" :src="appItem[2].appIcon"></image>
+                    <text class="list-item-title">{{appItem[2].appName}}</text>
+                </div>
+                <div class="list-item" :url="appItem[3].appUrl" style="left: 120px;top: 120px;" onclick="onPageRedirect">
+                    <image class="item-image" :src="appItem[3].appIcon"></image>
+                    <text class="list-item-title">{{appItem[3].appName}}</text>
+                </div>
+            </tab>
+        </template>
+        <!-- <tab class="tab-wrap">
+            <div class="list-item" url="evue-calculator" style="left: 18px;top: 18px;" onclick="onPageRedirect">
+                <image src="calculator.bin"></image>
+                <text class="list-item-title">计算器</text>
+            </div>
+            <div class="list-item" url="evue-calendar" style="left: 120px;top: 18px;" onclick="onPageRedirect">
+                <image class="item-image" src="calendar.bin"></image>
+                <text class="list-item-title">日历</text>
+            </div>
+            <div class="list-item" url="evue-music" style="left: 18px;top: 120px;" onclick="onPageRedirect">
+                <image src="music.bin"></image>
+                <text class="list-item-title">音乐</text>
+            </div>
+            <div class="list-item" url="evue-contacts" style="left: 120px;top: 120px;" onclick="onPageRedirect">
+                <image src="contacts.bin"></image>
+                <text class="list-item-title">通讯录</text>
+            </div>
+        </tab>
+        <tab class="tab-wrap">
+            <div class="list-item" url="evue-phone" style="left: 18px;top: 18px;" onclick="onPageRedirect">
+                <image src="phone-master.bin"></image>
+                <text class="list-item-title">手机配对</text>
+            </div>
+            <div class="list-item" url="evue-weixin" style="left: 120px;top: 18px;" onclick="onPageRedirect">
+                <image src="weixin.bin"></image>
+                <text class="list-item-title">微信</text>
+            </div>
+            <div class="list-item" url="evue-alipay" style="left: 18px;top: 120px;" onclick="onPageRedirect">
+                <image src="alipay.bin"></image>
+                <text class="list-item-title">支付宝</text>
+            </div>
+            <div class="list-item" url="evue-system" style="left: 120px;top: 120px;" onclick="onPageRedirect">
+                <image src="system.bin"></image>
+                <text class="list-item-title">设置</text>
+            </div>
+        </tab> -->
+    </tabview>
+</div>
+
+</html>
+<script>
+    router = require("@system.router")
+    fs = require("@system.fs")
+    http = require("@system.http")
+
+    export default {
+        data: {
+            title: 'World',
+            increased: true,
+            opacity: 0.1,
+            apps: []
+        },
+
+        onInit: function() {
+            print("==========onInit==========")
+
+        },
+
+        onReady: function() {
+            print("==========onReady==========")
+        },
+
+        onShow: function() {
+            print("==========onShow==========")
+            var apps = [];
+            for (let index = 0; index < 1; index++) {
+                var element = [{
+                    appUrl: "evue-camera",
+                    appName: "计算器",
+                    appIcon: "alipay.png"
+                }, {
+                    appUrl: "evue-album",
+                    appName: "相册",
+                    appIcon: "album.bin"
+                }, {
+                    appUrl: "evue-music",
+                    appName: "健康",
+                    appIcon: "introduction.bin"
+                }, {
+                    appUrl: "evue-calculator",
+                    appName: "语音",
+                    appIcon: "calculator.bin"
+                }];
+                apps.push(element);
+            };
+            // var apps_json = fs.readFile("C:/../../test/prettys/evue-dock-apps.json")
+            // var apps = JSON.parse(apps_json)
+            // print(apps)
+            // print(this.apps)
+            this.apps = apps;
+            // show();
+
+            // http.request({
+            //     method: "GET",
+            //     url: "http://119.23.220.236:8186/api/device.ashx?action=checktoke&deviceId=202107130000002&timeStamp=1590828061984",
+            //     headers: [],
+            //     timeout: 1,
+            //     callback: function(res) {
+            //         print(res);
+            //     },
+            //     error: function(code) {
+            //         print("get request code: " + code);
+            //     }
+            // })
+
+            // http.request({
+            //     method: "GET",
+            //     url: "https://watchshoptest.kidxin.com/asrMarket/test?data=123",
+            //     headers: [],
+            //     timeout: 1,
+            //     callback: function(res) {
+            //         print(res);
+            //     },
+            //     error: function(code) {
+            //         print("get request code: " + code);
+            //     }
+            // })
+
+
+            // headers = [
+            //     "Accept: application/json",
+            //     "Content-Type: application/json",
+            //     "charsets: utf-8",
+            //     "a:xxxx",
+            //     "b:xxxx12"
+            // ]
+
+            // http.request({
+            //     method: "GET",
+            //     url: "http://47.105.117.50:12000/api/v1/fullstack/apps/1",
+            //     headers: headers,
+            //     timeout: 1,
+            //     callback: function(res) {
+            //         print(res);
+            //         this.apps = JSON.parse(res)['apps'];
+            //     },
+            //     error: function(code) {
+            //         print("get request code: " + code);
+            //     }
+            // })
+
+            // setTimeout(function() {
+            //     http.request({
+            //         method: "GET",
+            //         url: "http://47.105.117.50:12000/api/v1/fullstack/apps/2",
+            //         headers: headers,
+            //         timeout: 1,
+            //         callback: function(res) {
+            //             print(res);
+            //             this.apps = JSON.parse(res)['apps'];
+            //         },
+            //         error: function(code) {
+            //             print("get request code: " + code);
+            //         }
+            //     })
+            // }, 2000)
+
+            // data = {
+            //     path: '/ejs/home/user'
+            // }
+            // setTimeout(function() {
+            //     http.request({
+            //         method: "POST",
+            //         url: "http://47.105.117.50:9999/api/v1/codeonline/test/jscases",
+            //         data: JSON.stringify(data),
+            //         timeout: 0,
+            //         headers: headers,
+            //         callback: function(res) {
+            //             print(res)
+            //                 // print(JSON.parse(res)['cases'][0]);
+            //         },
+            //         error: function(code) {
+            //             print("post request code: " + code);
+            //         }
+            //     })
+            // }, 5000)
+
+
+            // 
+            // this.render("http://47.105.117.50:12000//api/v1/fullstack/apps/evue-calculator.evue", "evue-calculator-online")
+        },
+
+        render: function(url, name) {
+            headers = [
+                "Accept: application/json",
+                "Content-Type: application/json",
+                "charsets: utf-8",
+                "a:xxxx",
+                "b:xxxx12"
+            ]
+            http.request({
+                method: "GET",
+                url: url,
+                headers: headers,
+                timeout: 1,
+                callback: function(res) {
+                    print(res);
+                    fs.writeFile("C:/../../test/prettys/" + name + ".evue", res);
+                    router.push({
+                        path: name
+                    })
+                    fs.remove("C:/../../test/prettys/" + name + ".evue")
+                },
+                error: function(code) {
+                    print("get request code: " + code);
+                }
+            })
+        },
+
+        onHide: function() {
+            print("==========onHide==========")
+        },
+
+        onDestroy: function() {
+            print("==========onDestroy==========")
+        },
+
+        onclick: function() {
+            if (this.style['background-color'] != 'transparent') {
+                this.style['background-color'] = 'transparent';
+            } else {
+                this.style['background-color'] = 'red';
+            }
+
+            // this.opacity += 0.1;
+            // this.style['border-opacity'] = this.opacity
+            // this.style['opacity'] = this.opacity
+
+            if (this.increased && this.style['border-width'] < 120) {
+                print("=====onclick==+++++++++++++++===", this.style['border-width']);
+                this.style['border-width'] += 10;
+                this.style['opacity'] += 0.1;
+                this.style['border-opacity'] += 0.1
+                print("=====onclick==+++++++++++++++===", this.style['border-width']);
+            } else {
+                this.increased = false;
+            }
+
+            if (!this.increased && this.style['border-width'] > 0) {
+                this.style['border-width'] -= 10;
+                this.style['opacity'] -= 0.1;
+                this.style['border-opacity'] -= 0.1
+                print("=====onclick==888888888888888888===", this.style['border-width']);
+            } else {
+                this.increased = true;
+            }
+
+            var _b = Number(this.style['border-width'])
+            this.title = this.style['border-width'].toString()
+            print("=====onclick==xxxxxxxxxxxxxxxxx===");
+            // print(this);
+            print("=====onclick=====");
+        },
+        onlongpress: function() {
+            print("=====longpress=====");
+        },
+
+        onButtonPress: function() {
+            print("=====onButtonPress=====");
+        },
+
+        onButtonLongPress: function() {
+            print("=====onButtonLongPress=====");
+        },
+
+        onPageRedirect: function(obj, x, y) {
+            print("==========onclick==========")
+            print(obj.attributes.url)
+            router.push({
+                path: obj.attributes.url
+            })
+        },
+
+        onButtonRelease: function() {
+            print("=====onButtonRelease=====");
+        },
+
+        onButtonClick: function() {
+            print("=====onButtonClick=====");
+            print(this.$page)
+            show();
+        },
+
+        onReturn: function() {
+            print("=====onReturn=====");
+            router.push({
+                path: "evue-dock",
+                params: {
+                    a: 1,
+                    b: 2
+                }
+            })
+        }
+    }
+</script>
+<style>
+    .container {
+        width: 240px;
+        height: 240px;
+        margin: 0px;
+        padding: 0px;
+        opacity: 1;
+        border-radius: 0px;
+        border-width: 0px;
+        /* background-color: transparent; */
+        gradient-main-color: #0093e8;
+        gradient-stop-color: #01e3d5;
+    }
+    
+    .tab-wrap {
+        left: 0px;
+        right: 0px;
+        width: 240px;
+        height: 240px;
+        background-color: transparent;
+    }
+    
+    .list-item {
+        position: absolute;
+        width: 100px;
+        height: 100px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        background-color: transparent;
+    }
+    
+    .list-item-title {
+        color: white;
+        top: 64px;
+        width: 100px;
+        text-align: center;
+        background-color: transparent;
+    }
+    
+    #button2 {
+        width: 80px;
+        height: 40px;
+        top: 150px;
+        left: 40px;
+    }
+</style>

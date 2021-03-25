@@ -1,0 +1,15 @@
+<div class="container">
+    <text style="top: 5px; background-color: transparent; color: white;width: 240px;height: 35px;text-align: center;font-family: simsun;font-size: 30px;">故事列表</text>
+    <image src="kdgs_1_back.bin" style="left:10px;top: 5px;" url="kdgs_1_story" onclick="onPageRedirect"></image>
+    <image :style="img_style" class="img" src="kdgs_1_nodata.bin" ></image>
+    <text class="text2" :style="text_style" >空空如也</text>
+    <list class="list-container" :style="list_style">
+        <template for="json" key="key" index="index">
+            <list-item class="list-item"    onclick="toPlayPage">
+                <image :src="key.icon"  class="app-icon"></image>
+                <image src="kdgs_1_storyPlay.bin"  class="play"></image>
+                <text font-size="20" style="left:35px;width:170px;height:40px;top:142px;background-color: transparent;color:red;text-align: center;">{{key.name}}</text>
+            </list-item>
+        </template>
+    </list>
+</div>

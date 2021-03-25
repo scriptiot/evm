@@ -1,0 +1,414 @@
+<html>
+<div class="container">
+    <text style="top: 5px; background-color: transparent; color: white;width: 240px;height: 35px;text-align: left;left:10px;font-family: simsun;font-size: 30px;">{{title}}</text>
+    <image src="more.bin" style="left:200px" url="category" onclick="onPageRedirect"></image>
+    <list class="list-container" >
+        <template for="json" key="key" index="index">
+            <list-item class="list-item" :title="key.name"  onclick="showMsgBox">
+                <image :src="key.icon"  class="app-icon"></image>
+                <text class="maintitle">{{key.name}}</text>
+                <image src="jd.bin" style="left:78px;top:40px"></image>
+                <text style="left:105px;top:40px;background-color:transparent;color:white">{{key.price}}</text>
+            </list-item>
+        </template>
+    </list>
+    <div id="msgbox" :style="msgbox_style">
+        <div id="msgContent">
+            <text id="msgTitle">{{messageTitle}}</text>
+            <text id="msgSubtitle">{{messageSubtitle}}</text>
+        </div>
+        <div id="button1" onclick="onEnterclick">
+            <text class="buttonText">确定</text>
+        </div>
+        <div id="button2" onclick="onCancleclick">
+            <text class="buttonText">取消</text>
+        </div>
+    </div>
+    <div id="msgbox" :style="msgbox_style1">
+        <image src="cancel.bin" style="left:173px;top:3px"  onclick="onCancleclick1"></image>
+        <text style="width:150px;top:20px;left:25px;text-align:center;color:white;background-color:transparent;font-size:40px">正在下载</text>
+        <text style="top:75px;left:82px;text-align:center;color:white;background-color:transparent">40%</text>
+        <progress type="horizontal" percent="40" style="left: 26px; top: 100px; width: 150px; height: 10px; border-radius:7px; border-width:0px; background-color: #56575C; indic-color: white;"></progress>
+    </div>
+</div>
+</html>
+<script>
+router = require("@system.router")
+fs = require("@system.fs")
+
+export default {
+    data: {
+        title: '热门推荐',
+        increased: true,
+        opacity: 0.1,
+        msgbox_style: {
+            'display': 'none'
+        },
+        msgbox_style1: {
+            'display': 'none'
+        },
+        messageTitle: "口袋故事",
+        messageSubtitle: "确定下此应用?",
+        json: [{
+            name: '口袋故事1',
+            icon: 'kdgs.bin',
+            status: '0',
+            price: '2',
+            id: '123456',
+        }, {
+            name: '国学诗词2',
+            icon: 'gxsc.bin',
+            status: '0',
+            price: '2',
+            id: '123457',
+        }, {
+            name: '生活百科3',
+            icon: 'shbk.bin',
+            status: '1',
+            price: '',
+            id: '123458',
+        }],
+        list: [{
+            name: '',
+            icon: '',
+            status: '', //状态信息0：未购买并且应用是付费的  1：免费
+            price: '', //应用价格
+            id: '' //应用id
+        }, {
+            name: '',
+            icon: '',
+            status: '',
+            price: '',
+            id: ''
+        }, {
+            name: '',
+            icon: '',
+            status: '',
+            price: '',
+            id: ''
+        }, {
+            name: '',
+            icon: '',
+            status: '',
+            price: '',
+            id: ''
+        }, {
+            name: '',
+            icon: '',
+            status: '',
+            price: '',
+            id: ''
+        }],
+        isShow: [{
+            'display': 'show'
+        }, {
+            'display': 'none'
+        }, {
+            'display': 'none'
+        }, {
+            'display': 'none'
+        }, {
+            'display': 'none'
+        }],
+    },
+
+    onInit: function() {
+        // for(var i=0;i<this.json.length;i++){
+        //     this.isShow[i].display='show'
+        //     this.json[i].name=this.list[i].name
+        //     this.json[i].icon=this.list[i].icon
+        //     this.json[i].status=this.list[i].status
+        //     this.json[i].price=this.list[i].price
+        //     this.json[i].id=this.list[i].id
+        //  }
+        // this.messageTitle=this.todolist.length
+    },
+
+    onReady: function() {
+        print("==========onReady==========")
+    },
+
+    onShow: function() {
+        print("==========onShow==========")
+    },
+
+    onHide: function() {
+        print("==========onHide==========")
+    },
+
+    onDestroy: function() {
+        print("==========onDestroy==========")
+    },
+
+    onclick: function() {
+        print("==========onInit==========")
+
+
+        if (this.style['background-color'] != 'transparent') {
+            this.style['background-color'] = 'transparent';
+        } else {
+            this.style['background-color'] = 'red';
+        }
+
+        // this.opacity += 0.1;
+        // this.style['border-opacity'] = this.opacity
+        // this.style['opacity'] = this.opacity
+
+        if (this.increased && this.style['border-width'] < 120) {
+            print("=====onclick==+++++++++++++++===", this.style['border-width']);
+            this.style['border-width'] += 10;
+            this.style['opacity'] += 0.1;
+            this.style['border-opacity'] += 0.1
+            print("=====onclick==+++++++++++++++===", this.style['border-width']);
+        } else {
+            this.increased = false;
+        }
+
+        if (!this.increased && this.style['border-width'] > 0) {
+            this.style['border-width'] -= 10;
+            this.style['opacity'] -= 0.1;
+            this.style['border-opacity'] -= 0.1
+            print("=====onclick==888888888888888888===", this.style['border-width']);
+        } else {
+            this.increased = true;
+        }
+
+        var _b = Number(this.style['border-width'])
+        this.title = this.style['border-width'].toString()
+        print("=====onclick==xxxxxxxxxxxxxxxxx===");
+        // print(this);
+        print("=====onclick=====");
+    },
+    onlongpress: function() {
+        print("=====longpress=====");
+    },
+
+    onButtonPress: function() {
+        print("=====onButtonPress=====");
+    },
+
+    onButtonLongPress: function() {
+        print("=====onButtonLongPress=====");
+    },
+
+    onPageRedirect: function(obj, x, y) {
+        print("==========onclick==========")
+        print(obj.attributes.url)
+        router.push({
+            path: obj.attributes.url
+        })
+    },
+
+    onButtonRelease: function() {
+        print("=====onButtonRelease=====");
+    },
+
+    onButtonClick: function() {
+        print("=====onButtonClick=====");
+        print(this.$page)
+        show();
+    },
+
+
+    onEnterclick: function() {
+        this.hideMsgBox();
+        this.msgbox_style1['display'] = 'show';
+
+        var a = fs.exists("C:/../../test/prettys/evue_appstore.js")
+        var b = fs.readFile("C:/../../test/prettys/evue_appstore.js")
+        var res = fs.writeFile("C:/../../test/prettys/evue_appstore1.js", b)
+
+        this.json = [{
+            name: '口袋故事1',
+            icon: 'kdgs.bin',
+            status: '0',
+            price: res + '',
+            id: '123456',
+        }]
+    },
+
+    onCancleclick: function() {
+        this.hideMsgBox();
+    },
+    onCancleclick1: function() {
+        this.msgbox_style1['display'] = 'none';
+    },
+
+    showMsgBox: function(obj) {
+        this.messageTitle = obj.attributes.title
+        this.msgbox_style['display'] = 'show'
+            // for(var i=0;i<this.todolist.length ){}
+    },
+
+    hideMsgBox: function() {
+        this.msgbox_style['display'] = 'none';
+    },
+
+    onReturn: function() {
+        print("=====onReturn=====");
+        router.push({
+            path: "evue-dock",
+            params: {
+                a: 1,
+                b: 2
+            }
+        })
+    }
+}
+</script>
+<style>
+.container {
+    width: 240px;
+    height: 240px;
+    margin: 0px;
+    padding: 0px;
+    border-radius: 0px;
+    border-width: 0px;
+    background-color: black;
+}
+
+.list-container {
+    width: 240px;
+    height: 210px;
+    left: 0px;
+    top: 30px;
+    border-width: 0px;
+    background-color: transparent;
+}
+
+.list-item {
+    width: 240px;
+    height: 61px;
+    left: 0px;
+    border-width: 0px;
+    background-color: transparent;
+}
+
+.app-icon {
+    /* top: 20px; */
+    left: 8px;
+}
+
+.arrow-icon {
+    top: 18px;
+    left: 180px;
+}
+
+.maintitle {
+    top: 2px;
+    left: 80px;
+    width: 160px;
+    height: 50px;
+    margin: 0px;
+    margin: 0px;
+    padding: 0px;
+    color: white;
+    font-size: 30px;
+    background-color: transparent;
+}
+
+.maintitle-note {
+    top: 58px;
+    left: 160px;
+    color: white;
+    width: 100px;
+    height: 25px;
+    font-family: simsun;
+    font-size: 20px;
+}
+
+.subtitle {
+    top: 20px;
+    left: 180px;
+    color: white;
+    width: 100px;
+    height: 25px;
+    font-family: simsun;
+    font-size: 20px;
+}
+
+#msgbox {
+    width: 200px;
+    height: 140px;
+    top: 50px;
+    z-index: 99999;
+    left: 20px;
+    background-color: #383b42;
+    border-radius: 2px;
+    border-width: 1px;
+    border-color: #4e5157;
+}
+
+#msgContent {
+    top: 0px;
+    left: 0px;
+    width: 200px;
+    height: 100px;
+    background-color: transparent;
+    border-radius: 0px;
+    border-width: 0px;
+    border-color: #ffffff;
+    text-overflow: longbreak;
+    align-items: center;
+}
+
+#msgTitle {
+    top: 0px;
+    left: 0px;
+    width: 200px;
+    height: 40px;
+    background-color: transparent;
+    border-radius: 0px;
+    border-width: 0px;
+    border-color: #ffffff;
+    color: #2fa5d2;
+    text-overflow: longbreak;
+    align-items: center;
+    text-align: center;
+}
+
+#msgSubtitle {
+    top: 0px;
+    left: 0px;
+    width: 200px;
+    height: 40px;
+    background-color: transparent;
+    border-radius: 0px;
+    border-width: 0px;
+    border-color: #ffffff;
+    color: #979897;
+    text-overflow: longbreak;
+    align-items: center;
+    text-align: center;
+}
+
+#button1 {
+    width: 100px;
+    height: 40px;
+    top: 100px;
+    left: 0px;
+    border-radius: 0px;
+    border-width: 1px;
+    border-color: #4e5157;
+    background-color: transparent;
+    align-items: center;
+}
+
+#button2 {
+    width: 100px;
+    height: 40px;
+    top: 100px;
+    left: 100px;
+    border-radius: 0px;
+    border-width: 1px;
+    border-color: #4e5157;
+    background-color: transparent;
+    align-items: center;
+}
+
+.buttonText {
+    background-color: transparent;
+    color: white;
+}
+
+</style>

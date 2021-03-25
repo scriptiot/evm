@@ -1,0 +1,7 @@
+<div class="container">
+	<div class="QRcode">
+		<image src="kdgs_QRcode3.bin" style="width:100%;height:auto"></image>
+	</div>
+	<text class="text" >微信扫码支付</text>
+	<text class="text1" >畅听10万+精品内容</text>
+</div>

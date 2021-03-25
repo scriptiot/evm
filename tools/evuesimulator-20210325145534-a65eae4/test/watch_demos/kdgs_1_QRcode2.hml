@@ -1,0 +1,7 @@
+<div class="container">
+	<div class="QRcode">
+		<image src="kdgs_QRcode2.bin" style="width: 100px"></image>
+	</div>
+	<text class="text" >扫码管理账号</text>
+	<text class="text1" >Marcin</text>
+</div>

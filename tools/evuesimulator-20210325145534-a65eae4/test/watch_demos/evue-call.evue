@@ -1,0 +1,69 @@
+<html>
+<div class="container">
+    <evue-container></evue-container>
+    <image src="girl.bin" style="top: 20px;left: 46px; border-radius: 50%;"></image>
+    <image src="call.bin" style="left: 87px; top: 174px; width: 64px;height: 64px;"></image>
+    <div style="width: 240px;height: 40px;top: 190px;left: 0px; background-color: transparent; flex-direction: row;">
+        <text style="color: white; width: 120px; text-align: left;font-size: 30px;background-color: transparent;font-family: simsun;padding: 20px;">张沫凡</text>
+        <text style="color: white; width: 120px; text-align: center;font-size: 25px;background-color: transparent;">00:02</text>
+    </div>
+</div>
+</html>
+<script>
+router = require("@system.router")
+
+export default {
+    data: {
+        title: 'World'
+    },
+    onInit: function () {
+        print("==========onInit progress==========")
+    },
+
+    onReady: function () {
+        print("==========onReady progress==========")
+    },
+
+    onShow: function () {
+        print("==========onShow progress==========")
+    },
+
+    onHide: function () {
+        print("==========onHide progress==========")
+    },
+
+    onDestroy: function () {
+        print("==========onDestroy progress==========")
+    },
+
+    onReturn: function () {
+        router.push({ path: "evue-dock" })
+    }
+}
+</script>
+<style>
+.container {
+    width: 240px;
+    height: 240px;
+    margin: 0px;
+    padding: 0px;
+    border-radius: 0px;
+    border-width: 0px;
+    border-color: red;
+    background-color: transparent;
+}
+
+.row-container {
+    flex-direction: row;
+    background-color: black;
+    background-color: black;
+    border-width: 0px;
+    border-color: transparent;
+    border-radius: 0px;
+}
+
+.icon-img {
+    width: 64px;
+    height: 64px;
+}
+</style>

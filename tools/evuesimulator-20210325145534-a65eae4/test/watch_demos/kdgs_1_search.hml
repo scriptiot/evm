@@ -1,0 +1,7 @@
+<div class="container">
+    <text class="text" style="top: 20px;left: 6px;" font-size="30">请说出</text>
+    <text class="text1" style="top:19px;left:96px;" font-size="30">想听的故事</text>
+    <text font-size="30" class="text" style="top: 53px;left: 58px;">如“孙悟空”</text>
+    <text class="text" style="top: 100px;left: 60px;color: #d3b962" font-size="20">长按说话</text>
+    <image class="img" src="kdgs_1_voice.bin" style="top: 120px;left: 55px;" url="kdgs_1_search2" onclick="toSearch"></image>
+</div>

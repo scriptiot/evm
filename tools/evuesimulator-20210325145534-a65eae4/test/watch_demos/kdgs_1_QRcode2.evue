@@ -1,0 +1,68 @@
+<html>
+<div class="container">
+	<div class="QRcode">
+		<image src="kdgs_QRcode2.bin" style="width: 100px"></image>
+	</div>
+	<text class="text" >扫码管理账号</text>
+	<text class="text1" >Marcin</text>
+</div>
+</html>
+<script>
+export default {
+    data:{
+
+    },
+    onInit: function () {
+        print("==========onInit==========")
+    },
+
+    onReady: function () {
+        print("==========onReady==========")
+    },
+
+    onShow: function () {
+        print("==========onShow==========")
+    },
+
+    onHide: function () {
+        print("==========onHide==========")
+    },
+
+    onDestroy: function () {
+        print("==========onDestroy==========")
+    },
+}
+</script>
+<style>
+.container {
+    width: 240px;
+    height: 240px;
+    margin: 0px;
+    padding: 0px;
+    border-radius: 0px;
+    border-width: 0px;
+    background-color: #382830;
+}
+.QRcode{
+    overflow: hidden;
+    align-content: center;
+    left:60px;
+    top: 40px;
+    width: 120px;
+    height: 120px;
+}
+.text{
+    width: 150px;
+    left: 70px;
+    top: 170px;
+    background-color: transparent;
+    color: white
+}
+.text1{
+    width: 150px;
+    left: 95px;
+    top: 190px;
+    background-color: transparent;
+    color: white
+}
+</style>

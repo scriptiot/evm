@@ -1,0 +1,39 @@
+.container {
+    width: 240px;
+    height: 240px;
+    border-width: 0px;
+    border-radius: 0px;
+    margin: 0px;
+    padding: 0px;
+    opacity: 0;
+    background-color: #382830;
+}
+.text{
+    width: 200px;
+    height: 80px;
+    margin: 0px;
+    margin: 0px;
+    padding: 0px;
+    color: white;
+    font-size: 40px;
+    /* font-family: simsun; */
+    background-color: transparent;
+}
+.text1{
+    width: 200px;
+    height: 80px;
+    margin: 0px;
+    margin: 0px;
+    padding: 0px;
+    color: #b0a6ad;
+    /* font-family: simsun; */
+    background-color: transparent;
+}
+.btn{
+    background-color: #FDD02D;
+    border-radius: 30px;
+    width:220px;
+    height:45px;
+    top:175px;
+    left:10px
+}

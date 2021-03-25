@@ -1,0 +1,15 @@
+.container {
+    width: 240px;
+    height: 240px;
+    margin: 0px;
+    padding: 0px;
+    border-radius: 0px;
+    border-width: 0px;
+}
+
+.background {
+    width: 240px;
+    height: 240px;
+    padding: 0px;
+    margin: 0px;
+}

@@ -1,0 +1,4 @@
+<div class="container">
+    <image src="evue-logo.bin" style="top: 20px;left: 40px;"></image>
+    <text style="top:190px;background-color: transparent; color: white;font-size: 20px;width: 240px;height: 25px;text-align: center;">Power by EVM</text>
+</div>

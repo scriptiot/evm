@@ -1,0 +1,71 @@
+<html>
+<div class="container">
+    <image src="kdgs_QRcode.bin" style="width:6px;height:6px;top:5px;left:5px;" url="kdgs_1_QRcode2" onclick="onPageRedirect"></image>
+    <image src="kdgs_setAge.bin" style="width:6px;height:6px;top:5px;left:205px;" url="kdgs_1_setage" onclick="onPageRedirect"></image>
+    <image src="kdgs_avatar.bin" style="width:50px;height:50px;top:30px;left:76px;"></image>
+    <text class="text" style="top: 128px;left: 90px;">{{adminName}}</text>
+    <text class="text1" style="top:150px;left:20px;">{{date}}</text>
+    <div class="btn" onclick="toIndex" url="kdgs_1_QRcode3" onclick="onPageRedirect">立即续费</div>
+    <text class="text" style="top: 187px;left: 86px;color:#382830" url="kdgs_1_QRcode3" onclick="onPageRedirect">立即续费</text>
+</div>
+</html>
+<script>
+router = require("@system.router")
+
+export default {
+    data: {
+        title: 'Hello,Developer!',
+        adminName:'Marvin',
+        date:'VIP到期时间：2019/01/31',
+    },
+    onPageRedirect: function (obj) {
+        print("==========onclick==========")
+        print(obj.attributes.url)
+
+        router.push({
+            path: obj.attributes.url
+        })
+    },
+}
+</script>
+<style>
+.container {
+    width: 240px;
+    height: 240px;
+    border-width: 0px;
+    border-radius: 0px;
+    margin: 0px;
+    padding: 0px;
+    opacity: 0;
+    background-color: #382830;
+}
+.text{
+    width: 200px;
+    height: 80px;
+    margin: 0px;
+    margin: 0px;
+    padding: 0px;
+    color: white;
+    font-size: 40px;
+    /* font-family: simsun; */
+    background-color: transparent;
+}
+.text1{
+    width: 200px;
+    height: 80px;
+    margin: 0px;
+    margin: 0px;
+    padding: 0px;
+    color: #b0a6ad;
+    /* font-family: simsun; */
+    background-color: transparent;
+}
+.btn{
+    background-color: #51d77a;
+    border-radius: 30px;
+    width:220px;
+    height:45px;
+    top:175px;
+    left:10px
+}
+</style>

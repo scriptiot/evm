@@ -1,0 +1,30 @@
+[
+    [{
+            "icon": "evue_recorder.png",
+            "name": "录音",
+            "url": "evue_recorder",
+            "version": "1.0",
+            "epk": "http://store.evmiot.com/api/v1/evm_store/download/apps",
+            "category": "tools",
+            "id": "b13494ca-8634-11eb-a7e9-00155db79754"
+        },
+        {
+            "icon": "evue_calculator.png",
+            "name": "计算器",
+            "url": "evue_calculator",
+            "version": "1.0",
+            "epk": "http://store.evmiot.com/api/v1/evm_store/download/apps",
+            "category": "tools",
+            "id": "b13494ca-8634-11eb-a7e9-00155db79755"
+        },
+        {
+            "icon": "evue_photo.png",
+            "name": "摄像头",
+            "url": "evue_photo",
+            "version": "1.0",
+            "epk": "http://store.evmiot.com/api/v1/evm_store/download/apps",
+            "category": "tools",
+            "id": "b13494ca-8634-11eb-a7e9-00155db79755"
+        }
+    ]
+]

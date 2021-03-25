@@ -1,0 +1,61 @@
+<html>
+<div class="container">
+    <evue-container></evue-container>
+    <div class="wrapper">
+        <text class="words-text" clickable="true" onclick="onReturn" onlongpress="onlongpress">{{ words }}</text>
+        <image src="voice-recorder.bin" style="top: 140px;left: 90px;" clickable="true" onclick="onReturn"></image>
+    </div>
+</div>
+</html>
+<script>
+router = require("@system.router")
+
+export default {
+    data: { words: '有什么可以帮您？' },
+    onclick: function () {
+        this.words = 'hello';
+        print("=====onclick=====");
+    },
+    onlongpress: function () {
+        print("=====longpress=====");
+    },
+    onReturn: function () {
+        print("=====onReturn=====");
+        router.push({
+            path: "evue-dock"
+        })
+    }
+}
+</script>
+<style>
+.container {
+    width: 240px;
+    height: 240px;
+    margin: 0px;
+    padding: 0px;
+    border-radius: 0px;
+    border-width: 0px;
+    border-color: red;
+    background-color: black;
+}
+
+.wrapper {
+    top: 20px;
+    left: 0px;
+    width: 240px;
+    height: 220px;
+    background-color: transparent;
+}
+
+.words-text {
+    top: 60px;
+    left: 70px;
+    color: white;
+    font-size: 20px;
+    width: 100px;
+    height: 25px;
+    text-align: center;
+    text-overflow: scrollcircle;
+    background-color: transparent;
+}
+</style>

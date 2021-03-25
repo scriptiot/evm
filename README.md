@@ -48,7 +48,7 @@
 | **sdk**|  第三方工具链 |
 | **test**|   测试代码 |
 | **tools**|  工具 |
-| **tools/evue-simulator**|  EVUE模拟器 |
+| **tools/evue-simulator**|  EVUE模拟器，可克隆仓库到本地运行模拟器本地体验EUE |
 
 三、EVM 在线帮助手册
 ========================================

@@ -1,0 +1,9 @@
+<div class="container">
+    <image src="kdgs_QRcode.bin" style="width:6px;height:6px;top:5px;left:5px;" url="kdgs_1_QRcode2" onclick="onPageRedirect"></image>
+    <image src="kdgs_setAge.bin" style="width:6px;height:6px;top:5px;left:205px;" url="kdgs_1_setage" onclick="onPageRedirect"></image>
+    <image src="kdgs_avatar.bin" style="width:50px;height:50px;top:30px;left:76px;"></image>
+    <text class="text" style="top: 128px;left: 90px;">{{adminName}}</text>
+    <text class="text1" style="top:150px;left:20px;">{{date}}</text>
+    <div class="btn" onclick="toIndex" url="kdgs_1_QRcode3" onclick="onPageRedirect">立即续费</div>
+    <text class="text" style="top: 187px;left: 86px;color:#382830" url="kdgs_1_QRcode3" onclick="onPageRedirect">立即续费</text>
+</div>
