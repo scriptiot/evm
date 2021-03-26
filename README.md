@@ -63,7 +63,8 @@ cd tools/evuesimulator-20210326090615-8e30a0e
 
 ![evm](./docs/evue.gif)
 
-关于模拟器的更多介绍和使用，请参考：https://www.yuque.com/bytecode/evue/vdtprt
++ 关于模拟器的更多介绍和使用，请参考：https://www.yuque.com/bytecode/evue/vdtprt
++ 真机体验视频链接：https://www.bilibili.com/video/BV1G54y1h7XK/
 
 三、EVM 在线帮助手册
 ========================================
