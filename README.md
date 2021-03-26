@@ -50,6 +50,21 @@
 | **tools**|  工具 |
 | **tools/evue-simulator**|  EVUE模拟器，可克隆仓库到本地运行模拟器本地体验EVUE |
 
+## 2. EVUE模拟器
+
+体验步骤：
+
+- 启动器和启动器内每个应用直接从云端获取应用包，实时渲染；
+
+```shell
+cd tools/evuesimulator-20210326090615-8e30a0e
+./evue.exe C:/test/watch_launcher
+```
+
+![evm](./docs/evue.gif)
+
+关于模拟器的更多介绍和使用，请参考：https://www.yuque.com/bytecode/evue/vdtprt
+
 三、EVM 在线帮助手册
 ========================================
 
