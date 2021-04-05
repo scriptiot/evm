@@ -13,7 +13,6 @@
 *.la
 
 # Executables
-*.exe
 *.out
 *.app
 Makefile
@@ -30,7 +29,6 @@ build/
 .vscode/
 .vscode*
 .settings/
-bin/
 .autotools
 .vscode-ctags
 *.zip
@@ -42,4 +40,3 @@ bin/
 *.pro.user
 vm.pro.user
 vm.pro.user.*
-/bin/
