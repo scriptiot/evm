@@ -122,12 +122,16 @@ static evm_val_t evm_module_fs_fstat(evm_t *e, evm_val_t *p, int argc, evm_val_t
 //fs.mkdir(path[, mode], callback)
 static evm_val_t evm_module_fs_mkdirSync(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
 {
-    __mode_t mode = 777;
     if( argc == 0 || !evm_is_string(v) )
         return EVM_VAL_UNDEFINED;
+    #if defined (__linux)
+    __mode_t mode = 777;
     if( argc > 1 && evm_is_integer(v + 1) )
         mode = (__mode_t)evm_2_integer(v + 1);
     mkdir(evm_2_string(v), mode);
+#elif defined (WIN32) || defined (WIN64)
+    mkdir(evm_2_string(v));
+#endif
     return EVM_VAL_UNDEFINED;
 }
 
@@ -425,10 +429,10 @@ static evm_val_t evm_module_fs_writeFileSync(evm_t *e, evm_val_t *p, int argc, e
     if( argc < 2 || !evm_is_string(v) || !(evm_is_buffer(v + 1) || evm_is_string(v + 1) ) )
         return EVM_VAL_UNDEFINED;
 
-    int fd = open(evm_2_string(v), O_CREAT | O_WRONLY);
+    int fd = open(evm_2_string(v), O_WRONLY);
     if( fd == -1 )
         return EVM_VAL_UNDEFINED;
-
+    int len = evm_buffer_len(v + 1);
     if( evm_is_buffer(v + 1) )
         write(fd, evm_buffer_addr(v + 1), evm_buffer_len(v + 1));
     else {

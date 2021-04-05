@@ -115,7 +115,8 @@ extern void evm_module_next_tick(evm_t *e, int argc, evm_val_t *v);
 extern evm_err_t evm_module_event_add_listener(evm_t *e, evm_val_t *pthis, const char *type, evm_val_t *listener);
 extern void evm_module_event_remove_listener(evm_t *e, evm_val_t *pthis, const char *type);
 extern void evm_module_event_emit (evm_t *e, evm_val_t *pthis, const char *type, int argc, evm_val_t *v);
-extern int evm_main(void);
+void evm_module_set_cwd(const char *cwd);
+evm_err_t evm_module_init(evm_t *env);
 extern evm_val_t *evm_runtime;
 
 #endif

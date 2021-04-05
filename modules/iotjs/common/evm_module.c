@@ -94,4 +94,115 @@ void evm_module_event_emit (evm_t *e, evm_val_t *pthis, const char *type, int ar
     }
 }
 
+evm_err_t evm_module_init(evm_t *env)
+{
+    evm_err_t err;
+#ifdef CONFIG_EVM_MODULE_ADC
+    err = evm_module_adc(env);
+    if (err != ec_ok)
+    {
+        evm_print("Failed to create adc module\r\n");
+        return err;
+    }
+#endif
 
+#ifdef CONFIG_EVM_MODULE_UART
+    err = evm_module_uart(env);
+    if (err != ec_ok)
+    {
+        evm_print("Failed to create uart module\r\n");
+        return err;
+    }
+#endif
+
+#ifdef CONFIG_EVM_MODULE_GPIO
+    err = evm_module_gpio(env);
+    if (err != ec_ok)
+    {
+        evm_print("Failed to create gpio module\r\n");
+        return err;
+    }
+#endif
+
+#ifdef CONFIG_EVM_MODULE_FS
+    err = evm_module_fs(env);
+    if (err != ec_ok)
+    {
+        evm_print("Failed to create fs module\r\n");
+        return err;
+    }
+#endif
+
+#ifdef CONFIG_EVM_MODULE_NET
+    err = evm_module_net(env);
+    if (err != ec_ok)
+    {
+        evm_print("Failed to create net module\r\n");
+        return err;
+    }
+#endif
+
+#ifdef CONFIG_EVM_MODULE_HTTP
+    err = evm_module_http(env);
+    if (err != ec_ok)
+    {
+        evm_print("Failed to create http module\r\n");
+        return err;
+    }
+#endif
+
+#ifdef CONFIG_EVM_MODULE_PROCESS
+    err = evm_module_process(env);
+    if (err != ec_ok)
+    {
+        evm_print("Failed to create process module\r\n");
+        return err;
+    }
+#endif
+
+#ifdef CONFIG_EVM_MODULE_EVENTS
+    err = evm_module_events(env);
+    if (err != ec_ok)
+    {
+        evm_print("Failed to create events module\r\n");
+        return err;
+    }
+#endif
+
+#ifdef CONFIG_EVM_MODULE_DNS
+    err = evm_module_dns(env);
+    if (err != ec_ok)
+    {
+        evm_print("Failed to create dns module\r\n");
+        return err;
+    }
+#endif
+
+#ifdef CONFIG_EVM_MODULE_TIMERS
+    err = evm_module_timers(env);
+    if (err != ec_ok)
+    {
+        evm_print("Failed to create timers module\r\n");
+        return err;
+    }
+#endif
+
+#ifdef CONFIG_EVM_MODULE_BUFFER
+    err = evm_module_buffer(env);
+    if (err != ec_ok)
+    {
+        evm_print("Failed to create buffer module\r\n");
+        return err;
+    }
+#endif
+
+#ifdef CONFIG_EVM_MODULE_ASSERT
+    err = evm_module_assert(env);
+    if (err != ec_ok)
+    {
+        evm_print("Failed to create assert module\r\n");
+        return err;
+    }
+#endif
+    return ec_ok;
+}

@@ -1,6 +1,12 @@
 #include "evm_module.h"
 
 static evm_hash_t _name_arguments;
+static char * _cwd = "";
+
+void evm_module_set_cwd(const char *cwd)
+{
+    _cwd = cwd;
+}
 
 static evm_val_t *evm_process_queue;
 //process.nextTick(callback, [...args]);
@@ -40,11 +46,40 @@ void evm_module_process_poll(evm_t *e) {
     }
 }
 
+//process.cwd
+static evm_val_t evm_module_process_cwd(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
+{
+    return evm_mk_foreign_string(_cwd);
+}
+
+//process.abspath
+static evm_val_t evm_module_process_abspath(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
+{
+    if (argc == 0){
+        return EVM_VAL_UNDEFINED;
+    }
+    char abspath[256];
+    const char * fpath = evm_2_string(v);
+    if (strncmp(abspath, _cwd, strlen(_cwd)) != 0){
+        sprintf(abspath, "%s/%s", _cwd , fpath);
+    }else{
+        sprintf(abspath, "%s" ,fpath);
+    }
+
+    evm_val_t * ret = evm_heap_string_create(e, abspath, 0);
+    if (ret == NULL){
+        return EVM_VAL_UNDEFINED;
+    }
+    return *ret;
+}
+
 evm_err_t evm_module_process(evm_t *e) {
     _name_arguments = evm_str_insert(e, "arguments", 0);
     evm_process_queue = evm_list_create(e, GC_LIST, 0);
     evm_builtin_t builtin[] = {
         {"nextTick", evm_mk_native((intptr_t)evm_module_process_nextTick)},
+        {"cwd", evm_mk_native((intptr_t)evm_module_process_cwd)},
+        {"abspath", evm_mk_native((intptr_t)evm_module_process_abspath)},
         {NULL, EVM_VAL_UNDEFINED}
     };
     evm_module_create(e, "process", builtin);
