@@ -154,30 +154,27 @@ static evm_val_t evm_module_fs_openSync(evm_t *e, evm_val_t *p, int argc, evm_va
     if( argc < 2 || !evm_is_string(v) || !evm_is_string(v + 1) )
         return EVM_VAL_UNDEFINED;
     const char *flag = evm_2_string(v + 1);
-    int mode;
-    if( !strcmp(flag, "r") ) {
-        mode = O_RDONLY;
-    } else if( !strcmp(flag, "rs") ) {
-        mode = O_RDONLY;
-    } else if( !strcmp(flag, "r+") ) {
-        mode = O_RDWR;
-    } else if( !strcmp(flag, "w") ) {
-        mode = O_CREAT | O_WRONLY;
-    } else if( !strcmp(flag, "wx") || !strcmp(flag, "xw") ) {
-        mode = O_WRONLY;
-    } else if( !strcmp(flag, "w+") ) {
-        mode = O_CREAT | O_RDWR;
-    } else if( !strcmp(flag, "wx+") || !strcmp(flag, "xw+") ) {
-        mode = O_RDWR;
-    } else if( !strcmp(flag, "a") ) {
-        mode = O_CREAT | O_APPEND;
-    } else if( !strcmp(flag, "ax") ) {
-        mode = O_APPEND;
-    } else if( !strcmp(flag, "a+") ) {
-        mode = O_CREAT | O_APPEND | O_RDONLY;
-    } else if( !strcmp(flag, "ax+") || !strcmp(flag, "xa+") ) {
-        mode = O_APPEND | O_RDONLY;
+    int mode = O_RDONLY;
+    if (strstr(flag, "+") != NULL){
+        mode = mode | O_CREAT;
     }
+
+    if (strstr(flag, "r") != NULL){
+        mode = mode | O_RDONLY;
+    }
+
+    if (strstr(flag, "w") != NULL){
+        mode = mode | O_WRONLY;
+    }
+
+    if (strstr(flag, "a") != NULL){
+        mode = mode | O_APPEND;
+    }
+
+    if (strstr(flag, "b") != NULL){
+        mode = mode | O_BINARY;
+    }
+
     return evm_mk_number(open(evm_2_string(v), mode));
 }
 
@@ -261,7 +258,7 @@ static evm_val_t evm_module_fs_readFileSync(evm_t *e, evm_val_t *p, int argc, ev
     if( !buf_obj )
         return EVM_VAL_UNDEFINED;
 
-    int fd = open(evm_2_string(v), O_RDONLY);
+    int fd = open(evm_2_string(v), O_RDONLY | O_BINARY);
     if( fd == -1 )
         return EVM_VAL_UNDEFINED;
 
@@ -429,13 +426,14 @@ static evm_val_t evm_module_fs_writeFileSync(evm_t *e, evm_val_t *p, int argc, e
     if( argc < 2 || !evm_is_string(v) || !(evm_is_buffer(v + 1) || evm_is_string(v + 1) ) )
         return EVM_VAL_UNDEFINED;
 
-    int fd = open(evm_2_string(v), O_WRONLY);
+    int fd = open(evm_2_string(v), O_CREAT |O_RDWR | O_BINARY);
     if( fd == -1 )
         return EVM_VAL_UNDEFINED;
-    int len = evm_buffer_len(v + 1);
-    if( evm_is_buffer(v + 1) )
-        write(fd, evm_buffer_addr(v + 1), evm_buffer_len(v + 1));
-    else {
+    if( evm_is_buffer(v + 1) ){
+        int len = evm_buffer_len(v + 1);
+        uint8_t *addr = evm_buffer_addr(v + 1);
+        write(fd, addr, len);
+    }else {
         write(fd, evm_2_string(v + 1), evm_string_len(v + 1));
     }
     close(fd);
