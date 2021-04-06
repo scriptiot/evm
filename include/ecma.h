@@ -6,7 +6,8 @@
 **  支持语言类型：JavaScript, Python, QML, EVUE, JSON, XML, HTML, CSS
 **  Version	: 3.0
 **  Email	: scriptiot@aliyun.com
-**  Website	: https://github.com/scriptiot
+**  Website	: https://gitee.com/scriptiot/evm
+**          : https://github.com/scriptiot/evm
 ****************************************************************************/
 
 #ifndef ECMA_H

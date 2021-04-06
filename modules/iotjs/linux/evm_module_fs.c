@@ -257,7 +257,7 @@ static evm_val_t evm_module_fs_readFileSync(evm_t *e, evm_val_t *p, int argc, ev
        return EVM_VAL_UNDEFINED;
     }
 
-    evm_val_t *buf_obj = evm_buffer_create(e, st.st_size);
+    evm_val_t *buf_obj = evm_buffer_create(e, st.st_size + 1);
     if( !buf_obj )
         return EVM_VAL_UNDEFINED;
 
