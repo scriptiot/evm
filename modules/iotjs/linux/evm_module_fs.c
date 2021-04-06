@@ -249,8 +249,10 @@ static evm_val_t evm_module_fs_readFileSync(evm_t *e, evm_val_t *p, int argc, ev
     if( argc == 0 || !evm_is_string(v) )
         return EVM_VAL_UNDEFINED;
 
+    const char * fpath = evm_2_string(v);
+
     struct stat st;
-    if(stat(evm_2_string(v), &st) < 0){
+    if(stat(fpath, &st) < 0){
        return EVM_VAL_UNDEFINED;
     }
 
@@ -258,7 +260,7 @@ static evm_val_t evm_module_fs_readFileSync(evm_t *e, evm_val_t *p, int argc, ev
     if( !buf_obj )
         return EVM_VAL_UNDEFINED;
 
-    int fd = open(evm_2_string(v), O_RDONLY | O_BINARY);
+    int fd = open(fpath, O_RDONLY | O_BINARY);
     if( fd == -1 )
         return EVM_VAL_UNDEFINED;
 

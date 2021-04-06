@@ -3,6 +3,11 @@
 static evm_hash_t _name_arguments;
 static char * _cwd = "";
 
+const char *evm_module_get_cwd()
+{
+    return _cwd;
+}
+
 void evm_module_set_cwd(const char *cwd)
 {
     _cwd = cwd;
