@@ -171,9 +171,11 @@ static evm_val_t evm_module_fs_openSync(evm_t *e, evm_val_t *p, int argc, evm_va
         mode = mode | O_APPEND;
     }
 
+#if defined (WIN32) || defined (WIN64)
     if (strstr(flag, "b") != NULL){
         mode = mode | O_BINARY;
     }
+#endif
 
     return evm_mk_number(open(evm_2_string(v), mode));
 }
@@ -259,8 +261,11 @@ static evm_val_t evm_module_fs_readFileSync(evm_t *e, evm_val_t *p, int argc, ev
     evm_val_t *buf_obj = evm_buffer_create(e, st.st_size + 1);
     if( !buf_obj )
         return EVM_VAL_UNDEFINED;
-
-    int fd = open(fpath, O_RDONLY | O_BINARY);
+#if defined (WIN32) || defined (WIN64)
+    int fd = open(evm_2_string(v), O_RDONLY | O_BINARY);
+#else
+    int fd = open(evm_2_string(v), O_RDONLY);
+#endif
     if( fd == -1 )
         return EVM_VAL_UNDEFINED;
 
@@ -427,8 +432,11 @@ static evm_val_t evm_module_fs_writeFileSync(evm_t *e, evm_val_t *p, int argc, e
 {
     if( argc < 2 || !evm_is_string(v) || !(evm_is_buffer(v + 1) || evm_is_string(v + 1) ) )
         return EVM_VAL_UNDEFINED;
-
+#if defined (WIN32) || defined (WIN64)
     int fd = open(evm_2_string(v), O_CREAT |O_RDWR | O_BINARY);
+#else
+    int fd = open(evm_2_string(v), O_CREAT |O_RDWR);
+#endif
     if( fd == -1 )
         return EVM_VAL_UNDEFINED;
     if( evm_is_buffer(v + 1) ){
