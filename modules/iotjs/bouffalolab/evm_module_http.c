@@ -45,7 +45,7 @@ static void _http_response_thread(_http_client_t *client)
         uint8_t *old_content = NULL;
 
         evm_val_t *args;
-        while (total_read < HTTP_RECV_MAX_SIZE)
+        while (total_read < HTTP_RECV_MAX_SIZE && buf_size < HTTP_RECV_MAX_SIZE)
         {
             buf_size += 512;
             old_content = out_content;
@@ -108,6 +108,8 @@ static void _http_response_thread(_http_client_t *client)
     }
 
 err:
+    evm_module_registry_remove(http_obj_e, client->obj_id);
+
     if (out_content)
         evm_free(out_content);
 
@@ -120,6 +122,8 @@ err:
             evm_free(client->buffer);
         evm_free(client);
     }
+
+    vTaskDelete(NULL);
 }
 
 //http.createServer([options][, requestListener])
@@ -532,7 +536,7 @@ static evm_val_t evm_module_http_request(evm_t *e, evm_val_t *p, int argc, evm_v
     client->buffer = NULL;
     client->buffer_length = 0;
 
-    if (strcmp(evm_2_string(method), "get") == 0 || strcmp(evm_2_string(method), "GET") == 0)
+    if (strncmp(evm_2_string(method), "get", 3) == 0 || strncmp(evm_2_string(method), "GET", 3) == 0)
     {
         client->method = GET;
     }

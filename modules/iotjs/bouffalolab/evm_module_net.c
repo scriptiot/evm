@@ -12,11 +12,11 @@
 
 typedef struct _net_sock_t
 {
-    struct sockaddr_in addr;
+    int alive;
     int sockfd;
     int obj_id;
     pthread_t pid;
-    int alive;
+    struct sockaddr_in addr;
     uint8_t rx_buf[_SOCKET_READ_BUF_SIZE];
 } _net_sock_t;
 
@@ -32,7 +32,6 @@ static void _net_server_thread(void *pvParameters)
             client_sock->sockfd = accept(server_sock->sockfd, (struct sockaddr *)&client_sock->addr, sizeof(struct sockaddr_in));
             if (client_sock->sockfd < 0)
             {
-                evm_print("accept connection failed!\r\n");
                 evm_free(client_sock);
                 continue;
             }
@@ -67,7 +66,7 @@ static void _net_client_thread(_net_sock_t *client_sock)
             break;
         }
 
-        vTaskDelay(1); /* 阻塞延时，单位ms */
+        vTaskDelay(1);
     }
     evm_free(client_sock);
 }
@@ -76,9 +75,11 @@ static void _net_client_thread(_net_sock_t *client_sock)
 static evm_val_t evm_module_net_server_close(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
 {
     _net_sock_t *server_sock = (_net_sock_t *)evm_object_get_ext_data(p);
-    if (!server_sock)
+    if (server_sock == NULL || server_sock == 0)
         return EVM_VAL_UNDEFINED;
     close(server_sock->sockfd);
+
+    evm_free(server_sock);
     return EVM_VAL_UNDEFINED;
 }
 
@@ -131,13 +132,6 @@ static evm_val_t evm_module_net_server_on(evm_t *e, evm_val_t *p, int argc, evm_
     {
         return EVM_VAL_UNDEFINED;
     }
-
-    _net_sock_t *server_sock = (_net_sock_t *)evm_object_get_ext_data(p);
-    if (!server_sock)
-        return EVM_VAL_UNDEFINED;
-
-    if (server_sock->obj_id == -1)
-        return EVM_VAL_UNDEFINED;
 
     evm_module_event_add_listener(e, p, evm_2_string(v), v + 1);
     return EVM_VAL_UNDEFINED;
@@ -308,7 +302,7 @@ static evm_val_t evm_module_net_createConnection(evm_t *e, evm_val_t *p, int arg
 {
     _net_sock_t *sock;
     evm_val_t *obj = evm_object_create(e, GC_DICT, 9, 0);
-    if (!obj)
+    if (obj == NULL || obj == 0)
         return EVM_VAL_UNDEFINED;
     evm_prop_append(e, obj, "connect", evm_mk_native((intptr_t)evm_module_net_socket_connect));
     evm_prop_append(e, obj, "destroy", evm_mk_native((intptr_t)evm_module_net_socket_destroy));

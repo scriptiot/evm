@@ -9,11 +9,11 @@
 #define _SOCKET_READ_BUF_SIZE   4096
 
 typedef struct _net_sock_t {
-    struct sockaddr_in addr;
     int sockfd;
     int obj_id;
-    pthread_t pid;
     int alive;
+    pthread_t pid;
+    struct sockaddr_in addr;
     uint8_t rx_buf[_SOCKET_READ_BUF_SIZE];
 } _net_sock_t;
 
@@ -42,7 +42,7 @@ static void _net_client_thread(_net_sock_t *client_sock) {
             if( obj ) {
                 evm_val_t *args = evm_buffer_create(evm_runtime, bytes_read);
                 if( args ){
-                    memcpy( evm_buffer_addr(args), client_sock->rx_buf, bytes_read);
+                    memcpy(evm_buffer_addr(args), client_sock->rx_buf, bytes_read);
                     evm_module_event_emit(evm_runtime, obj, "data", 1, args);
                     evm_pop(evm_runtime);
                 }

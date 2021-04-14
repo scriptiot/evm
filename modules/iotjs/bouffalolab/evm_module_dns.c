@@ -29,7 +29,7 @@ static evm_val_t evm_module_dns_lookup(evm_t *e, evm_val_t *p, int argc, evm_val
         else
             args[2] = evm_mk_foreign_string("");
         args[3] = evm_mk_number(hostinfo->h_addrtype);
-        evm_module_next_tick(e, 4, args);
+        evm_module_next_tick(e, 4,  );
     }
     return EVM_VAL_UNDEFINED;
 }

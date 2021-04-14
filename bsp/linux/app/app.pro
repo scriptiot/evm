@@ -11,6 +11,7 @@ DEFINES += EVM_LANG_ENABLE_JAVASCRIPT
 
 #DEFINES += CONFIG_EVM_MODULE_FS
 DEFINES += CONFIG_EVM_MODULE_NET
+DEFINES += CONFIG_EVM_MODULE_UDP
 DEFINES += CONFIG_EVM_MODULE_PROCESS
 DEFINES += CONFIG_EVM_MODULE_EVENTS
 DEFINES += CONFIG_EVM_MODULE_DNS
@@ -229,16 +230,17 @@ INCLUDEPATH += $$PWD/../../../modules/mpy
 
 SOURCES += \
         main.c \
-    ../../../modules/iotjs/linux/evm_main.c \
-    ../../../modules/iotjs/linux/evm_module_net.c \
     ../../../modules/iotjs/common/evm_module_process.c \
-    ../../../modules/iotjs/common/evm_module.c \
-    ../../../modules/iotjs/linux/evm_module_fs.c \
     ../../../modules/iotjs/common/evm_module_events.c \
-    ../../../modules/iotjs/linux/evm_module_dns.c \
-    ../../../modules/iotjs/linux/evm_module_timers.c \
     ../../../modules/iotjs/common/evm_module_buffer.c \
     ../../../modules/iotjs/common/evm_module_assert.c \
+    ../../../modules/iotjs/common/evm_module.c \
+    ../../../modules/iotjs/linux/evm_main.c \
+    ../../../modules/iotjs/linux/evm_module_net.c \
+    ../../../modules/iotjs/linux/evm_module_fs.c \
+    ../../../modules/iotjs/linux/evm_module_dns.c \
+    ../../../modules/iotjs/linux/evm_module_udp.c \
+    ../../../modules/iotjs/linux/evm_module_timers.c \
     ../../../modules/iotjs/linux/evm_module_http.c \
     ../../../components/webclient/src/webclient.c
 

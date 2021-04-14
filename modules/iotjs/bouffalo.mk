@@ -16,11 +16,13 @@ COMPONENT_SRCS += \
 	bouffalolab/evm_main.c \
 	bouffalolab/evm_module_dns.c \
 	bouffalolab/evm_module_net.c \
+	bouffalolab/evm_module_udp.c \
 	bouffalolab/evm_module_timers.c \
 	bouffalolab/evm_module_gpio.c \
 	bouffalolab/evm_module_uart.c \
 	bouffalolab/evm_module_fs.c \
 	bouffalolab/evm_module_http.c \
+	bouffalolab/evm_module_wifi.c \
 	../../components/webclient/src/webclient.c
 
 COMPONENT_OBJS := $(patsubst %.c,%.o, $(COMPONENT_SRCS))

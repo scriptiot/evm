@@ -79,6 +79,10 @@ extern evm_err_t evm_module_events(evm_t *e);
 extern evm_err_t evm_module_dns(evm_t *e);
 #endif
 
+#ifdef CONFIG_EVM_MODULE_WIFI
+extern evm_err_t evm_module_wifi(evm_t *e);
+#endif
+
 #ifdef CONFIG_EVM_MODULE_BUFFER
 extern evm_err_t evm_module_buffer(evm_t *e);
 #endif

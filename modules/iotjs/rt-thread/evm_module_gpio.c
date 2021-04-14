@@ -262,7 +262,6 @@ evm_err_t evm_module_gpio(evm_t *e) {
 	if( dir_prop ) {
 		evm_prop_append(e, dir_prop, "IN", evm_mk_number(EVM_GPIO_DIRECTION_IN));
 		evm_prop_append(e, dir_prop, "OUT", evm_mk_number(EVM_GPIO_DIRECTION_OUT));
-		
 	} else {
 		return e->err;
 	}
@@ -275,7 +274,6 @@ evm_err_t evm_module_gpio(evm_t *e) {
 		evm_prop_append(e, mode_prop, "FLOAT", evm_mk_number(EVM_GPIO_MODE_FLOAT));
 		evm_prop_append(e, mode_prop, "PUSHPULL", evm_mk_number(EVM_GPIO_MODE_PUSHPULL));
 		evm_prop_append(e, mode_prop, "OPENDRAIN", evm_mk_number(EVM_GPIO_MODE_OPENDRAIN));
-		
 	} else {
 		return e->err;
 	}
@@ -286,7 +284,6 @@ evm_err_t evm_module_gpio(evm_t *e) {
 		evm_prop_append(e, edge_prop, "RISING", evm_mk_number(EVM_GPIO_EDGE_RISING));
 		evm_prop_append(e, edge_prop, "FALLING", evm_mk_number(EVM_GPIO_EDGE_FALLING));
 		evm_prop_append(e, edge_prop, "BOTH", evm_mk_number(EVM_GPIO_EDGE_BOTH));
-		
 	} else {
 		return e->err;
 	}

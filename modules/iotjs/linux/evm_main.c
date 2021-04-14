@@ -233,6 +233,15 @@ evm_err_t evm_module_init(evm_t *env) {
     }
 #endif
 
+#ifdef CONFIG_EVM_MODULE_UDP
+    err = evm_module_udp(env);
+    if (err != ec_ok)
+    {
+        evm_print("Failed to create net module\r\n");
+        return err;
+    }
+#endif
+
 #ifdef CONFIG_EVM_MODULE_HTTP
     err = evm_module_http(env);
     if( err != ec_ok ) {

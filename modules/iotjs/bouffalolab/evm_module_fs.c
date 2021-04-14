@@ -162,47 +162,47 @@ static evm_val_t evm_module_fs_openSync(evm_t *e, evm_val_t *p, int argc, evm_va
 
     const char *flag = evm_2_string(v + 1);
     int mode;
-    if (!strcmp(flag, "r"))
+    if (!strncmp(flag, "r", 1))
     {
         mode = O_RDONLY;
     }
-    else if (!strcmp(flag, "rs"))
+    else if (!strncmp(flag, "rs", 2))
     {
         mode = O_RDONLY;
     }
-    else if (!strcmp(flag, "r+"))
+    else if (!strncmp(flag, "r+", 2))
     {
         mode = O_RDWR;
     }
-    else if (!strcmp(flag, "w"))
+    else if (!strncmp(flag, "w", 1))
     {
         mode = O_CREAT | O_WRONLY;
     }
-    else if (!strcmp(flag, "wx") || !strcmp(flag, "xw"))
+    else if (!strncmp(flag, "wx", 2) || !strncmp(flag, "xw", 2))
     {
         mode = O_WRONLY;
     }
-    else if (!strcmp(flag, "w+"))
+    else if (!strncmp(flag, "w+", 2))
     {
         mode = O_CREAT | O_RDWR;
     }
-    else if (!strcmp(flag, "wx+") || !strcmp(flag, "xw+"))
+    else if (!strncmp(flag, "wx+", 3) || !strncmp(flag, "xw+", 3))
     {
         mode = O_RDWR;
     }
-    else if (!strcmp(flag, "a"))
+    else if (!strncmp(flag, "a", 3))
     {
         mode = O_CREAT | O_APPEND;
     }
-    else if (!strcmp(flag, "ax"))
+    else if (!strncmp(flag, "ax", 2))
     {
         mode = O_APPEND;
     }
-    else if (!strcmp(flag, "a+"))
+    else if (!strncmp(flag, "a+", 2))
     {
         mode = O_CREAT | O_APPEND | O_RDONLY;
     }
-    else if (!strcmp(flag, "ax+") || !strcmp(flag, "xa+"))
+    else if (!strncmp(flag, "ax+", 3) || !strncmp(flag, "xa+", 3))
     {
         mode = O_APPEND | O_RDONLY;
     }

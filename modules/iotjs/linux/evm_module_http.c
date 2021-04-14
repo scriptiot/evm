@@ -44,16 +44,17 @@ static void _http_response_thread(_http_client_t *client)
         size_t buf_size = 0;
         uint8_t *old_content = NULL;
         evm_val_t *args;
-        while (total_read < HTTP_RECV_MAX_SIZE)
+        while (total_read < HTTP_RECV_MAX_SIZE && buf_size < HTTP_RECV_MAX_SIZE)
         {
             buf_size += 512;
             old_content = out_content;
             out_content = evm_malloc(buf_size);
-            if (out_content == NULL) {
+            if (out_content == NULL || out_content == 0)
+            {
                 printf("Exception is here: %s, line: %d\r\n", __FUNCTION__, __LINE__);
                 break;
             }
-            if (old_content != NULL)
+            if (old_content != NULL && old_content)
             {
                 memcpy(out_content, old_content, buf_size);
                 evm_free(old_content);
@@ -106,6 +107,8 @@ static void _http_response_thread(_http_client_t *client)
     }
 
 err:
+    evm_module_registry_remove(http_obj_e, client->obj_id);
+
     if (out_content)
         evm_free(out_content);
 
@@ -301,7 +304,6 @@ static evm_val_t evm_module_http_response_on(evm_t *e, evm_val_t *p, int argc, e
 }
 
 //response.end([data][, callback])
-//通知操作系统，已经发送完成，可以将缓存区数据发送给客户端
 static evm_val_t evm_module_http_response_end(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
 {
     char *buffer = NULL;
