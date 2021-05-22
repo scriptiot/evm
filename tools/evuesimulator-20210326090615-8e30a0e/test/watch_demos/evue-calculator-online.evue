@@ -1,0 +1,152 @@
+<html>
+<div class="container">
+    <evue-container></evue-container>
+    <text font-size='30' class="result-text">{{ result }}</text>
+    <div class="keyboard-wrapper">
+        <div class="key-wrapper" value="1" onclick="concatString">
+            <text font-size="30" value="1" class="key">1</text>
+        </div>
+        <div class="key-wrapper" value="2" onclick="concatString">
+            <text font-size="30" value="2" class="key">2</text>
+        </div>
+        <div class="key-wrapper" value="3" onclick="concatString">
+            <text font-size="30" value="3" class="key">3</text>
+        </div>
+        <div class="key-wrapper" value="+" onclick="concatString">
+            <text font-size="30" value="+" style="color: orange;" class="key">+</text>
+        </div>
+        <div class="key-wrapper" value="4" onclick="concatString">
+            <text font-size="30" value="4" class="key">4</text>
+        </div>
+        <div class="key-wrapper" value="5" onclick="concatString">
+            <text font-size="30" value="5" class="key">5</text>
+        </div>
+        <div class="key-wrapper" value="6" onclick="concatString">
+            <text font-size="30" value="6" class="key">6</text>
+        </div>
+        <div class="key-wrapper" value="-" onclick="concatString">
+            <text font-size="30" value="-" style="color: orange;" class="key">-</text>
+        </div>
+        <div class="key-wrapper" value="7" onclick="concatString">
+            <text font-size="30" value="7" class="key">7</text>
+        </div>
+        <div class="key-wrapper" value="8" onclick="concatString">
+            <text font-size="30" value="8" class="key">8</text>
+        </div>
+        <div class="key-wrapper" value="9" onclick="concatString">
+            <text font-size="30" value="9" class="key">9</text>
+        </div>
+        <div class="key-wrapper" value="*" onclick="concatString">
+            <text font-size="30" value="*" style="color: orange;" class="key" value="*">*</text>
+        </div>
+        <div class="key-wrapper" value="0" onclick="concatString">
+            <text font-size="30" value="0" class="key">0</text>
+        </div>
+        <div class="key-wrapper" value="." onclick="concatString">
+            <text font-size="30" value="." class="key">.</text>
+        </div>
+        <div class="key-wrapper" value="=" onclick="concatString">
+            <text font-size="30" value="=" onlongpress="clear" class="key" value="2" onclick="getResult">=</text>
+        </div>
+        <div class="key-wrapper" value="/" onclick="concatString">
+            <text font-size="30" value="/" style=" color: orange; " class="key">/</text>
+        </div>
+    </div>
+</div>
+</html>
+<script>
+router = require("@system.router")
+
+export default {
+    data: {
+        title: 'World',
+        result: "",
+    },
+    onclick: function() {
+        this.data.title = 'hello';
+        print("=====onclick=====");
+        show();
+        gc();
+    },
+    onlongpress: function() {
+        print("=====longpress=====");
+    },
+    onReturn: function() {
+        print("=====onReturn=====");
+        router.push({
+            path: "evue-dock"
+        })
+    },
+    concatString: function(obj) {
+        print(obj.attributes.value)
+        this.result = this.result + obj.attributes.value
+        print(this.result)
+    },
+    clear: function() {
+        this.result = ""
+    },
+    getResult: function() {
+        if (this.result != "") {
+            this.result = eval(this.result)
+        }
+    }
+}
+</script>
+<style>
+.container {
+    width: 240px;
+    height: 240px;
+    margin: 0px;
+    padding: 0px;
+    border-radius: 0px;
+    border-width: 0px;
+    border-color: red;
+    gradient-main-color: #0093e8;
+    gradient-stop-color: #01e3d5;
+}
+
+.result-text {
+    top: 5px;
+    left: 10px;
+    width: 220px;
+    text-align: right;
+    height: 30px;
+    color: white;
+    border-width: 0px;
+    border-color: red;
+    background-color: transparent;
+}
+
+.keyboard-wrapper {
+    top: 40px;
+    left: 0px;
+    padding: 0px;
+    margin: 0px;
+    width: 240px;
+    height: 200px;
+    background-color: transparent;
+    align-items: pretty;
+}
+
+.key-wrapper {
+    width: 60px;
+    height: 50px;
+    border-width: 0px;
+    border-color: red;
+    background-color: transparent;
+}
+
+.key {
+    left: 0px;
+    top: 0px;
+    width: 60px;
+    height: 50px;
+    margin: 0px;
+    margin: 0px;
+    padding: 0px;
+    color: white;
+    font-size: 30px;
+    text-align: center;
+    background-color: transparent;
+}
+</style>

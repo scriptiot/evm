@@ -1,0 +1,7 @@
+<div class="container">
+    <evue-container></evue-container>
+    <div class="wrapper">
+        <text class="words-text" clickable="true" onclick="onReturn" onlongpress="onlongpress">{{ words }}</text>
+        <image src="voice-recorder.bin" style="top: 140px;left: 90px;" clickable="true" onclick="onReturn"></image>
+    </div>
+</div>

@@ -1,0 +1,32 @@
+<div class="container">
+    <text style="top: 5px; background-color: transparent; color: white;width: 240px;height: 35px;text-align: left;left:10px;font-family: simsun;font-size: 30px;">{{title}}</text>
+    <image src="more.bin" style="left:200px" url="category" onclick="onPageRedirect"></image>
+    <list class="list-container" >
+        <template for="json" key="key" index="index">
+            <list-item class="list-item" :title="key.name"  onclick="showMsgBox">
+                <image :src="key.icon"  class="app-icon"></image>
+                <text class="maintitle">{{key.name}}</text>
+                <image src="jd.bin" style="left:78px;top:40px"></image>
+                <text style="left:105px;top:40px;background-color:transparent;color:white">{{key.price}}</text>
+            </list-item>
+        </template>
+    </list>
+    <div id="msgbox" :style="msgbox_style">
+        <div id="msgContent">
+            <text id="msgTitle">{{messageTitle}}</text>
+            <text id="msgSubtitle">{{messageSubtitle}}</text>
+        </div>
+        <div id="button1" onclick="onEnterclick">
+            <text class="buttonText">确定</text>
+        </div>
+        <div id="button2" onclick="onCancleclick">
+            <text class="buttonText">取消</text>
+        </div>
+    </div>
+    <div id="msgbox" :style="msgbox_style1">
+        <image src="cancel.bin" style="left:173px;top:3px"  onclick="onCancleclick1"></image>
+        <text style="width:150px;top:20px;left:25px;text-align:center;color:white;background-color:transparent;font-size:40px">正在下载</text>
+        <text style="top:75px;left:82px;text-align:center;color:white;background-color:transparent">40%</text>
+        <progress type="horizontal" percent="40" style="left: 26px; top: 100px; width: 150px; height: 10px; border-radius:7px; border-width:0px; background-color: #56575C; indic-color: white;"></progress>
+    </div>
+</div>

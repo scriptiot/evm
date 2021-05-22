@@ -1,0 +1,24 @@
+<div class="container">
+    <list class="list-container">
+        <list-item class="list-item" url="index" onclick="onPageRedirect">
+            <image src="rmtj.bin" class="app-icon"></image>
+            <text class="maintitle">热门推荐</text>
+        </list-item>
+        <list-item class="list-item" url="application" onclick="onPageRedirect">
+            <image src="shsy.bin" class="app-icon"></image>
+            <text class="maintitle">生活实用</text>
+        </list-item>
+        <list-item class="list-item" url="loading" onclick="onPageRedirect">
+            <image src="xxzs.bin" class="app-icon"></image>
+            <text class="maintitle">学习助手</text>
+        </list-item>
+        <list-item class="list-item" url="noData" onclick="onPageRedirect">
+            <image src="xxzs.bin" class="app-icon"></image>
+            <text class="maintitle">游戏娱乐</text>
+        </list-item>
+        <list-item class="list-item" url="pay" onclick="onPageRedirect">
+            <image src="zhye.bin" class="app-icon"></image>
+            <text class="maintitle">账户余额</text>
+        </list-item>
+    </list>
+</div>

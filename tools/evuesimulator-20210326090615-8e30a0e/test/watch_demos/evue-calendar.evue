@@ -1,0 +1,114 @@
+<html>
+<div class="container">
+    <evue-container></evue-container>
+    <div class="content-wrap">
+        <div class="pick-view-wrap">
+            <picker-view type="text" :visible_count='visible_count' :options='options1' :selected="selected1" style="left: 0px;" class="pick-view-item"></picker-view>
+            <picker-view type="text" :visible_count='visible_count' :options='options2' :selected="selected2" style="left: 76px;" class="pick-view-item"></picker-view>
+            <picker-view type="text" :visible_count='visible_count' :options='options3' :selected="selected3" style="left: 120px;" class="pick-view-item"></picker-view>
+        </div>
+        <text class="btn-group-title">当前时间</text>
+    </div>
+</div>
+</html>
+<script>
+router = require("@system.router")
+
+export default {
+    data: {
+        count: 3,
+        title: 'World',
+        visible_count: 3,
+        options1: ['2021', '2022', '2023', '2024', '2025', '2026', '2027'],
+        selected1: 1,
+        options2: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'],
+        selected2: 2,
+        options3: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '24', '25', '26', '27', '28', '29', '30'],
+        selected3: 3,
+        // onclick: undefined,
+        increased: true,
+        opacity: 0.1,
+        minus_btn_style: { left: '40px' },
+        plus_btn_style: { left: '140px' },
+        topbar_style: { 'background-color': 'transparent' },
+    },
+    onclick: function () {
+        print("=====onclick=====");
+    },
+    onlongpress: function () {
+        print(this.selected1);
+    },
+    onNext: function (obj, value) {
+        print("=====onValueChanged=====");
+        print(value);
+    },
+    onReturn: function() {
+        print("=====onReturn=====");
+        router.push({
+            path: "evue-dock"
+        })
+    },
+    minus: function () {
+        this.count = this.count - 1
+    },
+    plus: function () {
+        this.count = this.count + 1
+    },
+}
+</script>
+<style>
+.container {
+    width: 240px;
+    height: 240px;
+    margin: 0px;
+    padding: 0px;
+    border-radius: 0px;
+    border-width: 0px;
+    gradient-main-color: #ff4e08;
+    gradient-stop-color: #ff3203;
+}
+
+.content-wrap {
+    top: 40px;
+    left: 40px;
+    width: 160px;
+    height: 200px;
+    background-color: transparent;
+}
+
+.tag {
+    left: 20px;
+    top: 2px;
+    width: 100px;
+    color: white;
+    font-size: 17px;
+    background-color: transparent;
+}
+
+.pick-view-wrap {
+    width: 160px;
+    height: 120px;
+    top: 0px;
+    left: 0px;
+    background-color: transparent;
+}
+
+.pick-view-item {
+    top: 7px;
+    color: white;
+    width: 100px;
+    height: 50px;
+    border-width: 1px;
+    border-radius: 5px;
+    border-color: white;
+    background-color: transparent;
+}
+
+.btn-group-title {
+    top: 130px;
+    width: 160px;
+    color: white;
+    text-align: center;
+    background-color: red;
+}
+</style>

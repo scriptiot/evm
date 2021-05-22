@@ -1,0 +1,23 @@
+<div class="container">
+    <text style="top: 10px;left:40px;background-color: transparent; color: white;width: 200px;height: 35px;text-align: left;font-family: simsun;font-size: 30px;">{{keyword}}</text>
+    <image src="kdgs_1_search.bin" style="left:5px;top:7px;" url="kdgs_1_index" onclick="onPageRedirect"></image>
+    <image src="kdgs_1_voiceSearch.bin" style="left:203px;top:5px;" url="kdgs_1_index" onclick="onPageRedirect"></image>
+    <list class="list-container">
+        <div class="div">
+          <image src="kdgs_1_g5.bin"></image>
+          <text  class="text">拯救孙悟空</text>
+        </div>
+        <div class="div">
+          <image src="kdgs_1_g6.bin"></image>
+          <text class="text">西游记第一部</text>
+        </div>
+        <div class="div">
+          <image src="kdgs_1_g7.bin"></image>
+          <text  class="text">365睡前故事1封面</text>
+        </div>
+        <div class="div">
+            <image src="kdgs_1_g8.bin"></image>
+            <text  class="text">严禁男女生说话的怪城</text>
+         </div>
+    </list>
+</div>

@@ -1,0 +1,11 @@
+<div class="container">
+    <evue-container></evue-container>
+    <div class="content-wrap">
+        <div class="pick-view-wrap">
+            <picker-view type="text" :visible_count='visible_count' :options='options1' :selected="selected1" style="left: 0px;" class="pick-view-item"></picker-view>
+            <picker-view type="text" :visible_count='visible_count' :options='options2' :selected="selected2" style="left: 76px;" class="pick-view-item"></picker-view>
+            <picker-view type="text" :visible_count='visible_count' :options='options3' :selected="selected3" style="left: 120px;" class="pick-view-item"></picker-view>
+        </div>
+        <text class="btn-group-title">当前时间</text>
+    </div>
+</div>

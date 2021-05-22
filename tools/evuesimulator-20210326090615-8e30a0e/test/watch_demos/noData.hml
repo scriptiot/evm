@@ -1,0 +1,5 @@
+<div class="container">
+    <text style="top: 5px; background-color: transparent; color: white;width: 240px;height: 35px;text-align: left;left:10px;font-family: simsun;font-size: 30px;">游戏娱乐</text>
+    <image src="more.bin" style="left:200px" url="category" onclick="onPageRedirect"></image>
+    <text style="top: 100px; background-color: transparent; color: white;width: 240px;height: 35px;text-align: center;font-family: simsun;font-size: 30px;">暂无数据</text>
+</div>

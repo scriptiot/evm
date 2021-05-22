@@ -1,0 +1,11 @@
+<div class="container">
+    <text style="top: 5px; background-color: transparent; color: white;width: 240px;height: 35px;text-align: left;left:10px;font-family: simsun;font-size: 30px;">实用工具</text>
+    <image src="more.bin" style="left:200px" url="category" onclick="onPageRedirect"></image>
+    <list class="list-container">
+        <list-item class="list-item" url="index" onclick="onPageRedirect">
+            <image src="shsy.bin" class="app-icon"></image>
+            <text class="maintitle">系统工具</text>
+            <text style="left:78px;top:40px;background-color:transparent;color:blue;width:150px">已安装</text>
+        </list-item>
+    </list>
+</div>

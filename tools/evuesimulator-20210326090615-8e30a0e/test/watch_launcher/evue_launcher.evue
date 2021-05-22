@@ -1,0 +1,84 @@
+<html>
+<div class="container">
+    <image src="evue_logo.bin" style="top: 20px;left: 40px;"></image>
+    <text style="top:190px;background-color: transparent; color: white;font-size: 20px;width: 240px;height: 25px;text-align: center;">{{ title }}</text>
+</div>
+
+</html>
+<script>
+    router = require("@system.router")
+    http = require("@system.http")
+    fs = require("@system.fs")
+    watch = require("@system.watch")
+    os = require("@system.os")
+
+    export default {
+        data: {
+            title: 'Power by EVM!',
+            epk_remote_url: 'http://store.evmiot.com/api/v1/evm_store/download/apps',
+            path_prefix: '',
+            epk_name: 'evue_launcher.epk',
+            fpath: '',
+            url_dock: 'evue_dock',
+            url_404: 'evue_404',
+            appId: "evue_launcher"
+        },
+        onInit: function() {},
+
+        onReady: function() {
+            this.fpath = this.epk_name;
+        },
+
+        onShow: function() {
+            setTimeout(function() {
+                this.install();
+            }, 10)
+        },
+
+        install: function() {
+            this.installLauncherEpk(this.appId, this.epk_remote_url)
+            router.push({
+                path: this.url_dock
+            })
+        },
+
+        onHide: function() {},
+
+        onDestroy: function() {},
+
+        installLauncherEpk: function(appId, epk_remote_url) {
+            headers = [
+                "Accept: application/json",
+                "Content-Type: application/json",
+                "charsets: utf-8"
+            ]
+            var res = http.request({
+                method: "POST",
+                url: epk_remote_url,
+                headers: headers,
+                data: JSON.stringify({
+                    "id": appId,
+                    "imei": watch.imei()
+                }),
+                timeout: 10000,
+                responseType: "epk",
+                callback: function(res, len) {},
+                error: function(code) {}
+            });
+        }
+
+    }
+</script>
+<style>
+    .container {
+        width: 240px;
+        height: 240px;
+        border-width: 0px;
+        border-radius: 0px;
+        margin: 0px;
+        padding: 0px;
+        opacity: 0;
+        background-color: transparent;
+        align-items: off;
+    }
+</style>

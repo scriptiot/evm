@@ -1,0 +1,128 @@
+<html>
+<div class="container">
+    <image src="kdgs_1_logo2.bin" style="width:5px;height:5px;top:5px;left:5px;"></image>
+    <text font-size="20" class="text" style="top: 9px;left: 39px;" url="kdgs_1_QRcode" onclick="onPageRedirect">未登录</text>
+    <image src="kdgs_1_play.bin" style="top:5px;left:195px;" url="kdgs_1_playlist" onclick="onPageRedirect"></image>
+    <div style="width:220px;height:60px;top:45px;background-color: #4E4349;border-radius:5px;left:12px" url="kdgs_1_search" onclick="onPageRedirect"></div>
+    <image src="kdgs_1_yuyin.bin" style="top:52px;left:40px;" ></image>
+    <text font-size="30" class="text" style="top: 60px;left: 100px;" url="kdgs_1_search" onclick="onPageRedirect">语音搜索</text>
+    <div style="width:100px;height:60px;top:115px;background-color: #4E4349;border-radius:5px;left:12px" onclick="toStory" url="kdgs_1_collection"></div>
+    <div style="width:100px;height:60px;top:115px;background-color: #4E4349;border-radius:5px;left:131px" onclick="toStory" url="kdgs_1_history"></div>
+    <image src="kdgs_1_collection.bin" style="top:124px;left:40px;"></image>
+    <image src="kdgs_1_history.bin" style="top:124px;left:160px;"></image>
+    <div class="btn" onclick="toStory" url="kdgs_1_story"></div>
+    <text class="text" style="top: 203px;left: 90px;color:#382830">故事列表</text>
+</div>
+</html>
+<script>
+router = require("@system.router")
+
+export default {
+    data: {
+        title: 'Hello,Developer!',
+        age:5
+    },
+    onInit: function() {
+        print("==========onInit index==========")
+    },
+
+    onReady: function() {
+        print("==========onReady index==========")
+    },
+
+    onShow: function() {
+        print("==========onShow index==========")
+    },
+
+    onHide: function() {
+        print("==========onHide index==========")
+    },
+
+    onDestroy: function() {
+        print("==========onDestroy index==========")
+    },
+    changeAge(obj){
+        if(obj.attributes.id=='jia'){
+            if(this.age!=50){
+                this.age=this.age+1;
+            }
+        }else{S
+            if(this.age!=0){
+                this.age=this.age-1;
+            }
+        }
+
+    },
+    toStory(obj){
+        router.push({
+            path: obj.attributes.url
+        })
+    },
+    onPageRedirect: function (obj) {
+        print("==========onclick==========")
+        print(obj.attributes.url)
+
+        router.push({
+            path: obj.attributes.url
+        })
+    },
+}
+</script>
+<style>
+.container {
+    width: 240px;
+    height: 240px;
+    border-width: 0px;
+    border-radius: 0px;
+    margin: 0px;
+    padding: 0px;
+    opacity: 0;
+    background-color: #362A30;
+    align-items: off;
+}
+
+.list-container {
+    width: 240px;
+    height: 210px;
+    left: 0px;
+    top: 140px;
+    border-width: 0px;
+    background-color: transparent;
+}
+
+.btn{
+    background-color: #FDD02D;
+    border-radius: 30px;
+    width:220px;
+    height:45px;
+    top:190px;
+    left:10px
+}
+
+.out-layer-ring {
+    padding: 3px;
+    width: 200px;
+    height: 20px;
+    stroke-width: 35x;
+    border-width: 1px;
+    border-color: white;
+    background-color: black;
+}
+
+.text{
+    width: 200px;
+    height: 80px;
+    margin: 0px;
+    margin: 0px;
+    padding: 0px;
+    color: white;
+    font-size: 40px;
+    /* font-family: simsun; */
+    background-color: transparent;
+}
+
+image {
+    left: 90px;
+    top: 50px;
+}
+</style>

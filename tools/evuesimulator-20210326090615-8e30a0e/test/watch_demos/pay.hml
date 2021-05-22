@@ -1,0 +1,8 @@
+<div class="container">
+    <text style="top: 5px; background-color: transparent; color: white;width: 240px;height: 35px;text-align: left;left:10px;font-family: simsun;font-size: 30px;"
+     url="category" onclick="onPageRedirect">返回</text>
+    <text style="top: 5px; background-color: transparent; color: white;width: 240px;height: 35px;text-align: center;left:10px;font-family: simsun;font-size: 30px;">2</text>
+    <image src="jd.bin" style="left:100px;top: 5px" ></image>
+    <image src="ewm.bin" style="left:55px;top: 50px" ></image>
+    <text style="top: 200px; background-color: transparent; color: white;width: 240px;height: 35px;text-align: center;font-family: simsun;font-size: 30px;">微信扫码支付</text>
+</div>

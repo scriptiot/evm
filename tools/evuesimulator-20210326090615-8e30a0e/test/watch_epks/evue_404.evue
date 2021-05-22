@@ -1,0 +1,32 @@
+<html>
+<div class="container" onclick="onReturn">
+    <image src="evue_logo.bin" style="top: 20px;left: 40px; "></image>
+    <text style="top: 200px;left: 70px;background-color: transparent;color: white;font-size: 20px;width: 100px;height: 25px;text-align: center;text-overflow: scrollcircle;">404 Not Found</text>
+</div>
+
+</html>
+<script>
+    router = require("@system.router")
+
+    export default {
+        data: {},
+        onReturn: function() {
+            router.push({
+                path: "evue_dock"
+            })
+        }
+    }
+</script>
+<style>
+    .container {
+        width: 240px;
+        height: 240px;
+        border-width: 0px;
+        border-radius: 0px;
+        margin: 0px;
+        padding: 0px;
+        opacity: 0;
+        background-color: transparent;
+        align-items: off;
+    }
+</style>

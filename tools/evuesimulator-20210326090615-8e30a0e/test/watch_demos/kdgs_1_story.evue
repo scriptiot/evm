@@ -1,0 +1,222 @@
+<html>
+<div class="container">
+    <text style="top: 5px; background-color: transparent; color: white;width: 240px;height: 35px;text-align: center;font-family: simsun;font-size: 30px;">故事列表</text>
+    <image src="kdgs_1_back.bin" style="left:10px;top: 5px;" url="kdgs_1_index" onclick="onPageRedirect"></image>
+    <list class="list-container">
+        <div class="div" id="1" onclick="showStoryList">
+          <image src="kdgs_1_g1.bin"></image>
+          <text  class="text">米小圈姜</text>
+        </div>
+        <div class="div" id="1">
+          <image src="kdgs_1_g2.bin"></image>
+          <text  class="text">彼得兔</text>
+        </div>
+        <div class="div">
+          <image src="kdgs_1_g3.bin"></image>
+          <text  class="text">科学启蒙</text>
+        </div>
+        <div class="div">
+          <image src="kdgs_1_g4.bin"></image>
+          <text  class="text">动漫故事</text>
+        </div>
+    </list>
+</div>
+</html>
+<script>
+router = require("@system.router")
+
+export default {
+    data: {
+        title: 'World',
+        increased: true,
+        opacity: 0.1,
+    },
+
+    onInit: function () {
+        print("==========onInit==========")
+    },
+
+    onReady: function () {
+        print("==========onReady==========")
+    },
+
+    onShow: function () {
+        print("==========onShow==========")
+    },
+
+    onHide: function () {
+        print("==========onHide==========")
+    },
+
+    onDestroy: function () {
+        print("==========onDestroy==========")
+    },
+
+    onclick: function () {
+        if (this.style['background-color'] != 'transparent') {
+            this.style['background-color'] = 'transparent';
+        } else {
+            this.style['background-color'] = 'red';
+        }
+
+        // this.opacity += 0.1;
+        // this.style['border-opacity'] = this.opacity
+        // this.style['opacity'] = this.opacity
+
+        if (this.increased && this.style['border-width'] < 120) {
+            print("=====onclick==+++++++++++++++===", this.style['border-width']);
+            this.style['border-width'] += 10;
+            this.style['opacity'] += 0.1;
+            this.style['border-opacity'] += 0.1
+            print("=====onclick==+++++++++++++++===", this.style['border-width']);
+        } else {
+            this.increased = false;
+        }
+
+        if (!this.increased && this.style['border-width'] > 0) {
+            this.style['border-width'] -= 10;
+            this.style['opacity'] -= 0.1;
+            this.style['border-opacity'] -= 0.1
+            print("=====onclick==888888888888888888===", this.style['border-width']);
+        } else {
+            this.increased = true;
+        }
+
+        var _b = Number(this.style['border-width'])
+        this.title = this.style['border-width'].toString()
+        print("=====onclick==xxxxxxxxxxxxxxxxx===");
+        // print(this);
+        print("=====onclick=====");
+    },
+    onlongpress: function () {
+        print("=====longpress=====");
+    },
+
+    onButtonPress: function () {
+        print("=====onButtonPress=====");
+    },
+
+    onButtonLongPress: function () {
+        print("=====onButtonLongPress=====");
+    },
+
+    onPageRedirect: function (obj, x, y) {
+        print("==========onclick==========")
+        print(obj.attributes.url)
+        router.push({
+            path: obj.attributes.url
+        })
+    },
+
+    onButtonRelease: function () {
+        print("=====onButtonRelease=====");
+    },
+
+    onButtonClick: function () {
+        print("=====onButtonClick=====");
+        print(this.$page)
+        show();
+    },
+
+    onReturn: function () {
+        router.push({
+            path: "evue-dock",
+            params: {
+                a: 1,
+                b: 2
+            }
+        })
+    },
+
+
+    showStoryList: function (obj) {
+        router.push({
+            path: "kdgs_1_storyList",
+            params: {
+                id:obj.attributes.id
+            }
+        })
+    }
+}
+</script>
+<style>
+.container {
+    width: 240px;
+    height: 240px;
+    margin: 0px;
+    padding: 0px;
+    border-radius: 0px;
+    border-width: 0px;
+    background-color: #362A30;
+}
+
+.list-container {
+    width: 240px;
+    height: 210px;
+    left: 0px;
+    top: 30px;
+    border-width: 0px;
+    background-color: transparent;
+}
+
+.text {
+    width:86px;
+    text-align: center;
+    top:103px;
+    background-color: #362A30;
+    color:white
+}
+
+.div {
+    width: 95px;
+    height: 123px;
+    left: -10px;
+    float: left;
+    border-width: 0px;
+    background-color: #362A30;
+}
+
+.app-icon {
+    /* top: 20px; */
+    left: 8px;
+}
+
+.arrow-icon {
+    top: 18px;
+    left: 180px;
+}
+
+.maintitle {
+    top: 21px;
+    left: 80px;
+    width: 160px;
+    height: 50px;
+    margin: 0px;
+    margin: 0px;
+    padding: 0px;
+    color: white;
+    font-size: 30px;
+    /* font-family: simsun; */
+    background-color: transparent;
+}
+
+.maintitle-note {
+    top: 58px;
+    left: 160px;
+    color: white;
+    width: 100px;
+    height: 25px;
+    font-family: simsun;
+    font-size: 20px;
+}
+
+.subtitle {
+    top: 20px;
+    left: 180px;
+    color: white;
+    width: 100px;
+    height: 25px;
+    font-family: simsun;
+    font-size: 20px;
+}
+</style>

@@ -1,0 +1,134 @@
+<html>
+<div class="container">
+    <evue-container></evue-container>
+    <div class="img-modal">
+        <image class="current-img" :style="currentImg0" src="pic1.bin"></image>
+        <image class="current-img" :style="currentImg1" src="pic2.bin"></image>
+        <image class="current-img" :style="currentImg2" src="pic3.bin"></image>
+        <div class="btn-group">
+            <div style="left: 40px; width: 40px; height: 40px; background-color: transparent;" onclick="onButtonClick">
+                <image src="left.bin"></image>
+            </div>
+            <div class="close-icon" style="top: 10px; left: 105px; width: 40px; height: 40px; background-color: transparent;" onclick="onClose">
+                <image src="close.bin" style="top: 0px; left: 10px;"></image>
+            </div>
+            <div style="left: 170px; width: 40px; height: 40px; background-color: transparent;" onclick="onButtonClick">
+                <image src="right.bin"></image>
+            </div>
+        </div>
+    </div>
+</div>
+</html>
+<script>
+router = require("@system.router")
+
+export default {
+    data: {
+        title: 'World',
+        currentIndex: 0,
+        currentImg0: { display: 'flex' },
+        currentImg1: { display: 'none' },
+        currentImg2: { display: 'none' },
+    },
+
+    onShow: function() {
+        // this.currentIndex = this.currentIndex % 3
+        // for (var i = 0; i < 3; i++) {
+        //     this.data['currentImg' + i] = { display: 'none' }
+        // }
+        // this.data['currentImg' + this.currentIndex] = { display: 'flex' }
+        // this.currentIndex = this.currentIndex + 1
+    },
+
+    onClose: function() {
+        print("=====on close modal=====");
+        // this.modalStyle = { display: 'none' }
+        router.push({ path: "evue-dock" })
+    },
+    onlongpress: function() {
+        print("=====longpress=====");
+    },
+
+    onButtonPress: function() {
+        print("=====onButtonPress=====");
+    },
+
+    onButtonLongPress: function() {
+        print("=====onButtonLongPress=====");
+    },
+
+    onButtonRelease: function() {
+        print("=====onButtonRelease=====");
+    },
+
+    onButtonClick: function(obj) {
+        print(obj.attributes)
+        this.currentIndex = this.currentIndex % 3
+        for (var i = 0; i < 3; i++) {
+            this.data['currentImg' + i] = { display: 'none' }
+        }
+        this.data['currentImg' + this.currentIndex] = { display: 'flex' }
+        this.currentIndex = this.currentIndex + 1
+    },
+}
+</script>
+<style>
+.container {
+    width: 240px;
+    height: 240px;
+    border-radius: 2;
+    border-width: 0;
+    background-color: transparent;
+}
+
+.wrapper {
+    top: 30px;
+    width: 240px;
+    height: 240px;
+    background-color: transparent;
+}
+
+.img-wrapper {
+    top: 0px;
+    left: 0px;
+    width: 240px;
+    height: 240px;
+    align-items: pretty;
+    background-color: transparent;
+}
+
+.img-zoom {
+    width: 50px;
+    height: 50px;
+}
+
+.img-wrap {
+    width: 240px;
+    height: 50px;
+    display: flex;
+    flex-direction: row;
+    background-color: transparent;
+}
+
+.img-modal {
+    left: 0px;
+    right: 0px;
+    width: 240px;
+    height: 240px;
+    flex-direction: column;
+    background-color: black;
+}
+
+.current-img {
+    top: 30px;
+    left: 0px;
+}
+
+.btn-group {
+    top: 200px;
+    left: 0px;
+    width: 240px;
+    height: 40px;
+    background-color: transparent;
+}
+</style>

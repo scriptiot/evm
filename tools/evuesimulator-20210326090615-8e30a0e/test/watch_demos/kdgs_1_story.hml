@@ -1,0 +1,22 @@
+<div class="container">
+    <text style="top: 5px; background-color: transparent; color: white;width: 240px;height: 35px;text-align: center;font-family: simsun;font-size: 30px;">故事列表</text>
+    <image src="kdgs_1_back.bin" style="left:10px;top: 5px;" url="kdgs_1_index" onclick="onPageRedirect"></image>
+    <list class="list-container">
+        <div class="div" id="1" onclick="showStoryList">
+          <image src="kdgs_1_g1.bin"></image>
+          <text  class="text">米小圈姜</text>
+        </div>
+        <div class="div" id="1">
+          <image src="kdgs_1_g2.bin"></image>
+          <text  class="text">彼得兔</text>
+        </div>
+        <div class="div">
+          <image src="kdgs_1_g3.bin"></image>
+          <text  class="text">科学启蒙</text>
+        </div>
+        <div class="div">
+          <image src="kdgs_1_g4.bin"></image>
+          <text  class="text">动漫故事</text>
+        </div>
+    </list>
+</div>

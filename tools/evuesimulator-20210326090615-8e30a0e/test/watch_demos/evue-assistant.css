@@ -1,0 +1,30 @@
+.container {
+    width: 240px;
+    height: 240px;
+    margin: 0px;
+    padding: 0px;
+    border-radius: 0px;
+    border-width: 0px;
+    border-color: red;
+    background-color: black;
+}
+
+.wrapper {
+    top: 20px;
+    left: 0px;
+    width: 240px;
+    height: 220px;
+    background-color: transparent;
+}
+
+.words-text {
+    top: 60px;
+    left: 70px;
+    color: white;
+    font-size: 20px;
+    width: 100px;
+    height: 25px;
+    text-align: center;
+    text-overflow: scrollcircle;
+    background-color: transparent;
+}

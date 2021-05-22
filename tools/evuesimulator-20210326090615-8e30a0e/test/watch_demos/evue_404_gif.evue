@@ -1,0 +1,53 @@
+<html>
+<div class="container">
+    <image src="evue_logo.gif" style="top: 0px;width: 240px; height: 240px;"></image>
+</div>
+
+</html>
+<script>
+    router = require("@system.router")
+
+    export default {
+        data: {
+            title: 'Hello,Developer!'
+        },
+        onInit: function() {
+            print("==========onInit index==========")
+        },
+
+        onReady: function() {
+            print("==========onReady index==========")
+        },
+
+        onShow: function() {
+            print("==========onShow index==========")
+                // setTimeout(function() {
+                //     print("==========xxxxxxxxxxxxxxxxxxx==========")
+                //     router.push({
+                //         path: "evue-dock"
+                //     })
+                // }, 200)
+        },
+
+        onHide: function() {
+            print("==========onHide index==========")
+        },
+
+        onDestroy: function() {
+            print("==========onDestroy index==========")
+        },
+    }
+</script>
+<style>
+    .container {
+        width: 240px;
+        height: 240px;
+        border-width: 0px;
+        border-radius: 0px;
+        margin: 0px;
+        padding: 0px;
+        opacity: 0;
+        background-color: transparent;
+        align-items: off;
+    }
+</style>

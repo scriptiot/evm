@@ -1,0 +1,26 @@
+.container {
+    width: 240px;
+    height: 240px;
+    border-width: 0px;
+    border-radius: 0px;
+    margin: 0px;
+    padding: 0px;
+    opacity: 0;
+    background-color: #362A30;
+    align-items: off;
+}
+
+.out-layer-ring {
+    padding: 3px;
+    width: 200px;
+    height: 20px;
+    stroke-width: 35x;
+    border-width: 1px;
+    border-color: white;
+    background-color: black;
+}
+
+image {
+    left: 90px;
+    top: 50px;
+}

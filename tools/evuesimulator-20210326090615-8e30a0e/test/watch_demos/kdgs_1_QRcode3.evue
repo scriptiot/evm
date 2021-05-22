@@ -1,0 +1,69 @@
+<html>
+<div class="container">
+	<div class="QRcode">
+		<image src="kdgs_QRcode3.bin" style="width:100%;height:auto"></image>
+	</div>
+	<text class="text" >微信扫码支付</text>
+	<text class="text1" >畅听10万+精品内容</text>
+</div>
+</html>
+<script>
+export default {
+    data:{
+
+    },
+    onInit: function () {
+        print("==========onInit==========")
+    },
+
+    onReady: function () {
+        print("==========onReady==========")
+    },
+
+    onShow: function () {
+        print("==========onShow==========")
+    },
+
+    onHide: function () {
+        print("==========onHide==========")
+    },
+
+    onDestroy: function () {
+        print("==========onDestroy==========")
+    },
+}
+</script>
+<style>
+.container {
+    width: 240px;
+    height: 240px;
+    margin: 0px;
+    padding: 0px;
+    border-radius: 0px;
+    border-width: 0px;
+    background-color:#382830;
+}
+.QRcode{
+    border-radius: 50%;
+    overflow: hidden;
+    align-content: center;
+    left:60px;
+    top: 40px;
+    width: 120px;
+    height: 120px;
+}
+.text{
+    width: 150px;
+    left: 70px;
+    top: 170px;
+    background-color: transparent;
+    color: white
+}
+.text1{
+    width: 180px;
+    left: 45px;
+    top: 190px;
+    background-color: transparent;
+    color: white
+}
+</style>

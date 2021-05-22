@@ -1,0 +1,97 @@
+.container {
+    width: 240px;
+    height: 240px;
+    margin: 0px;
+    padding: 0px;
+    border-radius: 0px;
+    border-width: 0px;
+    background-color: #362A30;
+}
+
+.img{
+    top:40px;
+    left:40px
+}
+
+.list-container {
+    width: 240px;
+    height: 210px;
+    left: 0px;
+    top: 30px;
+    border-width: 0px;
+    background-color: transparent;
+}
+
+.text {
+    width:86px;
+    text-align: center;
+    top:103px;
+    background-color: #362A30;
+    color:white
+}
+
+.text2 {
+    width:86px;
+    text-align: center;
+    top:200px;
+    left:75px;
+    background-color: #362A30;
+    color:white
+}
+
+.list-item {
+    width: 240px;
+    height: 204px;
+    left: 0px;
+    background-color: #362A30;
+}
+
+.app-icon {
+    /* top: 20px; */
+    left: 35px;
+}
+
+.play {
+    /* top: 20px; */
+    left: 100px;
+    top:70px;
+}
+
+.arrow-icon {
+    top: 18px;
+    left: 180px;
+}
+
+.maintitle {
+    top: 21px;
+    left: 80px;
+    width: 160px;
+    height: 50px;
+    margin: 0px;
+    margin: 0px;
+    padding: 0px;
+    color: white;
+    font-size: 30px;
+    /* font-family: simsun; */
+    background-color: transparent;
+}
+
+.maintitle-note {
+    top: 58px;
+    left: 160px;
+    color: white;
+    width: 100px;
+    height: 25px;
+    font-family: simsun;
+    font-size: 20px;
+}
+
+.subtitle {
+    top: 20px;
+    left: 180px;
+    color: white;
+    width: 100px;
+    height: 25px;
+    font-family: simsun;
+    font-size: 20px;
+}

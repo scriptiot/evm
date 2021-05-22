@@ -1,0 +1,5 @@
+<div class="container">
+    <evue-container></evue-container>
+    <image src="evue-logo.bin" style="top: 40px;left: 40px; " clickable="true" onclick="onReturn"></image>
+    <text style="top: 200px;left: 70px;background-color: transparent;color: white;font-size: 20px;width: 100px;height: 25px;text-align: center;text-overflow: scrollcircle;" clickable="true" onclick="onReturn" onlongpress="onlongpress">405 Not Found</text>
+</div>

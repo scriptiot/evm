@@ -1,0 +1,7 @@
+<div class="container">
+    <evue-container></evue-container>
+    <div class="btn-group">
+        <image src="album-icon.bin" style="top: 150px;left: 40px;" clickable="true" onclick="onReturn"></image>
+        <image src="take-photo.bin" style="top: 150px;left: 110px;" clickable="true"></image>
+    </div>
+</div>

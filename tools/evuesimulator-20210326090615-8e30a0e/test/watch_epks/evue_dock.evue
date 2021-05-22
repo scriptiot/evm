@@ -1,0 +1,158 @@
+<html>
+<div class="container">
+    <tabview currentIndex="0" loopon="true">
+        <template for="apps" key="appItem" index="index">
+            <tab class="tab-wrap">
+        <template if="appItem[0].name">
+                <div class="list-item" :url="appItem[0].url" :appItem="appItem[0]" style="left: 18px;top: 18px;" onclick="onPageRedirect">
+                    <image :src="appItem[0].icon"></image>
+                    <text class="list-item-title">{{appItem[0].name}}</text>
+                </div>
+        </template>
+        <template if="appItem[1].name">
+                <div class="list-item" :url="appItem[1].url" :appItem="appItem[1]" style="left: 120px;top: 18px;" onclick="onPageRedirect">
+                    <image :src="appItem[1].icon"></image>
+                    <text class="list-item-title">{{appItem[1].name}}</text>
+                </div>
+        </template>
+        <template if="appItem[2].name">
+                <div class="list-item" :url="appItem[2].url" :appItem="appItem[2]" style="left: 18px;top: 120px;" onclick="onPageRedirect">
+                    <image :src="appItem[2].icon"></image>
+                    <text class="list-item-title">{{appItem[2].name}}</text>
+                </div>
+        </template>
+        <template if="appItem[3].name">
+                <div class="list-item" :url="appItem[3].url" :appItem="appItem[3]" style="left: 120px;top: 120px;" onclick="onPageRedirect">
+                    <image :src="appItem[3].icon"></image>
+                    <text class="list-item-title">{{appItem[3].name}}</text>
+                </div>
+        </template>
+        </tab>
+        </template>
+    </tabview>
+    <template if="debug">
+        <text style="top: 38px; width: 240; height: 40; background-color: yellow; text-align: center; color: ref;">{{msg1}}</text>
+        <text style="top: 78px; width: 240; height: 40; background-color: black; text-align: center; color: white;">{{msg2}}</text>
+        <text style="top: 119px; width: 240; height: 40; background-color: lightgray; text-align: center; color: white;">{{msg3}}</text>
+        <text style="top: 160px; width: 240; height: 40; background-color: gray; text-align: center; color: white;">{{msg4}}</text>
+        <text style="top: 200px; width: 240; height: 40; background-color: red; text-align: center; color: white;">{{msg5}}</text>
+    </template>
+</div>
+
+</html>
+<script>
+    router = require("@system.router")
+    fs = require("@system.fs")
+    http = require("@system.http")
+    watch = require("@system.watch")
+    audio = require("@system.audio")
+
+    export default {
+        data: {
+            msg1: "",
+            msg2: "",
+            msg3: "",
+            msg4: "",
+            msg5: "",
+            fpath: "",
+            appPath: "evue_dock_apps.json",
+            apps: [],
+            debug: false
+        },
+
+        onInit: function() {},
+
+        onReady: function() {},
+
+        onShow: function() {
+            this.fpath = this.appPath;
+            if (fs.exists(this.fpath)) {
+                var apps_json = fs.readFile(this.fpath)
+                this.apps = JSON.parse(apps_json)
+            } else {
+                this.debug = true;
+                this.msg2 = watch.imei();
+                str = new String("abtvr中文ty2354")
+                this.msg1 = str.toString();
+                this.msg2 = str.slice(1, 7);
+                this.msg3 = str.charAt(4)
+                this.msg4 = str.length
+                this.msg5 = str.indexOf("t")
+            }
+        },
+
+        installLauncherEpk: function(appId, epk_remote_url) {
+            headers = [
+                "Accept: application/json",
+                "Content-Type: application/json",
+                "charsets: utf-8"
+            ]
+            var res = http.request({
+                method: "POST",
+                url: epk_remote_url,
+                headers: headers,
+                data: JSON.stringify({
+                    "id": appId,
+                    "imei": watch.imei()
+                }),
+                timeout: 2,
+                responseType: "epk",
+                callback: function(res, len) {},
+                error: function(code) {}
+            });
+        },
+
+        onHide: function() {},
+
+        onDestroy: function() {},
+
+        onPageRedirect: function(obj, x, y) {
+            var appItem = obj.attributes.appItem
+            this.installLauncherEpk(appItem.url, appItem.epk)
+            router.push({
+                path: obj.attributes.url
+            })
+        }
+    }
+</script>
+<style>
+    .container {
+        width: 240px;
+        height: 240px;
+        margin: 0px;
+        padding: 0px;
+        opacity: 1;
+        border-radius: 0px;
+        border-width: 0px;
+        /* background-color: transparent; */
+        gradient-main-color: #0093e8;
+        gradient-stop-color: #01e3d5;
+    }
+    
+    .tab-wrap {
+        left: 0px;
+        right: 0px;
+        width: 240px;
+        height: 240px;
+        background-color: transparent;
+    }
+    
+    .list-item {
+        position: absolute;
+        width: 100px;
+        height: 100px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        background-color: transparent;
+    }
+    
+    .list-item-title {
+        color: white;
+        top: 64px;
+        width: 100px;
+        text-align: center;
+        background-color: transparent;
+    }
+</style>

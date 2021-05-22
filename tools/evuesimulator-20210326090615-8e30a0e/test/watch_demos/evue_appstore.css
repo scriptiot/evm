@@ -1,0 +1,153 @@
+.container {
+    width: 240px;
+    height: 240px;
+    margin: 0px;
+    padding: 0px;
+    border-radius: 0px;
+    border-width: 0px;
+    background-color: black;
+}
+
+.list-container {
+    width: 240px;
+    height: 210px;
+    left: 0px;
+    top: 30px;
+    border-width: 0px;
+    background-color: transparent;
+}
+
+.list-item {
+    width: 240px;
+    height: 61px;
+    left: 0px;
+    border-width: 0px;
+    background-color: transparent;
+}
+
+.app-icon {
+    /* top: 20px; */
+    left: 8px;
+}
+
+.arrow-icon {
+    top: 18px;
+    left: 180px;
+}
+
+.maintitle {
+    top: 2px;
+    left: 80px;
+    width: 160px;
+    height: 50px;
+    margin: 0px;
+    margin: 0px;
+    padding: 0px;
+    color: white;
+    font-size: 30px;
+    background-color: transparent;
+}
+
+.maintitle-note {
+    top: 58px;
+    left: 160px;
+    color: white;
+    width: 100px;
+    height: 25px;
+    font-family: simsun;
+    font-size: 20px;
+}
+
+.subtitle {
+    top: 20px;
+    left: 180px;
+    color: white;
+    width: 100px;
+    height: 25px;
+    font-family: simsun;
+    font-size: 20px;
+}
+
+#msgbox {
+    width: 200px;
+    height: 140px;
+    top: 50px;
+    z-index: 99999;
+    left: 20px;
+    background-color: #383b42;
+    border-radius: 2px;
+    border-width: 1px;
+    border-color: #4e5157;
+}
+
+#msgContent {
+    top: 0px;
+    left: 0px;
+    width: 200px;
+    height: 100px;
+    background-color: transparent;
+    border-radius: 0px;
+    border-width: 0px;
+    border-color: #ffffff;
+    text-overflow: longbreak;
+    align-items: center;
+}
+
+#msgTitle {
+    top: 0px;
+    left: 0px;
+    width: 200px;
+    height: 40px;
+    background-color: transparent;
+    border-radius: 0px;
+    border-width: 0px;
+    border-color: #ffffff;
+    color: #2fa5d2;
+    text-overflow: longbreak;
+    align-items: center;
+    text-align: center;
+}
+
+#msgSubtitle {
+    top: 0px;
+    left: 0px;
+    width: 200px;
+    height: 40px;
+    background-color: transparent;
+    border-radius: 0px;
+    border-width: 0px;
+    border-color: #ffffff;
+    color: #979897;
+    text-overflow: longbreak;
+    align-items: center;
+    text-align: center;
+}
+
+#button1 {
+    width: 100px;
+    height: 40px;
+    top: 100px;
+    left: 0px;
+    border-radius: 0px;
+    border-width: 1px;
+    border-color: #4e5157;
+    background-color: transparent;
+    align-items: center;
+}
+
+#button2 {
+    width: 100px;
+    height: 40px;
+    top: 100px;
+    left: 100px;
+    border-radius: 0px;
+    border-width: 1px;
+    border-color: #4e5157;
+    background-color: transparent;
+    align-items: center;
+}
+
+.buttonText {
+    background-color: transparent;
+    color: white;
+}

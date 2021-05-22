@@ -1,0 +1,9 @@
+<div class="container">
+    <evue-container></evue-container>
+    <image src="girl.bin" style="top: 20px;left: 46px; border-radius: 50%;"></image>
+    <image src="call.bin" style="left: 87px; top: 174px; width: 64px;height: 64px;"></image>
+    <div style="width: 240px;height: 40px;top: 190px;left: 0px; background-color: transparent; flex-direction: row;">
+        <text style="color: white; width: 120px; text-align: left;font-size: 30px;background-color: transparent;font-family: simsun;padding: 20px;">张沫凡</text>
+        <text style="color: white; width: 120px; text-align: center;font-size: 25px;background-color: transparent;">00:02</text>
+    </div>
+</div>

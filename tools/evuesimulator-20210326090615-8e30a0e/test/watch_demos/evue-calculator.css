@@ -1,0 +1,56 @@
+.container {
+    width: 240px;
+    height: 240px;
+    margin: 0px;
+    padding: 0px;
+    border-radius: 0px;
+    border-width: 0px;
+    border-color: red;
+    gradient-main-color: #0093e8;
+    gradient-stop-color: #01e3d5;
+}
+
+.result-text {
+    top: 5px;
+    left: 10px;
+    width: 220px;
+    text-align: right;
+    height: 30px;
+    color: white;
+    border-width: 0px;
+    border-color: red;
+    background-color: transparent;
+}
+
+.keyboard-wrapper {
+    top: 40px;
+    left: 0px;
+    padding: 0px;
+    margin: 0px;
+    width: 240px;
+    height: 200px;
+    background-color: transparent;
+    align-items: pretty;
+}
+
+.key-wrapper {
+    width: 60px;
+    height: 50px;
+    border-width: 0px;
+    border-color: red;
+    background-color: transparent;
+}
+
+.key {
+    left: 0px;
+    top: 0px;
+    width: 60px;
+    height: 50px;
+    margin: 0px;
+    margin: 0px;
+    padding: 0px;
+    color: white;
+    font-size: 30px;
+    text-align: center;
+    background-color: transparent;
+}

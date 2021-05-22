@@ -1,3 +1,14 @@
+/****************************************************************************
+**
+** Copyright (C) 2021 @武汉市字节码科技有限公司
+**
+**  EVM是一款通用化设计的虚拟机引擎，拥有语法解析前端接口、编译器、虚拟机和虚拟机扩展接口框架。
+**  支持语言类型：JavaScript, Python, QML, EVUE, JSON, XML, HTML, CSS
+**  Version	: 3.0
+**  Email	: scriptiot@aliyun.com
+**  Website	: https://gitee.com/scriptiot/evm
+**          : https://github.com/scriptiot/evm
+****************************************************************************/
 #ifndef EVM_TYPE_H
 #define EVM_TYPE_H
 

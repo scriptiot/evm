@@ -1,0 +1,7 @@
+<div class="container">
+    <image src="kdgs_setAge.bin" style="width:6px;height:6px;top:5px;left:205px;" url="kdgs_1_setage" onclick="onPageRedirect"></image>
+	<div class="QRcode"  url="kdgs_1_index" onclick="onPageRedirect">
+        <image src="kdgs_QRcode1.bin" ></image>
+	</div>
+	<text class="text" >扫码登录</text>
+</div>

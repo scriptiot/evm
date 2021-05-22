@@ -1,0 +1,135 @@
+<html>
+<div class="container" onclick="onReturn">
+    <text class="words-text">{{ words }}</text>
+    <text class="recordinfo">{{ recordinfo }}</text>
+    <image :src="record_png" style="top: 140px;left: 40px;" onclick="startRecord"></image>
+    <image :src="play_png" style="top: 140px;left: 144px;" onclick="playRecord"></image>
+</div>
+
+</html>
+<script>
+    router = require("@system.router")
+    fs = require("@system.fs")
+    http = require("@system.http")
+    audio = require("@system.audio")
+
+    export default {
+        data: {
+            clickcount: 0,
+            words: '',
+            recordinfo: '',
+            recordTooltip: '有什么可以帮您？',
+            recordingWords: '正在录音中.....',
+            recordFinishedWords: '录音已经完成, 是否播放？',
+            recordPlayingWords: '正在播放录音....',
+            recordStopWords: '播放录音停止',
+            maxDuration: 15,
+            filename: 'evue_record.mp3',
+            fpath: '',
+            isStartRecord: false,
+            isRecordFinished: false,
+            isRecordPlaying: false,
+            record_png: 'evue_recorder.png',
+            play_png: 'evue_record_play.bin',
+            record_start_png: 'evue_recorder.png',
+            record_play_png: 'evue_record_play.bin',
+            record_stop_png: 'evue_record_stop.bin'
+        },
+        onShow: function() {
+            this.clickcount = 0;
+            this.fpath = this.filename;
+            this.words = this.recordTooltip;
+            this.record_png = this.record_start_png;
+        },
+        startRecord: function(obj, x, y) {
+            this.isRecordFinished = false;
+            this.words = this.recordingWords
+            fs.remove(this.fpath)
+            if (!this.isStartRecord) {
+                this.isStartRecord = true;
+                this.recordinfo = '';
+                audio.startRecord({
+                    duration: this.maxDuration * 1000,
+                    filename: this.filename,
+                    play: false,
+                    end: function(data, size, duration) {
+                        this.words = size + "/" + duration;
+                        this.words = this.recordFinishedWords;
+                        this.recordinfo = parseFloat((duration / 1000 + ''), 2) + 's/' + parseFloat((size / 1024 + ''), 2) + 'kb';
+                        this.isRecordFinished = true;
+                        this.isStartRecord = false;
+                    },
+                })
+            } else {
+                this.isStartRecord = false;
+                audio.stopRecord();
+            }
+        },
+
+
+        playRecord: function(obj, x, y) {
+            if (this.isRecordFinished) {
+                if (!this.isRecordPlaying) {
+                    this.isRecordPlaying = true;
+                    this.words = this.recordPlayingWords;
+                    this.play_png = this.record_stop_png;
+                    audio.play(this.fpath);
+                } else {
+                    this.isRecordPlaying = false;
+                    this.words = this.recordStopWords;
+                    this.play_png = this.record_play_png;
+                    audio.stop();
+                }
+            }
+        },
+
+        onReturn: function() {
+            this.clickcount += 1;
+            if (this.clickcount >= 2) {
+                router.push({
+                    path: "evue_dock"
+                })
+            }
+        },
+
+        onHide: function() {
+            this.words = this.recordTooltip;
+        }
+    }
+</script>
+<style>
+    .container {
+        width: 240px;
+        height: 240px;
+        margin: 0px;
+        padding: 0px;
+        border-radius: 0px;
+        border-width: 0px;
+        border-color: red;
+        background-color: transparent;
+    }
+    
+    .words-text {
+        top: 60px;
+        left: 70px;
+        color: white;
+        font-size: 20px;
+        width: 100px;
+        height: 25px;
+        text-align: center;
+        text-overflow: scrollcircle;
+        background-color: transparent;
+    }
+    
+    .recordinfo {
+        top: 90px;
+        left: 70px;
+        color: white;
+        font-size: 20px;
+        width: 100px;
+        height: 25px;
+        text-align: center;
+        text-overflow: scrollcircle;
+        background-color: transparent;
+    }
+</style>

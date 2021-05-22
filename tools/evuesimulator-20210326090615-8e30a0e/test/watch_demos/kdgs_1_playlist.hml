@@ -1,0 +1,11 @@
+<div class="container">
+
+    <text style="top: 10px;left:10px;background-color: transparent; color: white;width: 200px;height: 35px;text-align: left;font-family: simsun;font-size: 30px;">{{title}}</text>
+    <list class="list-container">
+        <list-item class="list-item" :style="isShow[1]" :title="list[1].name"  onclick="">
+
+             <text class="maintitle">{{list[0].name}}</text>
+             <text style="left:78px;top:40px;background-color:transparent;color:#ffffff;width:150px">试听</text>
+        </list-item>
+    </list>
+</div>

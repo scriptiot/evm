@@ -1,0 +1,23 @@
+<html>
+<div class="container" onclick="onclick" onlongpress="onLongPress"></div>
+</html>
+<script>
+router = require("@system.router")
+
+export default {
+    data: {},
+    onLongPress: function () {
+        router.push({ path: "evue-dock" })
+    },
+    onclick: function() {}
+}
+</script>
+<style>
+.container {
+    width: 240px;
+    height: 240px;
+    margin: 0px;
+    padding: 0px;
+    background-color: transparent;
+}
+</style>

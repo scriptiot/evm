@@ -1,0 +1,54 @@
+.container {
+    width: 240px;
+    height: 240px;
+    margin: 0px;
+    padding: 0px;
+    border-radius: 0px;
+    border-width: 0px;
+    gradient-main-color: #ff4e08;
+    gradient-stop-color: #ff3203;
+}
+
+.content-wrap {
+    top: 40px;
+    left: 40px;
+    width: 160px;
+    height: 200px;
+    background-color: transparent;
+}
+
+.tag {
+    left: 20px;
+    top: 2px;
+    width: 100px;
+    color: white;
+    font-size: 17px;
+    background-color: transparent;
+}
+
+.pick-view-wrap {
+    width: 160px;
+    height: 120px;
+    top: 0px;
+    left: 0px;
+    background-color: transparent;
+}
+
+.pick-view-item {
+    top: 7px;
+    color: white;
+    width: 100px;
+    height: 50px;
+    border-width: 1px;
+    border-radius: 5px;
+    border-color: white;
+    background-color: transparent;
+}
+
+.btn-group-title {
+    top: 130px;
+    width: 160px;
+    color: white;
+    text-align: center;
+    background-color: red;
+}

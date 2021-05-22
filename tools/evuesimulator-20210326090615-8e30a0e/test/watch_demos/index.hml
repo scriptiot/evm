@@ -1,0 +1,45 @@
+<div class="container">
+    <text style="top: 5px; background-color: transparent; color: white;width: 240px;height: 35px;text-align: left;left:10px;font-family: simsun;font-size: 30px;">{{title}}</text>
+    <image src="more.bin" style="left:200px" url="category" onclick="onPageRedirect"></image>
+    <list class="list-container" >
+        <list-item class="list-item" title="口袋故事"  onclick="showMsgBox">
+            <image src="kdgs.bin"  class="app-icon"></image>
+            <text class="maintitle">口袋故事</text>
+            <image src="jd.bin" style="left:78px;top:40px"></image>
+            <text style="left:105px;top:40px;background-color:transparent;color:white">2</text>
+        </list-item>
+        <list-item class="list-item"  title="国学诗词"  onclick="showMsgBox">
+            <image src="gxsc.bin"  class="app-icon"></image>
+            <text class="maintitle">国学诗词</text>
+           <text style="left:78px;top:40px;background-color:transparent;color:#2FACDD;width:150px">已安装</text>
+        </list-item>
+        <list-item class="list-item" title="生活百科"  onclick="showMsgBox">
+            <image src="shbk.bin"  class="app-icon"></image>
+            <text class="maintitle">生活百科</text>
+            <text style="left:78px;top:40px;background-color:transparent;color:#20B432;width:150px">免费</text>
+        </list-item>
+        <list-item class="list-item" :style="isShow[3]" :title="list[3].name"  onclick="showMsgBox">
+            <image :src="list[3].icon"  class="app-icon"></image>
+            <text class="maintitle">{{list[3].name}}</text>
+            <text style="left:78px;top:40px;background-color:transparent;color:#20B432;width:150px">免费</text>
+        </list-item>
+    </list>
+    <div id="msgbox" :style="msgbox_style">
+        <div id="msgContent">
+            <text id="msgTitle">{{messageTitle}}</text>
+            <text id="msgSubtitle">{{messageSubtitle}}</text>
+        </div>
+        <div id="button1" onclick="onEnterclick">
+            <text class="buttonText">确定</text>
+        </div>
+        <div id="button2" onclick="onCancleclick">
+            <text class="buttonText">取消</text>
+        </div>
+    </div>
+    <div id="msgbox" :style="msgbox_style1">
+        <image src="cancel.bin" style="left:173px;top:3px"  onclick="onCancleclick1"></image>
+        <text style="width:150px;top:20px;left:25px;text-align:center;color:white;background-color:transparent;font-size:40px">正在下载</text>
+        <text style="top:75px;left:82px;text-align:center;color:white;background-color:transparent">40%</text>
+        <progress type="horizontal" percent="40" style="left: 26px; top: 100px; width: 150px; height: 10px; border-radius:7px; border-width:0px; background-color: #56575C; indic-color: white;"></progress>
+    </div>
+</div>

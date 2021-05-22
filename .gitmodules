@@ -7,3 +7,9 @@
 [submodule "components/micropython"]
 	path = components/micropython
 	url = git@gitee.com:scriptiot/micropython.git
+[submodule "sdk/emsdk"]
+	path = sdk/emsdk
+	url = https://gitee.com/scriptiot/emsdk.git
+[submodule "sdk/wabt"]
+	path = sdk/wabt
+	url = https://gitee.com/scriptiot/wabt.git
