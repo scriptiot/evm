@@ -24,7 +24,7 @@ static void _net_server_thread(void *pvParameters)
 {
     _net_sock_t *server_sock = (_net_sock_t *)pvParameters;
     _net_sock_t *client_sock;
-    while (client_sock->alive)
+    while (server_sock->alive)
     {
         client_sock = evm_malloc(sizeof(_net_sock_t));
         if (client_sock)

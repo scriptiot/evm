@@ -90,7 +90,6 @@ extern evm_err_t evm_module_process(evm_t *e);
 extern evm_err_t evm_module_events(evm_t *e);
 #endif
 
-
 #ifdef CONFIG_EVM_MODULE_DNS
 extern evm_err_t evm_module_dns(evm_t *e);
 #endif

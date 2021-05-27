@@ -231,6 +231,7 @@ static evm_val_t evm_module_fs_read(evm_t *e, evm_val_t *p, int argc, evm_val_t 
         args[2] = *(v + 1);
         evm_run_callback(e, v + 2, &e->scope, args, 3);
     }
+    return EVM_VAL_UNDEFINED;
 }
 
 //fs.readdir
@@ -262,9 +263,9 @@ static evm_val_t evm_module_fs_readFileSync(evm_t *e, evm_val_t *p, int argc, ev
     if( !buf_obj )
         return EVM_VAL_UNDEFINED;
 #if defined (WIN32) || defined (WIN64)
-    int fd = open(evm_2_string(v), O_RDONLY | O_BINARY);
+    int fd = open(fpath, O_RDONLY | O_BINARY);
 #else
-    int fd = open(evm_2_string(v), O_RDONLY);
+    int fd = open(fpath, O_RDONLY);
 #endif
     if( fd == -1 )
         return EVM_VAL_UNDEFINED;

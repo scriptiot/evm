@@ -262,6 +262,7 @@ static evm_val_t evm_module_fs_read(evm_t *e, evm_val_t *p, int argc, evm_val_t 
         args[2] = *(v + 1);
         evm_run_callback(e, v + 2, &e->scope, args, 3);
     }
+    return EVM_VAL_UNDEFINED;
 }
 
 //fs.readdir
