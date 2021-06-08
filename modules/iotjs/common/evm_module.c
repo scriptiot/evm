@@ -10,7 +10,7 @@ struct _module_registry_t {
 } _module_registry;
 
 void evm_module_registry_init(evm_t *e, int size) {
-    evm_runtime = e;
+    evm_runtime = (evm_val_t *)e;
     e->sp++;
     _module_registry.start = e->sp;
     e->sp += size;

@@ -53,10 +53,10 @@ static evm_val_t evm_module_buffer_class_new(evm_t *e, evm_val_t *p, int argc, e
     } else if (evm_is_string(v)) {
         if (argc > 1 && evm_is_string(v + 1) && !strcmp(evm_2_string(v + 1), "hex")) {
             length = 0;
-            uint8_t *p = evm_2_string(v);
+            uint8_t *p = (uint8_t *)evm_2_string(v);
             char t[2] = {0};
             while (*p != '\0' && *p) {
-                strncpy(t, p, 2);
+                strncpy(t, (const char *)p, 2);
                 if (atoi(t))
                     length++;
                 p += 2;
@@ -67,10 +67,10 @@ static evm_val_t evm_module_buffer_class_new(evm_t *e, evm_val_t *p, int argc, e
             EVM_ASSERT(buf_obj);
 
             char n;
-            p = evm_2_string(v);
+            p = (uint8_t *)evm_2_string(v);
             uint32_t cnt = 0;
             while (*p != '\0' && *p) {
-                strncpy(t, p, 2);
+                strncpy(t, (const char *)p, 2);
                 n = (char)hex_2_oct(atoi(t));
                 buffer[cnt] = n;
                 p += 2;
@@ -271,10 +271,10 @@ static evm_val_t evm_module_buffer_class_slice(evm_t *e, evm_val_t *p, int argc,
     if (!buf)
         return EVM_VAL_UNDEFINED;
 
-    char *b = evm_buffer_addr(p);
+    char *b = (char *)evm_buffer_addr(p);
     uint32_t cnt = 0;
     for(uint32_t i = start; i < end; i++) {
-        evm_buffer_set(e, buf, b + i, cnt, 1);
+        evm_buffer_set(e, buf, (uint8_t *)(b + i), cnt, 1);
         cnt++;
     }
 
@@ -317,7 +317,7 @@ static evm_val_t evm_module_buffer_class_write(evm_t *e, evm_val_t *p, int argc,
     if (argc > 2 && evm_is_integer(v + 2))
         length = evm_2_integer(v + 2);
 
-    evm_buffer_set(e, p, evm_2_string(v), offset, length);
+    evm_buffer_set(e, p, (uint8_t *)evm_2_string(v), offset, length);
     return evm_mk_number(length);
 }
 

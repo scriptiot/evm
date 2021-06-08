@@ -122,9 +122,9 @@ static evm_val_t evm_module_assert_equal(evm_t *e, evm_val_t *p, int argc, evm_v
     }
 }
 
-static evm_val_t compare_by_value(evm_val_t *l, evm_val_t *r, int operator) {
+static evm_val_t compare_by_value(evm_val_t *l, evm_val_t *r, int _operator) {
     evm_val_t result;
-    switch (operator) {
+    switch (_operator) {
     case NOT_EQUAL: {
         if (evm_2_integer(l) != evm_2_integer(r)) {
             result = EVM_VAL_FALSE;
@@ -189,21 +189,21 @@ static evm_val_t evm_module_assert_fail(evm_t *e, evm_val_t *p, int argc, evm_va
     evm_val_t result = evm_module_assert_equal(e, p, argc, v);
     if (result != EVM_VAL_TRUE) {
         evm_set_err(e, ec_type, message);
-        return NULL;
+        return EVM_VAL_UNDEFINED;
     }
 
-    const char *operator= evm_2_string(v + 3);
-    if (strcmp(operator, "!=") == 0) {
+    const char *_operator= evm_2_string(v + 3);
+    if (strcmp(_operator, "!=") == 0) {
         result = compare_by_value(v, v + 1, NOT_EQUAL);
-    } else if (strcmp(operator, "==") == 0) {
+    } else if (strcmp(_operator, "==") == 0) {
         result = compare_by_value(v, v + 1, EQUAL);
-    } else if (strcmp(operator, ">") == 0) {
+    } else if (strcmp(_operator, ">") == 0) {
         result = compare_by_value(v, v + 1, GREATER);
-    } else if (strcmp(operator, ">=") == 0) {
+    } else if (strcmp(_operator, ">=") == 0) {
         result = compare_by_value(v, v + 1, GREATER_THAN);
-    } else if (strcmp(operator, "<=") == 0) {
+    } else if (strcmp(_operator, "<=") == 0) {
         result = compare_by_value(v, v + 1, LESS_THAN);
-    } else if (strcmp(operator, "<") == 0) {
+    } else if (strcmp(_operator, "<") == 0) {
         result = compare_by_value(v, v + 1, LESS);
     } else {
         result = EVM_VAL_UNDEFINED;

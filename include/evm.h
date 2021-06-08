@@ -12,6 +12,10 @@
 #ifndef EVM_H
 #define EVM_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include "evm_type.h"
 
 /*** 字符串常量操作函数 ***/
@@ -177,5 +181,9 @@ static inline void evm_assert_fail (const char *assertion, const char *file, con
       evm_assert_fail (#x, __FILE__, __func__, __LINE__); \
     } \
   } while (0)
+
+#ifdef __cplusplus
+} /* extern "C" */
+#endif
 
 #endif

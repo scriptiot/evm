@@ -10,7 +10,7 @@ const char *evm_module_get_cwd()
 
 void evm_module_set_cwd(const char *cwd)
 {
-    _cwd = cwd;
+    _cwd = (char *)cwd;
 }
 
 static evm_val_t *evm_process_queue;

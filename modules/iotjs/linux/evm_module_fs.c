@@ -1,5 +1,6 @@
 #ifdef CONFIG_EVM_MODULE_FS
 #include "evm_module.h"
+#include "evm.h"
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
@@ -98,7 +99,7 @@ static evm_val_t evm_module_fs_fstatSync(evm_t *e, evm_val_t *p, int argc, evm_v
         return EVM_VAL_UNDEFINED;
     evm_prop_append(e, obj, "isDirectory", evm_mk_native((intptr_t)evm_module_fs_stats_isDirectory));
     evm_prop_append(e, obj, "isFile", evm_mk_native((intptr_t)evm_module_fs_stats_isFile));
-    struct stat *st = evm_malloc(sizeof(struct stat));
+    struct stat *st = (struct stat *)evm_malloc(sizeof(struct stat));
     fstat(evm_2_integer(v), st);
     evm_object_set_ext_data(obj, (intptr_t)st);
     return *obj;
@@ -345,7 +346,7 @@ static evm_val_t evm_module_fs_statSync(evm_t *e, evm_val_t *p, int argc, evm_va
     evm_prop_append(e, obj, "isDirectory", evm_mk_native((intptr_t)evm_module_fs_stats_isDirectory));
     evm_prop_append(e, obj, "isFile", evm_mk_native((intptr_t)evm_module_fs_stats_isFile));
 
-    struct stat *st = evm_malloc(sizeof(struct stat));
+    struct stat *st = (struct stat *)evm_malloc(sizeof(struct stat));
     if( !st )
         return EVM_VAL_UNDEFINED;
     stat(evm_2_string(v), st);
