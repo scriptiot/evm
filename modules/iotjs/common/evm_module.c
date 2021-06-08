@@ -1,6 +1,6 @@
 #include "evm_module.h"
 
-evm_val_t *evm_runtime;
+evm_t *evm_runtime;
 
 static evm_hash_t _hashname_events;
 

@@ -94,7 +94,6 @@ extern evm_err_t evm_module_process(evm_t *e);
 extern evm_err_t evm_module_events(evm_t *e);
 #endif
 
-
 #ifdef CONFIG_EVM_MODULE_DNS
 extern evm_err_t evm_module_dns(evm_t *e);
 #endif
@@ -122,7 +121,7 @@ extern void evm_module_event_emit (evm_t *e, evm_val_t *pthis, const char *type,
 const char * evm_module_get_cwd();
 void evm_module_set_cwd(const char *cwd);
 evm_err_t evm_module_init(evm_t *env);
-extern evm_val_t *evm_runtime;
+extern evm_t *evm_runtime;
 
 #ifdef __cplusplus
 }
