@@ -35,7 +35,8 @@
 #include <fdt.h>
 #include <libfdt.h>
 #include <blog.h>
-#include "evm_module.h"
+#include "luat_log.h"
+#include "luat_base.h"
 
 #define WIFI_AP_PSM_INFO_SSID "bytecode"
 #define WIFI_AP_PSM_INFO_PASSWORD "bytecode888"
@@ -46,8 +47,6 @@
 extern int evm_main(void);
 extern void ble_stack_start(void);
 volatile uint32_t uxTopUsedPriority __attribute__((used)) = configMAX_PRIORITIES - 1;
-
-static int fd_console;
 
 static wifi_interface_t wifi_interface;
 
@@ -568,15 +567,6 @@ static int get_dts_addr(const char *name, uint32_t *start, uint32_t *off)
     return 0;
 }
 
-char evm_repl_tty_read(evm_t *e)
-{
-    EVM_UNUSED(e);
-
-    char buffer[16];
-    aos_read(fd_console, buffer, 1);
-    return buffer[0];
-}
-
 static void cmd_stack_wifi(char *buf, int len, int argc, char **argv)
 {
     /*wifi fw stack and thread stuff*/
@@ -603,12 +593,9 @@ static void evm_task_proc(void *pvParameters)
         vfs_uart_init(fdt, offset);
     }
 
-    fd_console = aos_open("/dev/ttyS0", 0);
-    if (fd_console >= 0)
-    {
-        printf("Init CLI with event Driven\r\n");
-        evm_main();
-    }
+    printf("=================================================================evm main starts\r\n");
+    luat_log_set_uart_port(0);
+    luat_main();
 
     while (1)
     {
@@ -629,7 +616,7 @@ static void aos_loop_proc(void *pvParameters)
     aos_loop_init();
 
     aos_register_event_filter(EV_WIFI, event_cb_wifi_event, NULL);
-    cmd_stack_wifi(NULL, 0, 0, NULL);
+    //cmd_stack_wifi(NULL, 0, 0, NULL);
 
     aos_loop_run();
 
@@ -657,7 +644,7 @@ void bfl_main(void)
     static StackType_t aos_loop_proc_stack[1024];
     static StaticTask_t aos_loop_proc_task;
 
-    static StackType_t evm_stack[2048];
+    static StackType_t evm_stack[8*1024];
     static StaticTask_t evm_task;
 
     /*
@@ -678,7 +665,7 @@ void bfl_main(void)
 
     puts("[OS] Starting aos_loop_proc task...\r\n");
     xTaskCreateStatic(aos_loop_proc, (char *)"event_loop", 1024, NULL, 15, aos_loop_proc_stack, &aos_loop_proc_task);
-    xTaskCreateStatic(evm_task_proc, (char *)"evm", 2048, NULL, 12, evm_stack, &evm_task);
+    xTaskCreateStatic(evm_task_proc, (char *)"evm", 8 * 1024, NULL, 12, evm_stack, &evm_task);
     tcpip_init(NULL, NULL);
 
     puts("[OS] Starting OS Scheduler...\r\n");

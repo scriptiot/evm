@@ -6,8 +6,8 @@
 **  支持语言类型：JavaScript, Python, QML, EVUE, JSON, XML, HTML, CSS
 **  Version	: 3.0
 **  Email	: scriptiot@aliyun.com
-**  Website	: https://gitee.com/scriptiot/evm
-**          : https://github.com/scriptiot/evm
+**  Website	: https://github.com/scriptiot
+**  Licence: 个人免费，企业授权
 ****************************************************************************/
 #ifndef EVM_TYPE_H
 #define EVM_TYPE_H
@@ -38,6 +38,7 @@ typedef int32_t  evm_int_t;
 #define EVM_LANG_HML    7   /** HML语法*/
 #define EVM_LANG_CSS    8   /** CSS语法*/
 #define EVM_LANG_HTML   9   /** HTML语法*/
+#define EVM_LANG_WAST   10   /** WAST语法*/
 
 #define EVM_VER                   300  /** 虚拟机版本号*/
 #define EVM_VAR_NAME_MAX_LEN      255  /** 虚拟机解析文件变量名称最大长度*/
@@ -54,6 +55,15 @@ typedef int32_t  evm_int_t;
 #define EVM_RUN_AS_MODULE           0
 #define EVM_RUN_WITH_RETURN         1
 
+enum OP_TYPE {
+    EVM_OP_ADD = 0,
+    EVM_OP_EQ,
+    EVM_OP_NEQ,
+    EVM_OP_TEQ,
+    EVM_OP_TNE,
+    EVM_OP_IN,
+    EVM_OP_NIN,
+};
 
 enum GC_TYPE
 {
@@ -177,11 +187,6 @@ typedef struct evm_t{
     evm_val_t *module_tbl;
 
     evm_const_pool_t * string_pool;
-    evm_const_pool_t * number_pool;
-
-    evm_val_t *builtin_number;
-    evm_val_t *builtin_string;
-    evm_val_t *builtin_boolean;
 
     evm_val_t *token_object;
     uint8_t *token_buf;
@@ -210,8 +215,12 @@ typedef struct evm_object_native_t {
     evm_val_t *(*get_array)(evm_t * e, evm_val_t * p, int argc, evm_val_t * v);
     evm_val_t (*iterator)(evm_t * e, evm_val_t * p, int argc, evm_val_t * v);
     evm_val_t (*iterator_init)(evm_t * e, evm_val_t * p, int argc, evm_val_t * v);
+    evm_err_t (*operate)(evm_t * e, evm_val_t *op1, evm_val_t *op2, evm_val_t *res, int opcode, evm_err_t *implemented);
 
-    evm_err_t (*operate)(evm_t * e, evm_val_t *op1, evm_val_t *op2, evm_val_t *res);
+    evm_val_t *builtin_number;
+    evm_val_t *builtin_string;
+    evm_val_t *builtin_boolean;
+
     void *user_data;
 } evm_object_native_t;
 
@@ -267,7 +276,7 @@ static inline intptr_t evm_2_intptr(evm_val_t *v) {
 }
 
 static inline void *evm_2_object(evm_val_t *v) {
-    return (void*)(*v & EVM_VAL_MASK);
+    return (void*)(long)(*v & EVM_VAL_MASK);
 }
 
 static inline int evm_2_boolean(evm_val_t *v) {
