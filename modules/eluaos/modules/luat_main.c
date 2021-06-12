@@ -44,7 +44,6 @@ static int pmain(lua_State *L) {
     luat_os_print_heapinfo("loadlibs");
 
     lua_gc(L, LUA_GCSETPAUSE, 90); // 设置`垃圾收集器间歇率`要低于100%
-    printf("run script\r\n");
     // 加载main.lua
     #ifdef LUA_USE_WINDOWS
     if (win32_argc > 1) {
@@ -57,8 +56,7 @@ static int pmain(lua_State *L) {
     report(L, re);
     lua_pushboolean(L, re == LUA_OK);  /* signal no errors */
     #else
-      evm_run_string(L->e, "print('Hello EVM');", EVM_LANG_JS, EVM_RUN_AS_MODULE);
-    printf("run script\r\n");
+      evm_run_string(L->e, "require('main.js');", EVM_LANG_JS, EVM_RUN_AS_MODULE);
     report(L, re);
     lua_pushboolean(L, 1);  /* signal no errors */
     #endif

@@ -644,7 +644,7 @@ void bfl_main(void)
     static StackType_t aos_loop_proc_stack[1024];
     static StaticTask_t aos_loop_proc_task;
 
-    static StackType_t evm_stack[8*1024];
+    static StackType_t evm_stack[4*1024];
     static StaticTask_t evm_task;
 
     /*
@@ -665,7 +665,7 @@ void bfl_main(void)
 
     puts("[OS] Starting aos_loop_proc task...\r\n");
     xTaskCreateStatic(aos_loop_proc, (char *)"event_loop", 1024, NULL, 15, aos_loop_proc_stack, &aos_loop_proc_task);
-    xTaskCreateStatic(evm_task_proc, (char *)"evm", 8 * 1024, NULL, 12, evm_stack, &evm_task);
+    xTaskCreateStatic(evm_task_proc, (char *)"evm", 4 * 1024, NULL, 12, evm_stack, &evm_task);
     tcpip_init(NULL, NULL);
 
     puts("[OS] Starting OS Scheduler...\r\n");

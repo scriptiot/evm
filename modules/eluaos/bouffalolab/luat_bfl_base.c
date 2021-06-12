@@ -88,11 +88,10 @@ static const char * _vm_load(evm_t * e, char * path, int type)
     static char _path[128];
     int file_name_len = strlen(path) + 1;
     char* buffer = NULL;
-    sprintf(_path, "/%s", path);
+    sprintf(_path, "/romfs/%s", path);
 
     struct stat st;
-    int ret = stat(_path, &st);
-    if (stat(_path, &st) < 0) {
+    if (aos_stat(_path, &st) < 0) {
         return NULL;
     }
 
