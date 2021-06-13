@@ -1,7 +1,7 @@
 #ifndef EVM_LUA_CONF_H
 #define EVM_LUA_CONF_H
 
-#define EVM_LUA_HEAP_SIZE    (5 * 1024)
+#define EVM_LUA_HEAP_SIZE    (10 * 1024)
 #define EVM_LUA_STACK_SIZE   (2 * 1024)
 #define EVM_LUA_SIZE_OF_GLOBALS     20
 

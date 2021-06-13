@@ -386,7 +386,7 @@ static void event_cb_wifi_event(input_event_t *event, void *private_data)
     case CODE_WIFI_ON_MGMR_DONE:
     {
         printf("[APP] [EVT] MGMR DONE %lld\r\n", aos_now_ms());
-        _connect_wifi();
+        // _connect_wifi();
     }
     break;
     case CODE_WIFI_ON_MGMR_DENOISE:
@@ -616,7 +616,7 @@ static void aos_loop_proc(void *pvParameters)
     aos_loop_init();
 
     aos_register_event_filter(EV_WIFI, event_cb_wifi_event, NULL);
-    //cmd_stack_wifi(NULL, 0, 0, NULL);
+    cmd_stack_wifi(NULL, 0, 0, NULL);
 
     aos_loop_run();
 

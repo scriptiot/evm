@@ -19,6 +19,7 @@ COMPONENT_SRCS += \
 	bouffalolab/luat_msgbus_freertos.c \
 	bouffalolab/luat_malloc_bfl.c \
 	bouffalolab/luat_uart_blf.c \
+	bouffalolab/luat_lib_wlan.c \
 	bouffalolab/luat_bfl_base.c
 
 COMPONENT_SRCS += \
