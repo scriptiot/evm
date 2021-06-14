@@ -25,6 +25,8 @@ static const luaL_Reg loadedlibs[] = {
     {"rtos", luaopen_rtos},
     {"log", luaopen_log},
     {"wlan", luaopen_wlan},
+    {"socket", luaopen_socket},
+    {"timer", luaopen_timer},
     {NULL, NULL}
 };
 

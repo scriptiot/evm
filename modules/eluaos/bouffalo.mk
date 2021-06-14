@@ -20,6 +20,9 @@ COMPONENT_SRCS += \
 	bouffalolab/luat_malloc_bfl.c \
 	bouffalolab/luat_uart_blf.c \
 	bouffalolab/luat_lib_wlan.c \
+	bouffalolab/luat_socket_bfl.c \
+	bouffalolab/luat_netclient_bfl.c \
+	bouffalolab/luat_timer_freertos.c \
 	bouffalolab/luat_bfl_base.c
 
 COMPONENT_SRCS += \
@@ -29,6 +32,8 @@ COMPONENT_SRCS += \
 	modules/luat_log_weak.c \
 	modules/luat_malloc_weak.c \
 	modules/luat_luat_bin.c \
+	modules/luat_lib_socket.c \
+	modules/luat_lib_timer.c \
 	modules/luat_main.c 
 
 COMPONENT_OBJS := $(patsubst %.c,%.o, $(COMPONENT_SRCS))
