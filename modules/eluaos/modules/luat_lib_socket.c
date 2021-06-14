@@ -246,7 +246,7 @@ static int netc_connect(lua_State *L) {
         thiz->port = luaL_optinteger(L, 3, 80);
     }
     thiz->rx = luat_lib_socket_ent_handler;
-    //LLOGI("netc[%ld] host=%s port=%d type=%s", thiz->id, thiz->hostname, thiz->port, thiz->type == NETC_TYPE_TCP ? "TCP" : "UDP");
+    LLOGI("netc[%ld] host=%s port=%d type=%s", thiz->id, thiz->hostname, thiz->port, thiz->type == NETC_TYPE_TCP ? "TCP" : "UDP");
     re = netclient_start(thiz);
     if (re == 0) {
         lua_settop(L, 1);

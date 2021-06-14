@@ -11,7 +11,17 @@ timer.mdelay(1000 * 10);
 print('socket starts to send data');
 
 socket = require('socket');
+tcp = socket.tcp();
+print('tcp');
+tcp.host(tcp, "192.168.31.5");
+print('host');
+tcp.port(tcp, 8080);
+print('port');
+tcp.start(tcp);
+print('start');
+
 while(true) {
-    socket.tsend('192.168.31.5', 8080, 'this is EVM\n');
-    timer.mdelay(1000);
+    timer.mdelay(1000 * 3);
+    print('send');
+    tcp.send(tcp, "hello evm");
 }

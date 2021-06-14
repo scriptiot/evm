@@ -20,7 +20,7 @@
         #ifdef SOC_FAMILY_STM32
             #define LUAT_HEAP_SIZE (400*1024)
         #else
-            #define LUAT_HEAP_SIZE 20*1024
+            #define LUAT_HEAP_SIZE 25*1024
         #endif
     #endif
     static char luavm_buff[LUAT_HEAP_SIZE];

@@ -127,6 +127,8 @@ static int32_t socket_init(netclient_t *thiz, const char *url, int port)
     {
         thiz->sock_fd = socket(AF_INET, SOCK_DGRAM, 0);
     }
+
+    LLOGE("socket create");
     
     if (thiz->sock_fd == -1)
     {
@@ -199,7 +201,7 @@ static int32_t netclient_thread_init(netclient_t *thiz)
     static StackType_t proc_hellow_stack[2048];
     static StaticTask_t proc_hellow_task;
 
-    th = xTaskCreateStatic(netclient_thread_entry, (char*)"hellow", 2048, NULL, 20, proc_hellow_stack, &proc_hellow_task);
+    th = xTaskCreateStatic(netclient_thread_entry, (char*)"tcp", 2048, thiz, 20, proc_hellow_stack, &proc_hellow_task);
     if (th == NULL)
     {
         LLOGE("netc[%ld] thread create fail", thiz->id);
@@ -220,8 +222,8 @@ static void select_handle(netclient_t *thiz, char *sock_buff)
 
     while (1)
     {
+        FD_ZERO(&fds);
         FD_SET(thiz->sock_fd, &fds);
-        FD_SET(thiz->pipe_read_fd, &fds);
 
         res = select(max_fd, &fds, NULL, NULL, NULL);
 
@@ -258,32 +260,6 @@ static void select_handle(netclient_t *thiz, char *sock_buff)
             }
             #endif
             //EVENT(thiz->id, thiz->rx, thiz->cb_recv, NETC_EVENT_RECV, res, sock_buff);
-        }
-
-        /* pipe is read */
-        if (FD_ISSET(thiz->pipe_read_fd, &fds))
-        {
-            /* read pipe */
-            res = read(thiz->pipe_read_fd, sock_buff, BUFF_SIZE);
-
-            if (res <= 0) {
-                thiz->closed = 0;
-                goto exit;
-            }
-            else if (thiz->closed) {
-                goto exit;
-            }
-            else if (res > 0) {
-                if (thiz->type == NETC_TYPE_TCP)
-                    send(thiz->sock_fd, sock_buff, res, 0);
-                else
-                {
-                    from.sin_addr.s_addr = thiz->ipv4;
-                    from.sin_port = htons(thiz->port);
-                    from.sin_family = AF_INET;
-                    sendto(thiz->sock_fd, sock_buff, res, 0, &from, sizeof(struct sockaddr_in));
-                }
-            }
         }
     }
 exit:
@@ -370,14 +346,10 @@ int32_t netclient_send(netclient_t *thiz, const void *buff, size_t len, int flag
         LLOGW("netc[%ld] send : buff is NULL", thiz->id);
         return -1;
     }
-    if (thiz->pipe_write_fd == -1) {
-        LLOGW("netc[%ld] socket is closed!!!", thiz->id);
-        return -1;
-    }
 
     //LLOGD("netc[%ld] send data len=%d buff=[%s]", this->id, len, buff);
 
-    bytes = write(thiz->pipe_write_fd, buff, len);
+    bytes = write(thiz->sock_fd, buff, len);
     return bytes;
 }
 
