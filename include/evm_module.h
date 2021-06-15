@@ -12,10 +12,6 @@
 #ifndef EVM_MODULE_H
 #define EVM_MODULE_H
 
-#ifdef __cplusplus
-extern "C"{
-#endif
-
 #include "evm.h"
 
 #define EVM_GPIO_DIRECTION_IN   0
@@ -121,10 +117,6 @@ extern void evm_module_event_emit (evm_t *e, evm_val_t *pthis, const char *type,
 const char * evm_module_get_cwd();
 void evm_module_set_cwd(const char *cwd);
 evm_err_t evm_module_init(evm_t *env);
-extern evm_t *evm_runtime;
-
-#ifdef __cplusplus
-}
-#endif
+extern evm_val_t *evm_runtime;
 
 #endif
