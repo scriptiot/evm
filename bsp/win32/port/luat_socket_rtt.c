@@ -62,10 +62,13 @@ int luat_socket_tsend(const char* hostname, int port, void* buff, int len)
     server_addr.sin_addr = *((struct in_addr *)host->h_addr);
     memset(&(server_addr.sin_zero), 0, sizeof(server_addr.sin_zero));
 
-    if (connect(sock, (struct sockaddr *)&server_addr, sizeof(struct sockaddr)) < 0)
+    while(connect(sock, (struct sockaddr *)&server_addr, sizeof(struct sockaddr)) == -1 && errno != EISCONN)
     {
-        printf("Connect fail!\n");
-        goto __exit;
+        if ( errno != EINTR ){
+            printf("Connect fail!\n");
+            perror("");
+            goto __exit;
+        }
     }
 
     /* 发送数据到 socket 连接 */
