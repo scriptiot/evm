@@ -14,6 +14,10 @@
 
 #include "evm.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #define EVM_GPIO_DIRECTION_IN   0
 #define EVM_GPIO_DIRECTION_OUT  1
 #define EVM_GPIO_MODE_NONE      0
@@ -118,5 +122,9 @@ const char * evm_module_get_cwd();
 void evm_module_set_cwd(const char *cwd);
 evm_err_t evm_module_init(evm_t *env);
 extern evm_t *evm_runtime;
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif
