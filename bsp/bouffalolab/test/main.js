@@ -26,6 +26,9 @@ tcp.on(tcp, "recv", function(id, data) {
 tcp.start(tcp);
 print('start');
 
-while(true) {
-    rtos.receive(-1);
-}
+setInterval(function() {
+    rtos.receive(10);
+}, 10);
+
+gc();
+show();

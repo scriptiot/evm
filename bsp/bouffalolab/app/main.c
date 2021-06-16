@@ -159,6 +159,8 @@ static int get_dts_addr(const char *name, uint32_t *start, uint32_t *off)
     return 0;
 }
 
+#include "ecma.h"
+
 static void evm_task_proc(void *pvParameters)
 {
     uint32_t fdt = 0, offset = 0;
@@ -171,10 +173,11 @@ static void evm_task_proc(void *pvParameters)
     printf("=================================================================evm main starts\r\n");
     luat_log_set_uart_port(0);
     luat_main();
-
-    while (1)
-    {
-        vTaskDelay(100);
+    evm_t *env = luat_get_state()->e;
+    while (1) {
+        ecma_timeout_poll(env);
+        ecma_timeout_poll_inc(env, 1);
+        vTaskDelay(1);
     }
 }
 

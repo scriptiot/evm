@@ -245,6 +245,7 @@ static void select_handle(netclient_t *thiz, char *sock_buff)
             if (res > 0) {
                 LLOGI("netc[%ld] data recv len=%d", thiz->id, res);
                 if (thiz->rx) {
+                    sock_buff[res] = 0;
                     EVENT(thiz->id, thiz->rx, thiz->cb_recv, NETC_EVENT_RECV, res, sock_buff);
                 }
             }

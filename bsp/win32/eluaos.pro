@@ -3,6 +3,7 @@ CONFIG += console
 CONFIG -= app_bundle
 CONFIG -= qt
 
+INCLUDEPATH += $$PWD
 INCLUDEPATH += $$PWD/../../include
 INCLUDEPATH += $$PWD/../../modules/eluaos/lualib
 INCLUDEPATH += $$PWD/../../modules/eluaos/include

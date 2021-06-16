@@ -18,6 +18,7 @@ EXTRA_COMPONENT_DIRS += $(BL60X_SDK_PATH)/../../lib/riscv/bouffalolab
 COMPONENT_INCLUDES += $(BL60X_SDK_PATH)/../../modules/eluaos/bouffalolab
 
 CFLAGS += -DFREERTOS
+CFLAGS += -DCONFIG_EVM_ECMA_TIMEOUT
 
 COMPONENTS_NETWORK := sntp dns_server
 COMPONENTS_BLSYS   := bltime blfdt blmtd bloop loopadc looprt loopset
