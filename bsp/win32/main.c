@@ -26,7 +26,7 @@ static void _luat_main(void* args) {
 
 int main(int argc, char** argv) {
     bpool(luavm_heap, LUAT_HEAP_SIZE);
-    xTaskCreate( _luat_main, "luatos", 1024*8, NULL, 12, NULL );
+    xTaskCreate( _luat_main, "luatos", 1024*10, NULL, 12, NULL );
     vTaskStartScheduler();
     return 0;
 }

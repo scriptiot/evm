@@ -12,6 +12,10 @@
 #ifndef EVM_TYPE_H
 #define EVM_TYPE_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include <string.h>
 #include <stdio.h>
 #include <math.h>
@@ -496,5 +500,9 @@ static inline evm_val_t evm_mk_invoke( void *s) {
 static inline int evm_is_invoke(evm_val_t *v) {
     return (*v & INNER_TYPE_MASK) == INNER_TYPE_INVOKE;
 }
+
+#ifdef __cplusplus
+} /* extern "C" */
+#endif
 
 #endif

@@ -37,7 +37,7 @@ LUA_API lua_State *lua_newstate (lua_Alloc f, void *args) {
     if( env == NULL )
       return NULL;
     memset(env, 0, sizeof(evm_t));
-    evm_err_t err = evm_init(env, EVM_LUA_HEAP_SIZE, EVM_LUA_STACK_SIZE, EVM_VAR_NAME_MAX_LEN, EVM_FILE_NAME_LEN);
+    evm_err_t err = evm_init(env, 100 * 1024, 10 * 1024, EVM_VAR_NAME_MAX_LEN, EVM_FILE_NAME_LEN);
     if( err != ec_ok )
       return NULL;
 
