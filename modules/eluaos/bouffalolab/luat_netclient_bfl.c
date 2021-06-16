@@ -127,8 +127,6 @@ static int32_t socket_init(netclient_t *thiz, const char *url, int port)
     {
         thiz->sock_fd = socket(AF_INET, SOCK_DGRAM, 0);
     }
-
-    LLOGE("socket create");
     
     if (thiz->sock_fd == -1)
     {
@@ -194,15 +192,14 @@ static int32_t socket_deinit(netclient_t *thiz)
 
 static int32_t netclient_thread_init(netclient_t *thiz)
 {
-    TaskHandle_t th;
     char tname[12];
     sprintf(tname, "n%06X", thiz->id);
 
     static StackType_t proc_hellow_stack[2048];
     static StaticTask_t proc_hellow_task;
 
-    th = xTaskCreateStatic(netclient_thread_entry, (char*)"tcp", 2048, thiz, 20, proc_hellow_stack, &proc_hellow_task);
-    if (th == NULL)
+    thiz->thread_handle = xTaskCreateStatic(netclient_thread_entry, (char*)"tcp", 2048, thiz, 20, proc_hellow_stack, &proc_hellow_task);
+    if (thiz->thread_handle == NULL)
     {
         LLOGE("netc[%ld] thread create fail", thiz->id);
         return -1;
@@ -304,6 +301,8 @@ netc_exit:
     thiz->closed = 1;
     EVENT(thiz->id, thiz->rx, thiz->self_ref, NETC_EVENT_END, 0, NULL);
     LLOGW("netc[%ld] thread end", thiz->id);
+
+    vTaskDelete(thiz->thread_handle);
 }
 
 int32_t netclient_start(netclient_t * thiz) {

@@ -230,7 +230,7 @@ _exit:
   }
   // 等30秒,就重启吧
 //  luat_timer_mdelay(30*1000);
-  luat_os_reboot(result);
+  //luat_os_reboot(result);
   // 往下是肯定不会被执行的
   return (result && status == LUA_OK) ? 0 : 2;
 }

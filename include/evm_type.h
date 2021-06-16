@@ -4,7 +4,7 @@
 **
 **  EVM是一款通用化设计的虚拟机引擎，拥有语法解析前端接口、编译器、虚拟机和虚拟机扩展接口框架。
 **  支持语言类型：JavaScript, Python, QML, EVUE, JSON, XML, HTML, CSS
-**  Version	: 3.0
+**  Version	: 3.1
 **  Email	: scriptiot@aliyun.com
 **  Website	: https://github.com/scriptiot
 **  Licence: 个人免费，企业授权
@@ -172,22 +172,17 @@ typedef struct evm_t{
     uint32_t file_name_len;
     char *var_name;
     uint32_t var_name_len;
-
     heap_t *heap;
     evm_val_t *sp;
     evm_val_t *sp_base;
     uint32_t stack_size;
     evm_val_t root;
     evm_val_t scope;
-
     uint32_t native_cnt;
     evm_hash_t *native_symbals;
     evm_val_t *native_tbl;
-
     evm_val_t *module_tbl;
-
     evm_const_pool_t * string_pool;
-
     evm_val_t *token_object;
     uint8_t *token_buf;
     uint32_t token_index;

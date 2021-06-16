@@ -9,7 +9,6 @@
 **  Email	: scriptiot@aliyun.com
 **  Website	: https://github.com/scriptiot/evm
 **            https://gitee.com/scriptiot/evm
-**  Licence: Apache-2.0
 ****************************************************************************/
 
 #ifndef ECMA_H

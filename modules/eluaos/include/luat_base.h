@@ -27,7 +27,7 @@
 //#define USE_U8G2_UNIFONT_SYMBOLS
 //#define USE_U8G2_ICONIC_WEATHER_6X
 
-//lua_State * luat_get_state();
+lua_State * luat_get_state();
 /**
  * LuatOS主入口函数, 从这里开始就交由LuatOS控制了.
  * 集成时,该函数应在独立的thread/task中启动

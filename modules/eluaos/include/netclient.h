@@ -69,6 +69,8 @@ typedef struct netclient
     int cb_any;
     int cb_error;
     int self_ref;
+
+    void * thread_handle;
 }netclient_t;
 
 uint32_t netc_next_no(void);

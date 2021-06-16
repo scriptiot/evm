@@ -4,7 +4,7 @@
 **
 **  EVM是一款通用化设计的虚拟机引擎，拥有语法解析前端接口、编译器、虚拟机和虚拟机扩展接口框架。
 **  支持语言类型：JavaScript, Python, QML, EVUE, JSON, XML, HTML, CSS
-**  Version	: 3.0
+**  Version	: 3.1
 **  Email	: scriptiot@aliyun.com
 **  Website	: https://github.com/scriptiot
 **  Licence: 个人免费，企业授权

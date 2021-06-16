@@ -1,27 +1,31 @@
 print('Hello EVM');
+
 wlan = require('wlan');
+timer = require('timer');
+rtos = require('rtos');
+
 console.log(wlan);
 console.log(wlan.connect);
 
-wlan.connect('edmund_m', '11112222');
-
-timer = require('timer');
+wlan.connect('bytecode', 'bytecode888');
 
 timer.mdelay(1000 * 10);
-print('socket starts to send data');
 
 socket = require('socket');
 tcp = socket.tcp();
-print('tcp');
-tcp.host(tcp, "192.168.31.5");
-print('host');
+tcp.host(tcp, "192.168.31.229");
 tcp.port(tcp, 8080);
-print('port');
+tcp.on(tcp, "connect", function(id, re){
+    tcp.send(tcp, "EVM is connected to server");
+});
+
+tcp.on(tcp, "recv", function(id, data) {
+    console.log(data);
+});
+
 tcp.start(tcp);
 print('start');
 
 while(true) {
-    timer.mdelay(1000 * 3);
-    print('send');
-    tcp.send(tcp, "hello evm");
+    rtos.receive(-1);
 }

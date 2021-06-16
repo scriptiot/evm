@@ -1,8 +1,0 @@
-import os
-Import('RTT_ROOT')
-
-cwd = str(Dir('#'))
-objs = SConscript(os.path.join(cwd, '../../../modules/iotjs/rt-thread/SConscript'))
-objs += SConscript(os.path.join(cwd, '../../../modules/iotjs/common/SConscript'))
-
-Return('objs')
