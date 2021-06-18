@@ -7,6 +7,7 @@
 #include <lwip/netdb.h>
 #include <lwip/tcp.h>
 #include <lwip/err.h>
+#include <wifi_mgmr_ext.h>
 
 int luat_socket_tsend(const char* hostname, int port, void* buff, int len)
 {

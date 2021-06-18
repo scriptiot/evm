@@ -3,6 +3,7 @@
 #include "luat_msgbus.h"
 #include "luat_uart.h"
 #include "luat_log.h"
+#include <vfs.h>
 
 static int fd_console;
 
@@ -32,7 +33,7 @@ int luat_console_setup(int port) {
 
 int luat_uart_setup(luat_uart_t* uart)
 {
-    
+    return 0;
 }
 
 int luat_uart_write(int uartid, void* data, size_t length)

@@ -12,6 +12,10 @@
 #include <bl_wifi.h>
 #include <hal_wifi.h>
 #include <aos/yloop.h>
+#include <FreeRTOS.h>
+#include <task.h>
+#include <hal_sys.h>
+#include <aos/kernel.h>
 
 /*
 获取wifi模式
@@ -39,7 +43,7 @@ static int l_wlan_get_mode(lua_State *L) {
             }
         }
     }
-    int mode;// = rt_wlan_get_mode(devname);
+    int mode = 0;// = rt_wlan_get_mode(devname);
     lua_pushinteger(L, mode);
     return 1;
 }
@@ -67,7 +71,7 @@ static int l_wlan_set_mode(lua_State *L) {
         }
     }
     int mode = luaL_checkinteger(L, 2);
-    int re;// = rt_wlan_set_mode(devname, mode);
+    int re = 0;// = rt_wlan_set_mode(devname, mode);
     lua_pushinteger(L, re);
     return 1;
 }
@@ -166,7 +170,7 @@ wlan.autoreconnect()
 wlan.autoreconnect(1)
 */
 static int l_wlan_autoreconnect(lua_State *L) {
-    static autoconnect = 0;
+    static int autoconnect = 0;
     if (lua_gettop(L) > 0) {
         if( luaL_checkinteger(L, 1) ) {
             wifi_mgmr_sta_autoconnect_enable();
@@ -312,7 +316,7 @@ static int l_wlan_get_mac_raw(lua_State *L) {
     mac[0] = 0x00;
     wifi_mgmr_sta_mac_get(mac);
     if (mac[0] != 0x00) {
-        lua_pushlstring(L, mac, 6);
+        lua_pushlstring(L, (const char*)mac, 6);
         return 1;
     }
     return 0;
@@ -789,7 +793,7 @@ end)
 static int l_wlan_oneshot_start(lua_State *L) {
     WM_ONESHOT_MODE mode = (WM_ONESHOT_MODE)luaL_optinteger(L, 1, WM_UDP);
     oneshot_autojoin = luaL_optinteger(L, 2, 1);
-    LLOGD("oneshot mode=%d\n", mode);
+    LLOGD("oneshot mode=%lld\n", mode);
     if (mode == WM_APWEB) {
         const char* ssid = luaL_optstring(L, 2, "luatos");
         const char* passwd = luaL_optstring(L, 3, "12345678");

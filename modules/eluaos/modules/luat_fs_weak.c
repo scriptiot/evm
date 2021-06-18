@@ -4,6 +4,7 @@
 #include "luat_log.h"
 
 #define TAG "luat.fs"
+#include <vfs.h>
 
 // fs的默认实现, 指向poisx的stdio.h声明的方法
 

@@ -6,6 +6,7 @@
 #include "luat_base.h"
 #include "luat_malloc.h"
 #include "luat_msgbus.h"
+#include "ecma.h"
 
 #define O_RDONLY 0
 #define O_RDWR 2
