@@ -7,7 +7,10 @@ rtos = require('rtos');
 console.log(wlan);
 console.log(wlan.connect);
 
-wlan.connect('bytecode', 'bytecode888');
+var ssid = '';
+var pwd = ''
+
+wlan.connect(ssid, pwd);
 
 timer.mdelay(1000 * 10);
 
