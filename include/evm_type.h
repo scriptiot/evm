@@ -156,7 +156,6 @@ typedef struct heap_t {
     uint32_t * map;
     uint32_t map_size;
     uint32_t size;
-    uint32_t free;
     uint32_t offset;
     uint32_t usage;
     void *base;

@@ -61,6 +61,7 @@ EVM_API evm_val_t *evm_object_create_ext_data(evm_t *e, evm_type_t type, intptr_
 EVM_API evm_val_t *evm_native_function_create(evm_t *e, evm_object_native_t *native, uint32_t attr_len);
 EVM_API evm_val_t *evm_object_duplicate(evm_t *e, evm_type_t type, evm_val_t *o);
 EVM_API evm_hash_t evm_object_get_hash(evm_val_t *o);
+EVM_API void evm_object_set_hash(evm_val_t *o, evm_hash_t hash);
 EVM_API void evm_object_set_native(evm_val_t *o, evm_object_native_t *native);
 EVM_API evm_object_native_t *evm_object_get_native(evm_val_t *o);
 EVM_API void evm_object_set_count(evm_val_t *v, uint32_t count);
@@ -111,6 +112,8 @@ EVM_API evm_err_t evm_set_gc_type(evm_t *e, evm_val_t *o, evm_type_t type);
 EVM_API void evm_class_set_native(evm_val_t *o, evm_native_fn fn);
 EVM_API void evm_object_set_scope(evm_val_t *o, evm_val_t *s);
 EVM_API evm_val_t evm_object_get_scope(evm_val_t *o);
+EVM_API void evm_gc_ref_object(evm_val_t *v);
+EVM_API void evm_gc_deref_object(evm_val_t *v);
 
 /*** 虚拟机相关函数 ***/
 EVM_API evm_err_t evm_start(evm_t * e);
@@ -172,7 +175,7 @@ static inline void evm_assert_fail (const char *assertion, const char *file, con
 #define EVM_ASSERT(x) \
   do \
   { \
-    if (!x) \
+    if (! (x) ) \
     { \
       evm_assert_fail (#x, __FILE__, __func__, __LINE__); \
     } \

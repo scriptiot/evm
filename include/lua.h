@@ -8,7 +8,6 @@
 #include <float.h>
 
 #include "evm.h"
-#include "evm_lua_conf.h"
 
 typedef struct lua_State {
     evm_t *e;

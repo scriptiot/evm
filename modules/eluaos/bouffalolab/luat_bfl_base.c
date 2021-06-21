@@ -7,6 +7,7 @@
 #include "luat_malloc.h"
 #include "luat_msgbus.h"
 #include "ecma.h"
+#include "evm_lua_conf.h"
 
 #define O_RDONLY 0
 #define O_RDWR 2
@@ -28,6 +29,8 @@ static const luaL_Reg loadedlibs[] = {
     {"wlan", luaopen_wlan},
     {"socket", luaopen_socket},
     {"timer", luaopen_timer},
+    {"gpio", luaopen_gpio},
+    {"pwm", luaopen_pwm},
     {NULL, NULL}
 };
 

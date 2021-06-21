@@ -30,7 +30,7 @@ typedef struct luaL_Reg {
 
 LUALIB_API void (luaL_checkversion_) (lua_State *L, lua_Number ver, size_t sz);
 #define luaL_checkversion(L)  \
-          luaL_checkversion_(L, LUA_VERSION_NUM, LUAL_NUMSIZES)
+	  luaL_checkversion_(L, LUA_VERSION_NUM, LUAL_NUMSIZES)
 
 LUALIB_API int (luaL_getmetafield) (lua_State *L, int obj, const char *e);
 LUALIB_API int (luaL_callmeta) (lua_State *L, int obj, const char *e);
@@ -114,14 +114,14 @@ LUALIB_API void (luaL_requiref) (lua_State *L, const char *modname,
   (luaL_checkversion(L), luaL_newlibtable(L,l), luaL_setfuncs(L,l,0))
 
 #define luaL_argcheck(L, cond,arg,extramsg)	\
-                ((void)((cond) || luaL_argerror(L, (arg), (extramsg))))
+		((void)((cond) || luaL_argerror(L, (arg), (extramsg))))
 #define luaL_checkstring(L,n)	(luaL_checklstring(L, (n), NULL))
 #define luaL_optstring(L,n,d)	(luaL_optlstring(L, (n), (d), NULL))
 
 #define luaL_typename(L,i)	lua_typename(L, lua_type(L,(i)))
 
 #define luaL_dofile(L, fn) \
-        (luaL_loadfile(L, fn) || lua_pcall(L, 0, LUA_MULTRET, 0))
+	(luaL_loadfile(L, fn) || lua_pcall(L, 0, LUA_MULTRET, 0))
 
 #define luaL_getmetatable(L,n)	(lua_getfield(L, LUA_REGISTRYINDEX, (n)))
 
