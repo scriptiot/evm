@@ -30,10 +30,10 @@ Name | Type | Description
 ## 调用示例
 
 ```javascript
--- 设置gpio17为输入
+//设置gpio17为输入
 gpio.setup(17, 1) 
 -------------------------
--- 设置gpio17为输出
+//设置gpio17为输出
 gpio.setup(17, 0) 
 ```
 
@@ -61,7 +61,7 @@ Name | Type | Description
 ## 调用示例
 
 ```javascript
--- 设置gpio17为低电平
+//设置gpio17为低电平
 gpio.set(17, 0) 
 ```
 
@@ -88,7 +88,7 @@ Name | Type | Description
 ## 调用示例
 
 ```javascript
--- 获取gpio17的当前电平
+//获取gpio17的当前电平
 gpio.get(17) 
 ```
 
@@ -115,7 +115,7 @@ Name | Type | Description
 ## 调用示例
 
 ```javascript
--- 关闭gpio17
+//关闭gpio17
 gpio.close(17)
 ```
 
@@ -142,7 +142,7 @@ Name | Type | Description
 ## 调用示例
 
 ```javascript
--- 设置gpio.setup的pull默认值为上拉
+//设置gpio.setup的pull默认值为上拉
 gpio.setDefaultPull(1)
 ```
 
