@@ -6,6 +6,7 @@
 [wlan](luat_lib_wlan.md) | wifi操作库 
 [pwm](luat_lib_pwm.md) | PWM模块
 [gpio](luat_lib_gpio.md) | GPIO操作
+[fs](luat_lib_fs.md) | 文件操作
 
 # 如何编译博流BL602
 

@@ -46,8 +46,32 @@ static evm_val_t evm_module_fs_close(evm_t *e, evm_val_t *p, int argc, evm_val_t
     return EVM_VAL_UNDEFINED;
 }
 
-//fs.exists
-static evm_val_t evm_module_fs_exists(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
+//fs.closeSync(fd)
+static evm_val_t evm_module_fs_closeSync(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
+{
+    if (argc == 0)
+        return EVM_VAL_UNDEFINED;
+
+    if (!evm_is_integer(v) || evm_2_integer(v) == -1)
+        return EVM_VAL_UNDEFINED;
+    aos_close(evm_2_integer(v));
+    return EVM_VAL_UNDEFINED;
+}
+
+//fs.createReadStream
+static evm_val_t evm_module_fs_createReadStream(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
+{
+    return EVM_VAL_UNDEFINED;
+}
+
+//fs.createWriteStream
+static evm_val_t evm_module_fs_createWriteStream(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
+{
+    return EVM_VAL_UNDEFINED;
+}
+
+//fs.existsSync
+static evm_val_t evm_module_fs_existsSync(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
 {
     if (argc == 0 || !evm_is_string(v))
         return EVM_VAL_FALSE;
@@ -58,8 +82,19 @@ static evm_val_t evm_module_fs_exists(evm_t *e, evm_val_t *p, int argc, evm_val_
     return EVM_VAL_FALSE;
 }
 
-//fs.fstat(fd)
-static evm_val_t evm_module_fs_fstat(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
+//fs.exists
+static evm_val_t evm_module_fs_exists(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
+{
+    evm_val_t exists = evm_module_fs_existsSync(e, p, argc, v);
+    if (argc > 1 && evm_is_script(v + 1))
+    {
+        evm_run_callback(e, v + 1, &e->scope, &exists, 1);
+    }
+    return EVM_VAL_UNDEFINED;
+}
+
+//fs.fstatSync(fd)
+static evm_val_t evm_module_fs_fstatSync(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
 {
     if (argc == 0 || !evm_is_integer(v))
         return EVM_VAL_UNDEFINED;
@@ -76,8 +111,24 @@ static evm_val_t evm_module_fs_fstat(evm_t *e, evm_val_t *p, int argc, evm_val_t
     return *obj;
 }
 
-//fs.mkdir(path[, mode])
-static evm_val_t evm_module_fs_mkdir(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
+//fs.fstat(fd, callback)
+static evm_val_t evm_module_fs_fstat(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
+{
+    evm_val_t obj = evm_module_fs_fstatSync(e, p, argc, v);
+    if (obj == EVM_VAL_UNDEFINED)
+        return EVM_VAL_UNDEFINED;
+    if (argc > 1 && evm_is_script(v + 1))
+    {
+        evm_val_t args[2];
+        args[0] = EVM_VAL_NULL;
+        args[1] = obj;
+        evm_run_callback(e, v + 1, &e->scope, args, 2);
+    }
+    return EVM_VAL_UNDEFINED;
+}
+
+//fs.mkdirSync(path[, mode])
+static evm_val_t evm_module_fs_mkdirSync(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
 {
     if (argc == 0 || !evm_is_string(v))
         return EVM_VAL_UNDEFINED;
@@ -86,8 +137,24 @@ static evm_val_t evm_module_fs_mkdir(evm_t *e, evm_val_t *p, int argc, evm_val_t
     return EVM_VAL_UNDEFINED;
 }
 
-//fs.open(path, flags[, mode])
-static evm_val_t evm_module_fs_open(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
+//fs.mkdir(path[, mode], callback)
+static evm_val_t evm_module_fs_mkdir(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
+{
+    evm_module_fs_mkdirSync(e, p, argc, v);
+    evm_val_t args = evm_mk_number(errno);
+    if (argc > 2 && evm_is_script(v + 2))
+    {
+        evm_run_callback(e, v + 2, &e->scope, &args, 1);
+    }
+    else if (argc > 1 && evm_is_script(v + 1))
+    {
+        evm_run_callback(e, v + 1, &e->scope, &args, 1);
+    }
+    return EVM_VAL_UNDEFINED;
+}
+
+//fs.openSync(path, flags[, mode])
+static evm_val_t evm_module_fs_openSync(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
 {
     if (argc < 2 || !evm_is_string(v) || !evm_is_string(v + 1))
         return EVM_VAL_UNDEFINED;
@@ -141,8 +208,22 @@ static evm_val_t evm_module_fs_open(evm_t *e, evm_val_t *p, int argc, evm_val_t 
     return evm_mk_number(aos_open(evm_2_string(v), mode));
 }
 
-//fs.read(fd, buffer, offset, length, position)
-static evm_val_t evm_module_fs_read(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
+//fs.open(path, flags[, mode], callback)
+static evm_val_t evm_module_fs_open(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
+{
+    evm_val_t ret = evm_module_fs_openSync(e, p, argc, v);
+    if (argc > 2 && evm_is_script(v + 2))
+    {
+        evm_val_t args[2];
+        args[0] = evm_mk_number(errno);
+        args[1] = ret;
+        evm_run_callback(e, v + 2, &e->scope, args, 2);
+    }
+    return EVM_VAL_UNDEFINED;
+}
+
+//fs.readSync(fd, buffer, offset, length, position)
+static evm_val_t evm_module_fs_readSync(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
 {
     int fd;
     void *buffer;
@@ -168,8 +249,35 @@ static evm_val_t evm_module_fs_read(evm_t *e, evm_val_t *p, int argc, evm_val_t 
     return evm_mk_number(aos_read(fd, buffer + offset, length));
 }
 
-//fs.readFile(path)
-static evm_val_t evm_module_fs_readFile(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
+//fs.read(fd, buffer, offset, length, position, callback)
+static evm_val_t evm_module_fs_read(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
+{
+    evm_val_t ret = evm_module_fs_readSync(e, p, argc, v);
+    if (argc > 4 && evm_is_script(v + 4))
+    {
+        evm_val_t args[3];
+        args[0] = evm_mk_number(errno);
+        args[1] = ret;
+        args[2] = *(v + 1);
+        evm_run_callback(e, v + 2, &e->scope, args, 3);
+    }
+    return EVM_VAL_UNDEFINED;
+}
+
+//fs.readdir
+static evm_val_t evm_module_fs_readdir(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
+{
+    return EVM_VAL_UNDEFINED;
+}
+
+//fs.readdirSync
+static evm_val_t evm_module_fs_readdirSync(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
+{
+    return EVM_VAL_UNDEFINED;
+}
+
+//fs.readFileSync(path)
+static evm_val_t evm_module_fs_readFileSync(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
 {
     if (argc == 0 || !evm_is_string(v))
         return EVM_VAL_UNDEFINED;
@@ -193,8 +301,24 @@ static evm_val_t evm_module_fs_readFile(evm_t *e, evm_val_t *p, int argc, evm_va
     return *buf_obj;
 }
 
-//fs.rename(oldPath, newPath)
-static evm_val_t evm_module_fs_rename(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
+//fs.readFile(path, callback)
+static evm_val_t evm_module_fs_readFile(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
+{
+    evm_val_t ret = evm_module_fs_readFileSync(e, p, argc, v);
+    if (ret == EVM_VAL_UNDEFINED)
+        return ret;
+    if (argc > 1 && evm_is_script(v + 1))
+    {
+        evm_val_t args[2];
+        args[0] = evm_mk_number(errno);
+        args[1] = ret;
+        evm_run_callback(e, v + 1, &e->scope, args, 2);
+    }
+    return EVM_VAL_UNDEFINED;
+}
+
+//fs.renameSync(oldPath, newPath)
+static evm_val_t evm_module_fs_renameSync(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
 {
     if (argc < 2 || !evm_is_string(v) || !evm_is_string(v + 1))
         return EVM_VAL_UNDEFINED;
@@ -202,8 +326,21 @@ static evm_val_t evm_module_fs_rename(evm_t *e, evm_val_t *p, int argc, evm_val_
     return EVM_VAL_UNDEFINED;
 }
 
-//fs.rmdir(path)
-static evm_val_t evm_module_fs_rmdir(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
+//fs.rename
+static evm_val_t evm_module_fs_rename(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
+{
+    evm_module_fs_renameSync(e, p, argc, v);
+    if (argc > 2 && evm_is_script(v + 2))
+    {
+        evm_val_t args;
+        args = evm_mk_number(errno);
+        evm_run_callback(e, v + 2, &e->scope, &args, 1);
+    }
+    return EVM_VAL_UNDEFINED;
+}
+
+//fs.rmdirSync(path)
+static evm_val_t evm_module_fs_rmdirSync(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
 {
     if (argc == 0 || !evm_is_string(v))
         return EVM_VAL_UNDEFINED;
@@ -211,8 +348,21 @@ static evm_val_t evm_module_fs_rmdir(evm_t *e, evm_val_t *p, int argc, evm_val_t
     return EVM_VAL_UNDEFINED;
 }
 
-//fs.stat(path)
-static evm_val_t evm_module_fs_stat(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
+//fs.rmdir(path, callback)
+static evm_val_t evm_module_fs_rmdir(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
+{
+    evm_module_fs_rmdirSync(e, p, argc, v);
+    if (argc > 1 && evm_is_script(v + 1))
+    {
+        evm_val_t args;
+        args = evm_mk_number(errno);
+        evm_run_callback(e, v + 1, &e->scope, &args, 1);
+    }
+    return EVM_VAL_UNDEFINED;
+}
+
+//fs.statSync(path)
+static evm_val_t evm_module_fs_statSync(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
 {
     if (argc == 0 || !evm_is_string(v))
     {
@@ -234,8 +384,22 @@ static evm_val_t evm_module_fs_stat(evm_t *e, evm_val_t *p, int argc, evm_val_t 
     return *obj;
 }
 
-//fs.unlink(path)
-static evm_val_t evm_module_fs_unlink(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
+//fs.stat(path, callback)
+static evm_val_t evm_module_fs_stat(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
+{
+    evm_val_t obj = evm_module_fs_statSync(e, p, argc, v);
+    if (argc > 1 && evm_is_script(v + 1))
+    {
+        evm_val_t args[2];
+        args[0] = evm_mk_null();
+        args[1] = obj;
+        evm_run_callback(e, v + 1, &e->scope, args, 2);
+    }
+    return EVM_VAL_UNDEFINED;
+}
+
+//fs.unlinkSync(path)
+static evm_val_t evm_module_fs_unlinkSync(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
 {
     if (argc == 0 || !evm_is_string(v))
     {
@@ -245,8 +409,21 @@ static evm_val_t evm_module_fs_unlink(evm_t *e, evm_val_t *p, int argc, evm_val_
     return EVM_VAL_UNDEFINED;
 }
 
-//fs.write(fd, buffer, offset, length[, position])
-static evm_val_t evm_module_fs_write(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
+//fs.unlink(path, callback)
+static evm_val_t evm_module_fs_unlink(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
+{
+    evm_module_fs_unlinkSync(e, p, argc, v);
+    if (argc > 1 && evm_is_script(v + 1))
+    {
+        evm_val_t args;
+        args = evm_mk_number(errno);
+        evm_run_callback(e, v + 1, &e->scope, &args, 1);
+    }
+    return EVM_VAL_UNDEFINED;
+}
+
+//fs.writeSync(fd, buffer, offset, length[, position])
+static evm_val_t evm_module_fs_writeSync(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
 {
     int fd;
     void *buffer;
@@ -270,8 +447,23 @@ static evm_val_t evm_module_fs_write(evm_t *e, evm_val_t *p, int argc, evm_val_t
     return evm_mk_number(aos_write(fd, buffer + offset, length));
 }
 
-//fs.writeFile(path, data)
-static evm_val_t evm_module_fs_writeFile(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
+//fs.write(fd, buffer, offset, length[, position], callback)
+static evm_val_t evm_module_fs_write(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
+{
+    evm_val_t ret = evm_module_fs_writeSync(e, p, argc, v);
+    if (argc > 4 && evm_is_script(v + 4))
+    {
+        evm_val_t args[3];
+        args[0] = evm_mk_number(errno);
+        args[1] = ret;
+        args[2] = *(v + 1);
+        evm_run_callback(e, v + 2, &e->scope, args, 3);
+    }
+    return EVM_VAL_UNDEFINED;
+}
+
+//fs.writeFileSync(path, data)
+static evm_val_t evm_module_fs_writeFileSync(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
 {
     if (argc < 2 || !evm_is_string(v) || !(evm_is_buffer(v + 1) || evm_is_string(v + 1)))
         return EVM_VAL_UNDEFINED;
@@ -290,22 +482,52 @@ static evm_val_t evm_module_fs_writeFile(evm_t *e, evm_val_t *p, int argc, evm_v
     return EVM_VAL_UNDEFINED;
 }
 
+//fs.writeFile(path, data, callback)
+static evm_val_t evm_module_fs_writeFile(evm_t *e, evm_val_t *p, int argc, evm_val_t *v)
+{
+    evm_module_fs_writeFileSync(e, p, argc, v);
+    if (argc > 2 && evm_is_script(v + 2))
+    {
+        evm_val_t args;
+        args = evm_mk_number(errno);
+        evm_run_callback(e, v + 1, &e->scope, &args, 1);
+    }
+    return EVM_VAL_UNDEFINED;
+}
+
 evm_err_t evm_module_fs(evm_t *e)
 {
     evm_builtin_t builtin[] = {
         {"close", evm_mk_native((intptr_t)evm_module_fs_close)},
+        {"closeSync", evm_mk_native((intptr_t)evm_module_fs_closeSync)},
+        {"createReadStream", evm_mk_native((intptr_t)evm_module_fs_createReadStream)},
+        {"createWriteStream", evm_mk_native((intptr_t)evm_module_fs_createWriteStream)},
         {"exists", evm_mk_native((intptr_t)evm_module_fs_exists)},
+        {"existsSync", evm_mk_native((intptr_t)evm_module_fs_existsSync)},
         {"fstat", evm_mk_native((intptr_t)evm_module_fs_fstat)},
+        {"fstatSync", evm_mk_native((intptr_t)evm_module_fs_fstatSync)},
         {"mkdir", evm_mk_native((intptr_t)evm_module_fs_mkdir)},
+        {"mkdirSync", evm_mk_native((intptr_t)evm_module_fs_mkdirSync)},
         {"open", evm_mk_native((intptr_t)evm_module_fs_open)},
+        {"openSync", evm_mk_native((intptr_t)evm_module_fs_openSync)},
         {"read", evm_mk_native((intptr_t)evm_module_fs_read)},
+        {"readSync", evm_mk_native((intptr_t)evm_module_fs_readSync)},
+        {"readdir", evm_mk_native((intptr_t)evm_module_fs_readdir)},
+        {"readdirSync", evm_mk_native((intptr_t)evm_module_fs_readdirSync)},
         {"readFile", evm_mk_native((intptr_t)evm_module_fs_readFile)},
+        {"readFileSync", evm_mk_native((intptr_t)evm_module_fs_readFileSync)},
         {"rename", evm_mk_native((intptr_t)evm_module_fs_rename)},
+        {"renameSync", evm_mk_native((intptr_t)evm_module_fs_renameSync)},
         {"rmdir", evm_mk_native((intptr_t)evm_module_fs_rmdir)},
+        {"rmdirSync", evm_mk_native((intptr_t)evm_module_fs_rmdirSync)},
         {"stat", evm_mk_native((intptr_t)evm_module_fs_stat)},
+        {"statSync", evm_mk_native((intptr_t)evm_module_fs_statSync)},
         {"unlink", evm_mk_native((intptr_t)evm_module_fs_unlink)},
+        {"unlinkSync", evm_mk_native((intptr_t)evm_module_fs_unlinkSync)},
         {"write", evm_mk_native((intptr_t)evm_module_fs_write)},
+        {"writeSync", evm_mk_native((intptr_t)evm_module_fs_writeSync)},
         {"writeFile", evm_mk_native((intptr_t)evm_module_fs_writeFile)},
+        {"writeFileSync", evm_mk_native((intptr_t)evm_module_fs_writeFileSync)},
         {NULL, EVM_VAL_UNDEFINED}};
     evm_module_create(e, "fs", builtin);
     return e->err;
