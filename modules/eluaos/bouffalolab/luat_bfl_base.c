@@ -31,6 +31,7 @@ static const luaL_Reg loadedlibs[] = {
     {"timer", luaopen_timer},
     {"gpio", luaopen_gpio},
     {"pwm", luaopen_pwm},
+    {"uart", luaopen_uart},
     {NULL, NULL}
 };
 
@@ -121,6 +122,7 @@ extern evm_t * we_get_runtime(void)
 }
 
 extern int blf_mem_init();
+extern evm_err_t evm_module_fs(evm_t *e);
 
 LUA_API lua_State *lua_newstate (lua_Alloc f, void *args) {
     blf_mem_init();
@@ -143,6 +145,12 @@ LUA_API lua_State *lua_newstate (lua_Alloc f, void *args) {
     err = ecma_module(env);
     if (err != ec_ok) {
         printf("Failed to init ecma module\r\n");
+        return NULL;
+    }
+
+    err = evm_module_fs(env);
+    if (err != ec_ok) {
+        printf("Failed to init fs module\r\n");
         return NULL;
     }
     return evm_lua_new_state(env, EVM_LUA_SIZE_OF_GLOBALS);
