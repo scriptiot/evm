@@ -25,7 +25,7 @@
 #endif
 
 /* support both enable and disable "SAL_USING_POSIX" */
-#if defined(LINUX)
+#if defined(__linux__)
 #include <netdb.h>
 #include <sys/socket.h>
 #else
@@ -441,6 +441,7 @@ int webclient_connect(struct webclient_session *session, const char *URI)
         {
             /* connect failed */
             // "connect failed, connect socket(%d) error.", socket_handle
+            perror("");
             rc = -WEBCLIENT_CONNECT_FAILED;
             goto __exit;
         }

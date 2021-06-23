@@ -5,10 +5,12 @@
 #define LUAT_LOG_TAG "luat.http"
 #include "luat_log.h"
 
-#include <FreeRTOS.h>
-#include <task.h>
+#include <pthread.h>
 #include "webclient.h"
-#include <vfs.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <unistd.h>
 
 #define O_RDONLY                0
 #define O_WRONLY                1
@@ -48,7 +50,7 @@ static void webclient_req(luat_lib_http_req_t *req)
     else {
         LLOGD("webclient_session_create ok");
     }
-        
+
 
     rc = webclient_connect(session, URI);
     if (rc != WEBCLIENT_OK)
@@ -89,13 +91,13 @@ static void webclient_req(luat_lib_http_req_t *req)
         goto __exit;
     }
 
-    // fd = aos_open(req->dwpath, O_WRONLY | O_CREAT | O_TRUNC);
-    // if (fd < 0)
-    // {
-    //     LLOGW("get file failed, open file(%s) error.", filename);
-    //     rc = -WEBCLIENT_ERROR;
-    //     goto __exit;
-    // }
+    fd = open(req->dwpath, O_WRONLY | O_CREAT | O_TRUNC, 0);
+    if (fd < 0)
+    {
+        LLOGW("get file failed, open file(%s) error.", filename);
+        rc = -WEBCLIENT_ERROR;
+        goto __exit;
+    }
 
     ptr = (unsigned char *) web_malloc(WEBCLIENT_RESPONSE_BUFSZ);
     if (ptr == NULL)
@@ -112,7 +114,7 @@ static void webclient_req(luat_lib_http_req_t *req)
             length = webclient_read(session, ptr, WEBCLIENT_RESPONSE_BUFSZ);
             if (length > 0)
             {
-                // aos_write(fd, ptr, length);
+                write(fd, ptr, length);
                 total_length += length;
                 //LOG_RAW(">");
             }
@@ -132,7 +134,7 @@ static void webclient_req(luat_lib_http_req_t *req)
 
             if (length > 0)
             {
-                // aos_write(fd, ptr, length);
+                write(fd, ptr, length);
                 total_length += length;
                 //LOG_RAW(">");
             }
@@ -151,15 +153,21 @@ static void webclient_req(luat_lib_http_req_t *req)
     }
 
 __exit:
-    // if (fd >= 0)
-    // {
-    //     aos_close(fd);
-    // }
+    if (fd >= 0)
+    {
+        close(fd);
+    }
 
     if (session != NULL)
     {
         webclient_close(session);
     }
+
+    if (ptr != NULL)
+    {
+        web_free(ptr);
+    }
+
 
     luat_lib_http_resp_t *resp = luat_heap_malloc(sizeof(luat_lib_http_resp_t));
     if (resp == NULL) {
@@ -181,19 +189,17 @@ __exit:
             if (total_length > 0 && total_length < WEBCLIENT_RESPONSE_BUFSZ) {
                 resp->body.ptr = luat_heap_malloc(total_length);
                 if (resp->body.ptr != NULL) {
-                    memcpy(resp->body.ptr, ptr, total_length);
-                    resp->body.size = total_length;
-                    fd = aos_open(req->dwpath, O_RDONLY);
-                    // if (fd) {
-                    //     aos_read(fd, resp->body.ptr, total_length);
-                    //     aos_close(fd);
-                    //     resp->body.size = total_length;
-                    // }
-                    // else {
-                    //     resp->body.size = 0;
-                    //     luat_heap_free(resp->body.ptr);
-                    //     LLOGW("resp file is fail to open");
-                    // }
+                    fd = open(req->dwpath, O_RDONLY);
+                    if (fd) {
+                        read(fd, resp->body.ptr, total_length);
+                        close(fd);
+                        resp->body.size = total_length;
+                    }
+                    else {
+                        resp->body.size = 0;
+                        luat_heap_free(resp->body.ptr);
+                        LLOGW("resp file is fail to open");
+                    }
                 }
                 else {
                     LLOGW("resp body malloc fail!!! size=%d", total_length);
@@ -209,10 +215,6 @@ __exit:
         req->httpcb(resp);
     }
     LLOGD("http every done, clean req");
-    if (ptr != NULL)
-    {
-        web_free(ptr);
-    }
     luat_http_req_gc(req);
 }
 
@@ -221,22 +223,18 @@ static void luat_http_thread_entry(void* arg) {
 
     // 默认下载到到文件里
     if (req->dwpath[0] == 0x00) {
-        strcpy(req->dwpath, "/httpdw.bin");
+        strcpy(req->dwpath, "./httpdw.bin");
     }
-    
+
     webclient_req(req);
-    vTaskDelete(req->handle);
 }
 
 int luat_http_req(luat_lib_http_req_t *req) {
-
-    static StackType_t proc_hellow_stack[4096];
-    static StaticTask_t proc_hellow_task;
-
-    req->handle = xTaskCreateStatic(luat_http_thread_entry, (char*)"http", 4096, req, 20, proc_hellow_stack, &proc_hellow_task);
-    if ( !req->handle )
+    pthread_t th;
+    if (pthread_create(&th, NULL, luat_http_thread_entry, req) == -1)
     {
-        LLOGE("http thread fail to start");
+        LLOGE("netc thread create fail");
+        return -1;
     }
     return 0;
 }

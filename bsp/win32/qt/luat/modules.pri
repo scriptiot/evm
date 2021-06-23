@@ -9,6 +9,8 @@ SOURCES += \
     $$PWD/../../../../modules/eluaos/modules/luat_lib_zbuff.c \
     $$PWD/../../../../modules/eluaos/modules/luat_luadb.c \
     $$PWD/../../../../modules/eluaos/modules/luat_luat_bin.c \
+    $$PWD/../../../../modules/eluaos/modules/luat_lib_http.c \
+    $$PWD/../../../../components/webclient/src/webclient.c \
     $$PWD/../../../../modules/eluaos/modules/luat_main.c
 
 

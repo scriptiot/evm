@@ -7,4 +7,4 @@ setInterval(function() {
 }, 10);
 
 //example codes
-require('test_socket1.js')
+require('test_http.js')

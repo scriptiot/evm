@@ -26,7 +26,7 @@ extern "C"
 {
 #endif
 
-#ifdef LINUX
+#ifdef __linux__
 
 #ifndef web_malloc
 #define web_malloc malloc

@@ -45,7 +45,7 @@ LUA_API lua_State *lua_newstate (lua_Alloc f, void *args) {
     if (err != ec_ok)
         return NULL;
 
-    return evm_lua_new_state(env, EVM_LUA_SIZE_OF_GLOBALS);
+    return evm_lua_new_state(env, 20);
 }
 
 

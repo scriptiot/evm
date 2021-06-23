@@ -8,10 +8,10 @@ INCLUDEPATH += $$PWD/../../include
 INCLUDEPATH += $$PWD/../../modules/eluaos/lualib
 INCLUDEPATH += $$PWD/../../modules/eluaos/include
 INCLUDEPATH += $$PWD/../../modules/eluaos/packages/lua-cjson
-INCLUDEPATH += $$PWD/../../components/httpclient/inc
 INCLUDEPATH += $$PWD/../../components/freertos/include
 INCLUDEPATH += $$PWD/../../components/mbedtls/include
 INCLUDEPATH += $$PWD/../../components/mbedtls/include/mbedtls
+INCLUDEPATH += $$PWD/../../components/webclient/inc
 
 DEFINES += LUAT_CONF_DISABLE_ROTABLE
 DEFINES += CONFIG_EVM_ECMA_TIMEOUT
@@ -33,7 +33,6 @@ win32 {
 include($$PWD/qt/lualib.pri)
 include($$PWD/qt/luat.pri)
 include($$PWD/qt/freertos.pri)
-include($$PWD/qt/httpclient.pri)
 include($$PWD/qt/mbedtls.pri)
 include($$PWD/qt/port.pri)
 

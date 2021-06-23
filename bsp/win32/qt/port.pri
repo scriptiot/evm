@@ -7,6 +7,7 @@ SOURCES += \
     $$PWD/../port/luat_msgbus_freertos.c \
     $$PWD/../port/luat_lib_gpio.c \
     $$PWD/../port/luat_gpio_rtt.c \
+    $$PWD/../port/luat_http_win32.c \
     $$PWD/../port/luat_timer_freertos.c
 
 win32 {
