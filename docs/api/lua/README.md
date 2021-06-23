@@ -7,6 +7,7 @@
 [pwm](luat_lib_pwm.md) | PWM模块
 [gpio](luat_lib_gpio.md) | GPIO操作
 [fs](luat_lib_fs.md) | 文件操作
+[http](luat_lib_http.md) | http操作
 
 # 如何编译博流BL602
 

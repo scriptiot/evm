@@ -2,6 +2,7 @@
 #
 ## These include paths would be exported to project level
 COMPONENT_ADD_INCLUDEDIRS += ../../include
+COMPONENT_ADD_INCLUDEDIRS += ../../components/webclient/inc
 COMPONENT_ADD_INCLUDEDIRS += ../include
 
 COMPONENT_INCLUDES += bouffalolab
@@ -26,6 +27,7 @@ COMPONENT_SRCS += \
 	bouffalolab/luat_gpio_bfl.c \
 	bouffalolab/luat_pwm_bfl.c \
 	bouffalolab/evm_module_fs.c \
+	bouffalolab/luat_http_bfl.c \
 	bouffalolab/luat_bfl_base.c
 
 COMPONENT_SRCS += \
@@ -40,8 +42,12 @@ COMPONENT_SRCS += \
 	modules/luat_lib_gpio.c \
 	modules/luat_lib_pwm.c \
 	modules/luat_lib_uart.c \
+	modules/luat_lib_http.c \
 	modules/luat_main.c 
+
+COMPONENT_SRCS += \
+	../../components/webclient/src/webclient.c 
 
 COMPONENT_OBJS := $(patsubst %.c,%.o, $(COMPONENT_SRCS))
 
-COMPONENT_SRCDIRS += modules bouffalolab lualib
+COMPONENT_SRCDIRS += modules bouffalolab lualib ../../components/webclient/src

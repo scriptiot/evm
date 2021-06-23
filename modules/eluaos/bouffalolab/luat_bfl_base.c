@@ -2,6 +2,7 @@
 #include <vfs.h>
 #include <aos/kernel.h>
 #include <bl_romfs.h>
+#include <bl_sys.h>
 #include "lua.h"
 #include "luat_base.h"
 #include "luat_malloc.h"
@@ -32,6 +33,7 @@ static const luaL_Reg loadedlibs[] = {
     {"gpio", luaopen_gpio},
     {"pwm", luaopen_pwm},
     {"uart", luaopen_uart},
+    {"http", luaopen_http},
     {NULL, NULL}
 };
 
@@ -52,7 +54,7 @@ void luat_openlibs(lua_State *L) {
 }
 
 void luat_os_reboot(int code) {
-    
+    bl_sys_reset_system();
 }
 
 void sys_start_standby(int ms);
