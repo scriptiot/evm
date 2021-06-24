@@ -213,7 +213,8 @@ static int l_http_reqcommon(lua_State *L, uint8_t method) {
         else if (lua_isstring(L, -1)) {
             tmp = (char*)luaL_checklstring(L, -1, &(req->body.size));
             if (req->body.size > 0) {
-                req->body.ptr = luat_heap_malloc(req->body.size);
+                req->body.ptr = luat_heap_malloc(req->body.size + 1);
+                memset(req->body.ptr, 0, req->body.size + 1);
                 memcpy(req->body.ptr, tmp, req->body.size);
             }
         }

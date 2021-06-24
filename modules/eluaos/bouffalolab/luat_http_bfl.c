@@ -61,6 +61,23 @@ static void webclient_req(luat_lib_http_req_t *req)
         LLOGD("http connect ok");
     }
 
+    if( req->method == LUAT_HTTP_POST ) {
+        /* use default header data */
+        if (webclient_header_fields_add(session, "POST %s HTTP/1.1\r\n", session->req_url) < 0)
+            goto __exit;
+        if (webclient_header_fields_add(session, "Content-Type: application/json\r\n") < 0)
+            goto __exit;
+        if (req->body.size)
+        {
+            if (webclient_header_fields_add(session, "Content-Length: %d\r\n", req->body.size) < 0)
+                goto __exit;
+        }
+    } else {
+        /* use default header data */
+        if (webclient_header_fields_add(session, "GET %s HTTP/1.1\r\n", session->req_url) < 0)
+            goto __exit;
+    }
+
     // TODO 把DELETE和PUT支持一下
     rc = webclient_send_header(session, req->body.size == 0 ? WEBCLIENT_GET : WEBCLIENT_POST);
     if (rc != WEBCLIENT_OK)

@@ -8,7 +8,7 @@ const char * vm_load(evm_t * e, char * path, int type)
     FILE *file;
     uint32_t lSize;
 
-    sprintf(_path, "../../test/elua/%s", path);
+    sprintf(_path, "../../../eluaos/test/win32/%s", path);
     sprintf(e->file_name, "%s", _path);
 
     file = fopen(_path, "rb");
